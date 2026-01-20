@@ -1,0 +1,98 @@
+<div class="min-vh-100 bg-light p-4">
+  <div class="container">
+    
+    <div class="row mb-5 align-items-center">
+      <div class="col-md-8">
+        <h1 class="display-5 fw-bold text-dark">Admin Dashboard</h1>
+        <p class="lead text-muted">Control Center for Institution Management</p>
+      </div>
+      <div class="col-md-4 text-md-end">
+        <div class="badge bg-primary p-2 px-3 rounded-pill shadow-sm">
+          <i class="bi bi-shield-check me-2"></i>Secure Admin Session
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-4">
+      
+      <div class="col-md-6 col-lg-4">
+        <div class="card border-0 shadow-sm h-100 py-3 text-center action-card" (click)="setView('staff')">
+          <div class="card-body">
+            <div class="icon-box bg-primary-soft mb-4">
+              <i class="bi bi-people-fill text-primary fs-2"></i>
+            </div>
+            <h4 class="fw-bold">Staff</h4>
+            <p class="text-muted px-3">Manage faculty members, departments, and roles.</p>
+            <button class="btn btn-primary rounded-pill px-4 mt-2" [routerLink]="['/admin/managed-staff']">Open Records</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-4">
+        <div class="card border-0 shadow-sm h-100 py-3 text-center action-card" (click)="setView('students')">
+          <div class="card-body">
+            <div class="icon-box bg-success-soft mb-4">
+              <i class="bi bi-mortarboard-fill text-success fs-2"></i>
+            </div>
+            <h4 class="fw-bold">Students</h4>
+            <p class="text-muted px-3">Handle enrollments, student profiles, and analytics.</p>
+            <button class="btn btn-success rounded-pill px-4 mt-2">Open Directory</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-4">
+        <div class="card border-0 shadow-sm h-100 py-3 text-center action-card" (click)="setView('timetable')">
+          <div class="card-body">
+            <div class="icon-box bg-warning-soft mb-4">
+              <i class="bi bi-calendar3 text-warning fs-2"></i>
+            </div>
+            <h4 class="fw-bold">Timetable</h4>
+            <p class="text-muted px-3">Generate schedules and resolve class conflicts.</p>
+            <button class="btn btn-warning text-dark rounded-pill px-4 mt-2" [routerLink]="['/timetable']" routerLinkActive="router-link-active" >Manage Schedule</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-4">
+        <div class="card border-0 shadow-sm h-100 py-3 text-center action-card" (click)="setView('notifications')">
+          <div class="card-body">
+            <div class="icon-box bg-danger-soft mb-4">
+              <i class="bi bi-send-fill text-danger fs-2"></i>
+            </div>
+            <h4 class="fw-bold">Broadcast</h4>
+            <p class="text-muted px-3">Push announcements to all staff and student apps.</p>
+            <button class="btn btn-danger rounded-pill px-4 mt-2">Send Alerts</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-4">
+        <div class="card border-0 shadow-sm h-100 py-3 text-center action-card" (click)="setView('calendar')">
+          <div class="card-body">
+            <div class="icon-box bg-info-soft mb-4">
+              <i class="bi bi-calendar-event text-info fs-2"></i>
+            </div>
+            <h4 class="fw-bold">Calendar</h4>
+            <p class="text-muted px-3">Set term dates, holidays, and exam periods.</p>
+            <button class="btn btn-info text-dark rounded-pill px-4 mt-2">Edit Calendar</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-4">
+        <div class="card border-0 shadow-sm h-100 py-3 text-center action-card bg-dark text-white" (click)="logout()">
+          <div class="card-body">
+            <div class="icon-box bg-secondary-soft mb-4">
+              <i class="bi bi-box-arrow-right text-white fs-2"></i>
+            </div>
+            <h4 class="fw-bold">Exit</h4>
+            <p class="text-white-50 px-3">Securely sign out of the administrator portal.</p>
+            <button class="btn btn-outline-light rounded-pill px-4 mt-2">Logout</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

@@ -10,7 +10,7 @@
   },
   "include": [
     "src/**/*.ts"
-  ],
+, "src/firebaseconfig.ts"  ],
   "exclude": [
     "src/**/*.spec.ts"
   ]

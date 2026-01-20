@@ -1,0 +1,129 @@
+<div class="container-fluid p-4 bg-light min-vh-100">
+  <div class="row">
+    <div class="col-12">
+      
+      <div class="card timetable-card shadow-sm mb-4">
+        <div class="card-body bg-white d-flex flex-wrap align-items-center gap-4">
+          <div>
+            <h4 class="fw-bold text-dark mb-0">BCA <span class="text-primary">Scheduler</span></h4>
+          </div>
+
+          <div class="d-flex align-items-center gap-2 border-start ps-4">
+            <span class="small fw-bold text-muted">START:</span>
+            <input type="number" class="time-input" [ngModel]="startTime()" (ngModelChange)="startTime.set($event)">
+            <span class="small fw-bold text-muted ms-2">END:</span>
+            <input type="number" class="time-input" [ngModel]="endTime()" (ngModelChange)="endTime.set($event)">
+          </div>
+
+          @if (viewMode() === 'class') {
+            <div class="d-flex align-items-end gap-2 p-1 bg-light rounded shadow-sm ms-auto">
+              <select class="form-select form-select-sm border-0 bg-transparent" [(ngModel)]="selectedSem">
+                @for (s of [1,2,3,4,5,6]; track s) { <option [value]="s">Sem {{s}}</option> }
+              </select>
+              <select class="form-select form-select-sm border-0 bg-transparent" [(ngModel)]="selectedDiv">
+                <option value="A">Div A</option><option value="B">Div B</option><option value="C">Div C</option>
+              </select>
+              <button class="btn btn-success btn-sm px-3 fw-bold" (click)="generateTimetable()" [disabled]="isGenerating()">
+                {{ isGenerating() ? 'WORKING...' : 'AUTO-GEN' }}
+              </button>
+            </div>
+          } @else {
+            <div class="ms-auto" style="min-width: 250px;">
+              <select class="form-select form-select-sm shadow-sm" [(ngModel)]="selectedStaffId">
+                <option value="">-- Select Teacher --</option>
+                @for (st of staffList(); track st.id) { <option [value]="st.id">{{st.name}}</option> }
+              </select>
+            </div>
+          }
+
+          <div class="btn-group btn-group-sm">
+            <button class="btn btn-outline-dark" [class.active]="viewMode()==='class'" (click)="viewMode.set('class')">Class View</button>
+            <button class="btn btn-outline-dark" [class.active]="viewMode()==='staff'" (click)="viewMode.set('staff')">Staff View</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card timetable-card shadow-sm border-0 overflow-hidden">
+        <table class="table table-bordered mb-0 text-center align-middle">
+          <thead class="table-dark">
+            <tr>
+              <th class="time-col py-3">TIME</th>
+              @for (day of days; track day) { <th class="py-3">{{day}}</th> }
+            </tr>
+          </thead>
+          <tbody>
+            @for (time of currentTimeSlots; track time) {
+              @if (time === 'RECESS') {
+                <tr class="recess-row">
+                  <td class="py-2 small fw-bold">13:30 - 14:00</td>
+                  <td colspan="6" class="py-2">R e c e s s</td>
+                </tr>
+              } @else {
+                <tr>
+                  <td class="time-col py-4">{{time}}</td>
+                  @for (day of days; track day) {
+                    <td class="slot-cell p-2" (click)="openEdit(day, time)">
+                      @for (slot of filteredSlots; track slot.id) {
+                        @if (slot.day === day && slot.time === time) {
+                          <div class="p-2 text-start bg-white rounded shadow-sm border-start border-4 border-primary">
+                            <div class="fw-bold small">{{slot.subject}}</div>
+                            <div class="text-primary" style="font-size: 0.7rem;">
+                              {{ viewMode() === 'staff' ? 'Sem ' + slot.sem + ' Div ' + slot.div : slot.staffName }}
+                            </div>
+                          </div>
+                        }
+                      }
+                    </td>
+                  }
+                </tr>
+              }
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  @if (showEditModal()) {
+    <div class="modal fade show" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+          <div class="modal-header border-0 pb-0">
+            <h5 class="fw-bold m-0">{{editingSlot().day}} @ {{editingSlot().time}}</h5>
+            <button type="button" class="btn-close" (click)="showEditModal.set(false)"></button>
+          </div>
+          <div class="modal-body p-4">
+            <div class="mb-3">
+              <label class="small fw-bold text-muted">Teacher</label>
+              <select class="form-select bg-light border-0" [disabled]="viewMode()==='staff'" [ngModel]="editingSlot().staffId" (ngModelChange)="onStaffChange($event)">
+                @for (st of staffList(); track st.id) { <option [value]="st.id">{{st.name}}</option> }
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="small fw-bold text-muted">Subject</label>
+              <input type="text" class="form-control bg-light border-0" [(ngModel)]="editingSlot().subject">
+            </div>
+            <div class="row g-2">
+              <div class="col-6">
+                <label class="small fw-bold text-muted">Sem</label>
+                <select class="form-select bg-light border-0" [(ngModel)]="editingSlot().sem">
+                  @for (s of [1,2,3,4,5,6]; track s) { <option [value]="s">Sem {{s}}</option> }
+                </select>
+              </div>
+              <div class="col-6">
+                <label class="small fw-bold text-muted">Div</label>
+                <select class="form-select bg-light border-0" [(ngModel)]="editingSlot().div">
+                  <option value="A">Div A</option><option value="B">Div B</option><option value="C">Div C</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer border-0">
+            @if (editingSlot().id) { <button class="btn btn-link text-danger me-auto small" (click)="deleteSlot()">Delete</button> }
+            <button class="btn btn-primary px-4 fw-bold" (click)="saveSlot()">Save Assignment</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>
