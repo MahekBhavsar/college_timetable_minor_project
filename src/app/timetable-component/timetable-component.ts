@@ -14,9 +14,9 @@ import { FirebaseCollections } from '../services/firebase-enums';
     .slot-cell { cursor: pointer; transition: 0.2s; min-height: 100px; vertical-align: top; border: 1px solid #f0f0f0 !important; }
     .slot-cell:hover { background-color: #f8f9fa !important; }
     .time-col { background-color: #f1f3f5 !important; color: #495057 !important; font-weight: 700; width: 120px; font-size: 0.85rem; }
-    .recess-row { background-color: #e2f0d9 !important; font-weight: bold; color: #2e7d32; letter-spacing: 5px; text-transform: uppercase; }
+    .recess-row { background-color: #fff3cd !important; font-weight: bold; color: #856404; letter-spacing: 5px; text-transform: uppercase; }
     .timetable-card { border-radius: 15px; border: none; overflow: hidden; }
-    .time-input { width: 70px; border: 1px solid #dee2e6; border-radius: 6px; padding: 4px 8px; font-weight: bold; }
+    .time-input { width: 70px; border: 1px solid #dee2e6; border-radius: 6px; padding: 4px 8px; font-weight: bold; text-align: center; }
   `]
 })
 export class TimetableComponent implements OnInit {
@@ -27,9 +27,9 @@ export class TimetableComponent implements OnInit {
   selectedStaffId = signal<string>('');
   isGenerating = signal<boolean>(false);
 
-  // Manual Time Settings
-  startTime = signal<number>(8); // 8 AM
-  endTime = signal<number>(16);  // 4 PM
+  // Manual Time Settings (In Hours)
+  startTime = signal<number>(8); 
+  endTime = signal<number>(17);  
 
   showEditModal = signal<boolean>(false);
   editingSlot = signal<any>(null);
@@ -47,17 +47,17 @@ export class TimetableComponent implements OnInit {
     this.fb.getCollection<any>(FirebaseCollections.Timetable).subscribe(data => this.allSlots.set(data));
   }
 
-  // Logic for 50-minute lectures and Recess at 13:30
+  // --- 50 MINUTE LECTURE + 1:30 RECESS LOGIC ---
   get currentTimeSlots() {
     const slots: string[] = [];
     let currentMins = this.startTime() * 60;
     const endMins = this.endTime() * 60;
 
     while (currentMins + 50 <= endMins) {
-      // 13:30 = 810 minutes from start of day
+      // 13:30 = 810 minutes (1:30 PM)
       if (currentMins === 810) {
         slots.push("RECESS");
-        currentMins += 30; // 30 min break
+        currentMins += 30; // 30 min break until 14:00
         continue;
       }
 
@@ -97,12 +97,12 @@ export class TimetableComponent implements OnInit {
     const slot = this.editingSlot();
     if (!slot.staffId) return alert("Select a teacher!");
 
-    // Prevent manual conflict: Check if teacher is teaching elsewhere at this time
+    // Prevent manual conflict
     const isBusy = this.allSlots().some(s => 
       s.id !== slot.id && s.day === slot.day && s.time === slot.time && s.staffId === slot.staffId
     );
 
-    if (isBusy) return alert(`Teacher is already busy in another classroom at ${slot.time}`);
+    if (isBusy) return alert(`Conflict: This teacher is already teaching another class at ${slot.time}`);
 
     slot.id ? await this.fb.updateDocument(FirebaseCollections.Timetable, slot.id, slot) 
             : await this.fb.addDocument(FirebaseCollections.Timetable, slot);
@@ -122,7 +122,7 @@ export class TimetableComponent implements OnInit {
         const isOccupied = tempSlots.some(s => s.day === day && s.time === time && s.sem == this.selectedSem() && s.div === this.selectedDiv());
         
         if (!isOccupied) {
-          // Find staff who is NOT busy at this day/time anywhere else
+          // Conflict Prevention: Find staff free at this specific time across ALL classes
           const freeStaff = this.staffList().find(staff => 
             !tempSlots.some(s => s.day === day && s.time === time && s.staffId === staff.id)
           );
