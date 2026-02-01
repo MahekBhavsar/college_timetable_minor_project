@@ -1,94 +1,134 @@
 <div class="min-vh-100 bg-light p-4">
   <div class="container">
     
+    <!-- Header Section -->
     <div class="row mb-5 align-items-center">
       <div class="col-md-8">
         <h1 class="display-5 fw-bold text-dark">Admin Dashboard</h1>
-        <p class="lead text-muted">Control Center for Institution Management</p>
+        <p class="lead text-muted">Core Institution & Academic Control Center</p>
       </div>
       <div class="col-md-4 text-md-end">
-        <div class="badge bg-primary p-2 px-3 rounded-pill shadow-sm">
-          <i class="bi bi-shield-check me-2"></i>Secure Admin Session
+        <div class="badge bg-white text-primary p-2 px-4 rounded-pill shadow-sm border">
+          <span class="dot bg-success me-2"></span> Secure Admin Session
         </div>
       </div>
     </div>
 
+    <!-- Grid Layout -->
     <div class="row g-4">
       
+      <!-- Staff Management -->
       <div class="col-md-6 col-lg-4">
-        <div class="card border-0 shadow-sm h-100 py-3 text-center action-card" (click)="setView('staff')">
-          <div class="card-body">
-            <div class="icon-box bg-primary-soft mb-4">
-              <i class="bi bi-people-fill text-primary fs-2"></i>
+        <div class="card border-0 shadow-sm h-100 action-card" (click)="setView('staff')">
+          <div class="card-body text-center p-4">
+            <div class="icon-circle bg-primary-subtle text-primary mb-3">
+              <i class="bi bi-people-fill fs-2"></i>
             </div>
-            <h4 class="fw-bold">Staff</h4>
-            <p class="text-muted px-3">Manage faculty members, departments, and roles.</p>
-            <button class="btn btn-primary rounded-pill px-4 mt-2" [routerLink]="['/admin/managed-staff']">Open Records</button>
+            <h5 class="fw-bold">Staff Portal</h5>
+            <p class="small text-muted mb-4">Faculty records, departments, and roles.</p>
+            <button class="btn btn-primary w-100 rounded-pill fw-bold" [routerLink]="['/admin/managed-staff']">Open Records</button>
           </div>
         </div>
       </div>
 
+      <!-- Student Management -->
       <div class="col-md-6 col-lg-4">
-        <div class="card border-0 shadow-sm h-100 py-3 text-center action-card" (click)="setView('students')">
-          <div class="card-body">
-            <div class="icon-box bg-success-soft mb-4">
-              <i class="bi bi-mortarboard-fill text-success fs-2"></i>
+        <div class="card border-0 shadow-sm h-100 action-card" (click)="setView('students')">
+          <div class="card-body text-center p-4">
+            <div class="icon-circle bg-success-subtle text-success mb-3">
+              <i class="bi bi-mortarboard-fill fs-2"></i>
             </div>
-            <h4 class="fw-bold">Students</h4>
-            <p class="text-muted px-3">Handle enrollments, student profiles, and analytics.</p>
-            <button class="btn btn-success rounded-pill px-4 mt-2">Open Directory</button>
+            <h5 class="fw-bold">Student Hub</h5>
+            <p class="small text-muted mb-4">Enrollments, profiles, and attendance sync.</p>
+            <button class="btn btn-success w-100 rounded-pill fw-bold text-white">Manage Registry</button>
           </div>
         </div>
       </div>
 
+      <!-- Timetable -->
       <div class="col-md-6 col-lg-4">
-        <div class="card border-0 shadow-sm h-100 py-3 text-center action-card" (click)="setView('timetable')">
-          <div class="card-body">
-            <div class="icon-box bg-warning-soft mb-4">
-              <i class="bi bi-calendar3 text-warning fs-2"></i>
+        <div class="card border-0 shadow-sm h-100 action-card">
+          <div class="card-body text-center p-4">
+            <div class="icon-circle bg-warning-subtle text-warning mb-3">
+              <i class="bi bi-calendar3 fs-2"></i>
             </div>
-            <h4 class="fw-bold">Timetable</h4>
-            <p class="text-muted px-3">Generate schedules and resolve class conflicts.</p>
-            <button class="btn btn-warning text-dark rounded-pill px-4 mt-2" [routerLink]="['/timetable']" routerLinkActive="router-link-active" >Manage Schedule</button>
+            <h5 class="fw-bold">Auto Timetable</h5>
+            <p class="small text-muted mb-4">Generate schedules and resolve conflicts.</p>
+            <button class="btn btn-warning w-100 rounded-pill fw-bold text-dark" [routerLink]="['/timetable']">Manage Schedule</button>
           </div>
         </div>
       </div>
 
+      <!-- 🟢 NEW: ACADEMIC PLANNER -->
       <div class="col-md-6 col-lg-4">
-        <div class="card border-0 shadow-sm h-100 py-3 text-center action-card" (click)="setView('notifications')">
-          <div class="card-body">
-            <div class="icon-box bg-danger-soft mb-4">
-              <i class="bi bi-send-fill text-danger fs-2"></i>
+        <div class="card border-0 shadow-sm h-100 action-card">
+          <div class="card-body text-center p-4">
+            <div class="icon-circle mb-3" style="background-color: #e0f2f1; color: #00897b;">
+              <i class="bi bi-calendar-check-fill fs-2"></i>
             </div>
-            <h4 class="fw-bold">Broadcast</h4>
-            <p class="text-muted px-3">Push announcements to all staff and student apps.</p>
-            <button class="btn btn-danger rounded-pill px-4 mt-2">Send Alerts</button>
+            <h5 class="fw-bold">Academic Planner</h5>
+            <p class="small text-muted mb-4">Set Exam dates, assignments, & project vivas.</p>
+            <button class="btn w-100 rounded-pill fw-bold text-white" 
+                    style="background-color: #00897b;"
+                    [routerLink]="['/admin/academic-planner']">Configure Terms</button>
           </div>
         </div>
       </div>
 
+      <!-- Subjects -->
       <div class="col-md-6 col-lg-4">
-        <div class="card border-0 shadow-sm h-100 py-3 text-center action-card" (click)="setView('calendar')">
-          <div class="card-body">
-            <div class="icon-box bg-info-soft mb-4">
-              <i class="bi bi-calendar-event text-info fs-2"></i>
+        <div class="card border-0 shadow-sm h-100 action-card">
+          <div class="card-body text-center p-4">
+            <div class="icon-circle bg-secondary-subtle text-secondary mb-3">
+              <i class="bi bi-book-fill fs-2"></i>
             </div>
-            <h4 class="fw-bold">Calendar</h4>
-            <p class="text-muted px-3">Set term dates, holidays, and exam periods.</p>
-            <button class="btn btn-info text-dark rounded-pill px-4 mt-2">Edit Calendar</button>
+            <h5 class="fw-bold">Curriculum</h5>
+            <p class="small text-muted mb-4">Manage subjects and credit allocations.</p>
+            <button class="btn btn-secondary w-100 rounded-pill fw-bold" [routerLink]="['/admin/subjects']">Manage Subjects</button>
           </div>
         </div>
       </div>
 
+      <!-- Infrastructure / Div Allocation -->
       <div class="col-md-6 col-lg-4">
-        <div class="card border-0 shadow-sm h-100 py-3 text-center action-card bg-dark text-white" (click)="logout()">
-          <div class="card-body">
-            <div class="icon-box bg-secondary-soft mb-4">
-              <i class="bi bi-box-arrow-right text-white fs-2"></i>
+        <div class="card border-0 shadow-sm h-100 action-card">
+          <div class="card-body text-center p-4">
+            <div class="icon-circle mb-3" style="background-color: #f3e5f5; color: #6f42c1;">
+              <i class="bi bi-geo-alt-fill fs-2"></i>
             </div>
-            <h4 class="fw-bold">Exit</h4>
-            <p class="text-white-50 px-3">Securely sign out of the administrator portal.</p>
-            <button class="btn btn-outline-light rounded-pill px-4 mt-2">Logout</button>
+            <h5 class="fw-bold">Div Allocation</h5>
+            <p class="small text-muted mb-4">Assign Home rooms and mapping lab spaces.</p>
+            <button class="btn w-100 rounded-pill fw-bold text-white" 
+                    style="background-color: #6f42c1;"
+                    [routerLink]="['/admin/division-allocation']">Set Infrastructure</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Broadcast -->
+      <div class="col-md-6 col-lg-4">
+        <div class="card border-0 shadow-sm h-100 action-card">
+          <div class="card-body text-center p-4">
+            <div class="icon-circle bg-danger-subtle text-danger mb-3">
+              <i class="bi bi-megaphone-fill fs-2"></i>
+            </div>
+            <h5 class="fw-bold">Broadcaster</h5>
+            <p class="small text-muted mb-4">Push announcements to apps instantly.</p>
+            <button class="btn btn-danger w-100 rounded-pill fw-bold text-white">Send Notice</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Exit Card -->
+      <div class="col-md-6 col-lg-4">
+        <div class="card border-0 shadow-sm h-100 action-card bg-dark text-white">
+          <div class="card-body text-center p-4">
+            <div class="icon-circle bg-light bg-opacity-10 text-white mb-3">
+              <i class="bi bi-power fs-2"></i>
+            </div>
+            <h5 class="fw-bold">Logout Session</h5>
+            <p class="small text-white-50 mb-4">Safely disconnect from admin portal.</p>
+            <button class="btn btn-outline-light w-100 rounded-pill fw-bold" (click)="logout()">Sign Out</button>
           </div>
         </div>
       </div>

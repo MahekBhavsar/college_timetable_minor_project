@@ -1,88 +1,118 @@
-import { Component, signal, OnInit } from '@angular/core';
+import { Component, signal, OnInit, inject, computed, OnDestroy } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FirebaseService } from '../services/firebaseservice';
 import { FirebaseCollections } from '../services/firebase-enums';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-manage-staff',
   standalone: true,
-  imports: [FormsModule], // Only FormsModule is needed for [(ngModel)]
+  imports: [CommonModule, FormsModule],
   templateUrl: './managed-staff.html',
-  styleUrls: ['./managed-staff.css']
+  styleUrls: ['./managed-staff.css'] // I will provide this below
 })
-export class ManageStaff implements OnInit {
+export class ManageStaff implements OnInit, OnDestroy {
+  private fb = inject(FirebaseService);
+  private sub = new Subscription();
+
+  // --- SIGNALS ---
   staffList = signal<any[]>([]);
-  subjectInput = '';
+  availableSubjects = signal<any[]>([]);
+  selectedSubjectIds = signal<string[]>([]);
+  selectedSemester = signal<number>(1);
   editingId = signal<string | null>(null);
 
-  newStaff = {
+  newStaff = signal({
     name: '',
     email: '',
-    semesters: [] as number[],
-    subjects: [] as string[]
-  };
+    password: '', // 🟢 NEW
+    semester: 1
+  });
 
-  constructor(private fb: FirebaseService) {}
+  // --- COMPUTED ---
+  // This combines staff data with subject names for the table
+  enrichedStaff = computed(() => {
+    const subjects = this.availableSubjects();
+    return this.staffList().map(staff => ({
+      ...staff,
+      displaySubjects: (staff.subjectIds || []).map((id: string) => 
+        subjects.find(sub => sub.id === id)?.name || 'Unknown'
+      )
+    }));
+  });
 
   ngOnInit() {
-    this.loadStaff();
+    this.sub.add(this.fb.getCollection(FirebaseCollections.Staff).subscribe(data => this.staffList.set(data)));
+    this.sub.add(this.fb.getCollection(FirebaseCollections.Subjects).subscribe(data => this.availableSubjects.set(data)));
   }
 
-  loadStaff() {
-    this.fb.getCollection<any>(FirebaseCollections.Staff).subscribe(data => {
-      this.staffList.set(data);
-    });
+  updateStaffField(field: 'name' | 'email' | 'password', value: string) {
+    this.newStaff.set({ ...this.newStaff(), [field]: value });
   }
 
-  editStaff(staff: any) {
-    this.editingId.set(staff.id);
-    this.newStaff = {
-      name: staff.name,
-      email: staff.email,
-      semesters: [...staff.semesters],
-      subjects: [...staff.subjects]
-    };
-    this.subjectInput = staff.subjects.join(', ');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
-  toggleSem(sem: number) {
-    if (this.newStaff.semesters.includes(sem)) {
-      this.newStaff.semesters = this.newStaff.semesters.filter(s => s !== sem);
+  toggleSubject(subjectId: string) {
+    const current = this.selectedSubjectIds();
+    if (current.includes(subjectId)) {
+      this.selectedSubjectIds.set(current.filter(id => id !== subjectId));
     } else {
-      this.newStaff.semesters.push(sem);
-      this.newStaff.semesters.sort();
+      this.selectedSubjectIds.set([...current, subjectId]);
     }
   }
 
   async saveStaff() {
-    if (this.subjectInput) {
-      this.newStaff.subjects = this.subjectInput.split(',').map(s => s.trim()).filter(s => s !== '');
+    const staff = this.newStaff();
+    if (!staff.name || !staff.email || !staff.password) {
+      return alert('All fields including Password are required');
     }
+
+    const payload = {
+      ...staff,
+      role: 'staff', // 🟢 This allows them to use the common login page
+      semester: this.selectedSemester(),
+      subjectIds: this.selectedSubjectIds(),
+      updatedAt: new Date()
+    };
 
     try {
       if (this.editingId()) {
-        await this.fb.updateDocument(FirebaseCollections.Staff, this.editingId()!, this.newStaff);
+        await this.fb.updateDocument(FirebaseCollections.Staff, this.editingId()!, payload);
+        alert('Staff updated successfully');
       } else {
-        await this.fb.addDocument(FirebaseCollections.Staff, this.newStaff);
+        await this.fb.addDocument(FirebaseCollections.Staff, payload);
+        alert('Staff account created with password');
       }
-      this.loadStaff();
       this.cancelAction();
-    } catch (error) {
-      console.error("Save failed", error);
+    } catch (err) {
+      alert('Error saving staff member');
+    }
+  }
+
+  editStaff(staff: any) {
+    this.editingId.set(staff.id);
+    this.selectedSemester.set(staff.semester || 1);
+    this.selectedSubjectIds.set([...(staff.subjectIds || [])]);
+    this.newStaff.set({
+      name: staff.name,
+      email: staff.email,
+      password: staff.password || '', // 🟢 Load the password
+      semester: staff.semester || 1
+    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  async deleteStaff(id: string) {
+    if (confirm('Delete this faculty account?')) {
+      await this.fb.deleteDocument(FirebaseCollections.Staff, id);
     }
   }
 
   cancelAction() {
-    this.newStaff = { name: '', email: '', semesters: [], subjects: [] };
-    this.subjectInput = '';
     this.editingId.set(null);
+    this.selectedSubjectIds.set([]);
+    this.selectedSemester.set(1);
+    this.newStaff.set({ name: '', email: '', password: '', semester: 1 });
   }
 
-  async deleteStaff(id: string) {
-    if (confirm('Delete this faculty member?')) {
-      await this.fb.deleteDocument(FirebaseCollections.Staff, id);
-      this.loadStaff();
-    }
-  }
+  ngOnDestroy() { this.sub.unsubscribe(); }
 }

@@ -1,0 +1,22 @@
+.scheduler-grid td { vertical-align: top; padding: 4px !important; }
+
+.lecture-box {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-left: 4px solid #007bff; /* The blue stripe from your image */
+  border-radius: 4px;
+  padding: 8px;
+  height: 100%;
+  font-size: 0.75rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.subject { font-weight: 800; color: #333; margin-bottom: 2px; }
+.prof { font-size: 0.7rem; margin-bottom: 2px; }
+.room { 
+  display: inline-block;
+  background: #f8f9fa;
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-weight: bold;
+}

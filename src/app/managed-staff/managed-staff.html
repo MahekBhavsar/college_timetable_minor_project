@@ -1,96 +1,123 @@
 <div class="container-fluid p-4 bg-light min-vh-100">
-  
-  <div class="card border-0 shadow-sm mb-5">
-    <div class="card-header bg-primary text-white py-3">
-      <h5 class="mb-0 fw-bold">
-        @if (editingId()) { Update Faculty Member } @else { Add New Faculty Member }
-      </h5>
-    </div>
-    <div class="card-body p-4 bg-white">
-      <div class="row g-3">
-        <div class="col-md-4">
-          <label class="form-label small fw-bold">NAME</label>
-          <input type="text" class="form-control" [(ngModel)]="newStaff.name" placeholder="Prof. Name">
-        </div>
-        
-        <div class="col-md-4">
-          <label class="form-label small fw-bold">EMAIL</label>
-          <input type="email" class="form-control" [(ngModel)]="newStaff.email" placeholder="email@college.edu">
-        </div>
 
-        <div class="col-md-4">
-          <label class="form-label small fw-bold">SUBJECTS (Comma separated)</label>
-          <input type="text" class="form-control" [(ngModel)]="subjectInput" placeholder="Java, DBMS, C++">
-        </div>
-
-        <div class="col-12 mt-3">
-          <label class="form-label small fw-bold d-block">BCA SEMESTERS</label>
-          <div class="d-flex flex-wrap gap-2 pt-1">
-            @for (s of [1,2,3,4,5,6]; track s) {
-              <input type="checkbox" class="btn-check" [id]="'sem'+s" 
-                     [checked]="newStaff.semesters.includes(s)" (change)="toggleSem(s)">
-              <label class="btn btn-outline-dark btn-sm px-3 rounded-pill" [for]="'sem'+s">Sem {{s}}</label>
-            }
-          </div>
-        </div>
-
-        <div class="col-12 text-end mt-4 border-top pt-3">
-          <button type="button" class="btn btn-secondary me-2 px-4" (click)="cancelAction()">Clear</button>
-          <button type="button" class="btn btn-primary px-5 fw-bold shadow-sm" (click)="saveStaff()">
-            @if (editingId()) { Update } @else { Save }
-          </button>
-        </div>
+  <!-- HEADER -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h2 class="fw-bold mb-1">Faculty Registry</h2>
+      <div class="d-flex align-items-center">
+        <span class="p-1 bg-success rounded-circle me-2" style="width:8px;height:8px"></span>
+        <p class="text-muted small mb-0">Portal Access Management</p>
       </div>
+    </div>
+    <div class="badge bg-primary px-3 py-2 rounded-pill shadow-sm">
+      Total Faculty: {{ staffList().length }}
     </div>
   </div>
 
-  <div class="card border-0 shadow-sm rounded-3">
-    <div class="card-header bg-white py-3 border-bottom">
-      <h5 class="m-0 fw-bold">Staff Directory</h5>
+  <div class="row g-4">
+
+    <!-- LEFT: FORM CARD -->
+    <div class="col-xl-4">
+      <div class="card shadow-sm border-0 rounded-4 sticky-top" style="top:20px">
+        <div class="card-header bg-white border-0 py-3">
+          <h5 class="fw-bold text-primary mb-0">
+            {{ editingId() ? 'Edit Profile' : 'Create Staff Account' }}
+          </h5>
+        </div>
+
+        <div class="card-body">
+          <label class="small fw-bold text-muted">Full Name</label>
+          <input type="text" class="form-control bg-light border-0 mb-3 py-2"
+            placeholder="Dr. Rajesh Kumar" [ngModel]="newStaff().name"
+            (ngModelChange)="updateStaffField('name', $event)">
+
+          <label class="small fw-bold text-muted">Portal Login Email</label>
+          <input type="email" class="form-control bg-light border-0 mb-3 py-2"
+            placeholder="staff@college.com" [ngModel]="newStaff().email"
+            (ngModelChange)="updateStaffField('email', $event)">
+
+          <!-- 🟢 NEW PASSWORD FIELD -->
+          <label class="small fw-bold text-muted">Set Access Password</label>
+          <div class="input-group mb-3">
+            <span class="input-group-text bg-light border-0"><i class="bi bi-lock-fill"></i></span>
+            <input type="password" class="form-control bg-light border-0 py-2"
+              placeholder="Min 6 characters" [ngModel]="newStaff().password"
+              (ngModelChange)="updateStaffField('password', $event)">
+          </div>
+
+          <label class="small fw-bold text-muted">Assign to Semester</label>
+          <select class="form-select bg-light border-0 mb-3 py-2"
+            [ngModel]="selectedSemester()" (ngModelChange)="selectedSemester.set(+$event)">
+            @for (s of [1,2,3,4,5,6]; track s) { <option [value]="s">Semester {{ s }}</option> }
+          </select>
+
+          <label class="small fw-bold text-muted d-block mb-2">Subject Specialization</label>
+          <div class="d-flex flex-wrap gap-2 p-3 bg-white border border-light rounded-3 mb-4" style="max-height: 200px; overflow-y: auto;">
+            @for (sub of availableSubjects(); track sub.id) {
+              <label class="btn btn-sm px-3 rounded-pill transition-all" 
+                [class.btn-primary]="selectedSubjectIds().includes(sub.id)"
+                [class.btn-outline-light]="!selectedSubjectIds().includes(sub.id)"
+                [class.text-dark]="!selectedSubjectIds().includes(sub.id)">
+                <input type="checkbox" class="d-none" [checked]="selectedSubjectIds().includes(sub.id)" (change)="toggleSubject(sub.id)">
+                {{ sub.name }}
+              </label>
+            }
+          </div>
+
+          <div class="d-grid gap-2">
+            <button class="btn btn-primary fw-bold py-3 rounded-3" (click)="saveStaff()">
+              {{ editingId() ? 'Update Faculty Member' : 'Deploy Staff Account' }}
+            </button>
+            @if (editingId()) {
+              <button class="btn btn-link text-decoration-none text-muted" (click)="cancelAction()">Cancel Edit</button>
+            }
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="table-responsive">
-      <table class="table align-middle mb-0">
-        <thead class="bg-light">
-          <tr class="text-muted small fw-bold text-uppercase">
-            <th class="ps-4">Faculty</th>
-            <th>Semesters</th>
-            <th>Subjects</th>
-            <th class="text-end pe-4">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (staff of staffList(); track staff.id) {
-            <tr>
-              <td class="ps-4">
-                <div class="fw-bold text-dark">{{ staff.name }}</div>
-                <small class="text-muted">{{ staff.email }}</small>
-              </td>
-              <td>
-                @for (sem of staff.semesters; track sem) {
-                  <span class="badge bg-secondary-subtle text-dark border me-1">S{{sem}}</span>
-                }
-              </td>
-              <td>
-                @for (sub of staff.subjects; track sub) {
-                  <span class="badge bg-info-subtle text-primary border me-1">{{sub}}</span>
-                }
-              </td>
-              <td class="text-end pe-4">
-                <button class="btn btn-sm btn-outline-primary me-2 border-0" (click)="editStaff(staff)">
-                  Edit
-                </button>
-                <button class="btn btn-sm btn-outline-danger border-0" (click)="deleteStaff(staff.id)">
-                  Delete
-                </button>
-              </td>
+
+    <!-- RIGHT: TABLE CARD -->
+    <div class="col-xl-8">
+      <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+        <table class="table align-middle mb-0">
+          <thead class="bg-dark text-white">
+            <tr class="small text-uppercase">
+              <th class="px-4 py-3">Faculty & Login Details</th>
+              <th>Core Expertise</th>
+              <th class="text-end px-4">Management</th>
             </tr>
-          } @empty {
-            <tr>
-              <td colspan="4" class="text-center py-5 text-muted">No faculty records found.</td>
-            </tr>
-          }
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            @for (s of enrichedStaff(); track s.id) {
+              <tr class="bg-white">
+                <td class="px-4">
+                  <div class="fw-bold fs-6">{{ s.name }}</div>
+                  <div class="text-primary small fw-semibold">{{ s.email }}</div>
+                  <div class="text-muted extra-small">Semester {{ s.semester }} Active</div>
+                </td>
+                <td>
+                  <div class="d-flex flex-wrap gap-1">
+                    @for (subName of s.displaySubjects; track subName) {
+                      <span class="badge bg-secondary-subtle text-dark border-0 px-2 py-1" style="font-size: 0.7rem;">
+                        {{ subName }}
+                      </span>
+                    }
+                  </div>
+                </td>
+                <td class="text-end px-4">
+                  <button class="btn btn-light btn-sm me-2 border rounded-circle" (click)="editStaff(s)">
+                    <i class="bi bi-pencil-fill text-primary"></i>
+                  </button>
+                  <button class="btn btn-light btn-sm border rounded-circle" (click)="deleteStaff(s.id)">
+                    <i class="bi bi-trash-fill text-danger"></i>
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
     </div>
+
   </div>
 </div>

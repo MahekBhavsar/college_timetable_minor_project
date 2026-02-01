@@ -1,0 +1,52 @@
+<div class="container-fluid py-4 bg-light min-vh-100">
+  <div class="d-flex justify-content-between align-items-center mb-4 px-3">
+    <div>
+      <h3 class="fw-bold text-primary mb-0">My Personal Schedule</h3>
+      <p class="text-muted mb-0">Weekly view for <strong>{{ staffUser()?.name }}</strong></p>
+    </div>
+    <button routerLink="/staff/staff-dashboard" class="btn btn-outline-secondary border-2 fw-bold">
+      <i class="bi bi-arrow-left"></i> Dashboard
+    </button>
+  </div>
+
+  <div class="card border-0 shadow-sm overflow-hidden rounded-4">
+    <div class="table-responsive">
+      <table class="table table-bordered mb-0 scheduler-grid">
+        <thead class="bg-dark text-white text-center">
+          <tr>
+            <th style="width: 140px;">TIME</th>
+            @for (day of days; track day) { <th>{{ day }}</th> }
+          </tr>
+        </thead>
+        <tbody>
+          @for (slot of timeSlots; track slot) {
+            <tr>
+              <td class="text-center align-middle small fw-bold bg-light text-secondary">{{ slot }}</td>
+              @for (day of days; track day) {
+                <td class="p-1" style="height: 110px; width: 15%;">
+                  @if (slot === '01:30 PM - 02:00 PM') {
+                    <div class="h-100 d-flex align-items-center justify-content-center bg-warning-subtle text-warning fw-bold small rounded">
+                      ☕ BREAK
+                    </div>
+                  } @else if (timetableGrid()[slot] && timetableGrid()[slot][day]) {
+                    <div class="lecture-box border-primary">
+                      <div class="subject text-truncate">{{ timetableGrid()[slot][day].subject }}</div>
+                      <div class="class-info text-primary fw-bold">
+                        🎓 Sem {{ timetableGrid()[slot][day].sem }} - Div {{ timetableGrid()[slot][day].div }}
+                      </div>
+                      <div class="room-info mt-2">
+                        <span class="badge bg-secondary-subtle text-secondary border">
+                          📍 {{ timetableGrid()[slot][day].roomName }}
+                        </span>
+                      </div>
+                    </div>
+                  }
+                </td>
+              }
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

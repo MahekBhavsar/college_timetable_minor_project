@@ -1,7 +1,4 @@
 import { Injectable } from '@angular/core';
-import { initializeApp } from 'firebase/app';
-import { getAuth, signInWithEmailAndPassword, signOut, Auth } from 'firebase/auth';
-
 import {
   CollectionReference,
   DocumentData,
@@ -14,75 +11,128 @@ import {
   doc,
   getDoc,
   getDocs,
+  onSnapshot,
   query,
   updateDoc,
   where,
 } from '@angular/fire/firestore';
 import { Observable, from, map } from 'rxjs';
 import { FirebaseCollections } from '../services/firebase-enums';
+import { RegistrationUserData } from '../Interfaces/user';
 
+import { initializeApp } from 'firebase/app';
+import {
+  Auth,
+  getAuth,
+  signInWithEmailAndPassword,
+  signOut,
+} from 'firebase/auth';
+
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { firebaseConfig } from '../../firebaseconfig';
 
 @Injectable({
   providedIn: 'root',
 })
 export class FirebaseService {
-  private app = initializeApp(firebaseConfig); // Initialize Firebase app
-  private auth: Auth = getAuth(this.app);      // Initialize Auth with app
+
+  /* ---------------- FIREBASE INIT ---------------- */
+  private app = initializeApp(firebaseConfig);
+  private auth: Auth = getAuth(this.app);
 
   constructor(private readonly firestore: Firestore) {}
 
-  async adminLogin(email: string, password: string) {
-  const adminRef = collection(this.firestore, FirebaseCollections.Admin);
-  const q = query(adminRef, where("email", "==", email.trim()));
-  const querySnapshot = await getDocs(q);
+  /* =================================================
+     🔐 LOGIN METHODS
+     ================================================= */
 
-  if (querySnapshot.empty) {
-    throw new Error('Invalid Admin Credentials');
+  /** 🔑 Admin login via Firestore (email + password field) */
+  // Inside services/firebaseservice.ts
+
+async adminLogin(email: string, pass: string) {
+  // 1. Try to find user in Admin collection
+  const adminQuery = query(collection(this.firestore, 'admin'), 
+                     where('email', '==', email), 
+                     where('password', '==', pass));
+  const adminSnap = await getDocs(adminQuery);
+
+  if (!adminSnap.empty) {
+    const data = adminSnap.docs[0].data();
+    return { ...data, role: 'admin' }; // Force role 'admin'
   }
 
-  let adminData = null;
-  querySnapshot.forEach((doc) => {
-    const data = doc.data();
-    if (data['password'] === password) {
-      adminData = { id: doc.id, ...data };
-    }
-  });
+  // 2. If not found, try to find user in Staff collection
+  const staffQuery = query(collection(this.firestore, 'staff'), 
+                     where('email', '==', email), 
+                     where('password', '==', pass));
+  const staffSnap = await getDocs(staffQuery);
 
-  if (!adminData) {
-    throw new Error('Invalid Admin Credentials');
+  if (!staffSnap.empty) {
+    const data = staffSnap.docs[0].data();
+    return { ...data, role: 'staff' }; // Force role 'staff'
   }
 
-  return adminData;
+  return null; // No user found in either collection
 }
-
+  /** 🔐 Firebase Auth login (optional, future-proof) */
+  authLogin(email: string, password: string) {
+    return signInWithEmailAndPassword(this.auth, email, password);
+  }
 
   logout() {
     return signOut(this.auth);
   }
 
-  // ... your other firestore CRUD methods unchanged ...
+  /* =================================================
+     📄 APPLICATION METHODS
+     ================================================= */
 
+/* Inside services/firebaseservice.ts */
 
-  // ============================
-  // 🔥 FIRESTORE CRUD METHODS
-  // ============================
+public getFilteredCollection<T extends DocumentData>(
+  collectionName: string,
+  filterField: string,
+  filterValue: any // Change this from string to any
+): Observable<T[]> {
+  const collectionRef = collection(this.firestore, collectionName);
+  const q = query(collectionRef, where(filterField, '==', filterValue));
 
-  public getCollection<T extends DocumentData>(
+  return new Observable<T[]>(subscriber => {
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const data = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...(doc.data() as T),
+      }));
+      subscriber.next(data);
+    }, (error) => subscriber.error(error));
+
+    return () => unsubscribe();
+  });
+}
+  /* =================================================
+     🔥 FIRESTORE CRUD (UNCHANGED STYLE)
+     ================================================= */
+
+   public getCollection<T extends DocumentData>(
     collectionName: FirebaseCollections
   ): Observable<T[]> {
     const collectionRef = collection(this.firestore, collectionName);
     const collectionQuery = query(collectionRef);
-    return from(getDocs(collectionQuery)).pipe(
-      map((snapshot) =>
-        snapshot.docs.map((doc) => ({
+
+    return new Observable<T[]>(subscriber => {
+      // onSnapshot listens for any change in the DB and pushes it to the app
+      const unsubscribe = onSnapshot(collectionQuery, (snapshot) => {
+        const data = snapshot.docs.map(doc => ({
           id: doc.id,
           ...doc.data(),
-        })) as unknown as T[]
-      )
-    );
-  }
+        })) as unknown as T[];
+        subscriber.next(data);
+      }, (error) => subscriber.error(error));
 
+      // Clean up listener when the component/subscription is destroyed
+      return () => unsubscribe();
+    });
+  }
   public getDocument<T extends DocumentData>(
     collectionName: FirebaseCollections,
     documentId: string
@@ -90,7 +140,7 @@ export class FirebaseService {
     const collectionRef = collection(this.firestore, collectionName);
     const docRef = doc(collectionRef, documentId);
     return from(getDoc(docRef)).pipe(
-      map((snapshot) => {
+      map(snapshot => {
         if (!snapshot.exists()) return undefined;
         return {
           id: snapshot.id,
@@ -104,7 +154,10 @@ export class FirebaseService {
     collectionName: FirebaseCollections,
     document: T
   ): Promise<DocumentReference<T>> {
-    const collectionRef = collection(this.firestore, collectionName) as CollectionReference<T, DocumentData>;
+    const collectionRef = collection(
+      this.firestore,
+      collectionName
+    ) as CollectionReference<T, DocumentData>;
     return addDoc(collectionRef, document);
   }
 
@@ -114,7 +167,10 @@ export class FirebaseService {
     document: UpdateData<T>
   ): Promise<void> {
     const collectionRef = collection(this.firestore, collectionName);
-    const docRef = doc(collectionRef, documentId) as DocumentReference<T, DocumentData>;
+    const docRef = doc(
+      collectionRef,
+      documentId
+    ) as DocumentReference<T, DocumentData>;
     return updateDoc(docRef, document);
   }
 
@@ -125,5 +181,17 @@ export class FirebaseService {
     const collectionRef = collection(this.firestore, collectionName);
     const docRef = doc(collectionRef, documentId);
     return deleteDoc(docRef);
+  }
+
+  /* =================================================
+     📁 FILE UPLOAD
+     ================================================= */
+
+  async uploadFile(path: string, file: File) {
+    const storage = getStorage();
+    const storageRef = ref(storage, path);
+    await uploadBytes(storageRef, file);
+    const downloadURL = await getDownloadURL(storageRef);
+    return { downloadURL };
   }
 }

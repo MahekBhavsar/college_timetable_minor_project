@@ -1,0 +1,34 @@
+.rounded-4 { border-radius: 1.25rem !important; }
+
+.icon-box {
+  width: 65px;
+  height: 65px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 18px;
+  margin: 0 auto;
+}
+
+.icon-box-sm {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+}
+
+.hover-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hover-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+}
+
+.bg-primary-subtle { background-color: #e7f1ff; }
+.bg-info-subtle { background-color: #e0f7fa; }
+.bg-warning-subtle { background-color: #fff8e1; }
+.bg-success-subtle { background-color: #e8f5e9; }
