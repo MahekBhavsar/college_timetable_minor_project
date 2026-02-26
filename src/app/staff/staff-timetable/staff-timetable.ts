@@ -26,16 +26,24 @@ export class StaffTimetable implements OnInit {
     @Inject(PLATFORM_ID) private platformId: Object
   ) {}
 
-  ngOnInit(): void {
-    if (isPlatformBrowser(this.platformId)) {
-      const storedData = localStorage.getItem('staff_user');
-      if (storedData) {
-        const user = JSON.parse(storedData);
-        this.staffUser.set(user);
+  // src/app/staff/staff-timetable/staff-timetable.ts
+
+ngOnInit(): void {
+  if (isPlatformBrowser(this.platformId)) {
+    // 1. CHANGE THIS from 'staff_user' to 'portal_user'
+    const storedData = localStorage.getItem('portal_user'); 
+    
+    if (storedData) {
+      const user = JSON.parse(storedData);
+      this.staffUser.set(user);
+      
+      // 2. Ensure user.name exists before calling the grid
+      if (user.name) {
         this.loadMyGrid(user.name);
       }
     }
   }
+}
 
   loadMyGrid(name: string): void {
     this.firebaseService.getFilteredCollection<any>('Timetable', 'staffName', name)

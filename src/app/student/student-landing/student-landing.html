@@ -1,0 +1,177 @@
+<div class="min-vh-100" style="background-color: #f0f4f8; font-family: 'Inter', sans-serif;">
+  
+  <header class="py-5 shadow-lg" style="background: linear-gradient(135deg, #002d72 0%, #0056b3 100%); border-bottom: 5px solid #ffc107;">
+    <div class="container pt-4 pb-5">
+      <div class="row align-items-center g-4">
+        
+        <div class="col-lg-7 text-white text-center text-lg-start">
+          <div class="d-inline-flex align-items-center bg-white bg-opacity-10 border border-white border-opacity-20 px-3 py-1 rounded-pill mb-3">
+            <span class="spinner-grow spinner-grow-sm text-warning me-2" role="status"></span>
+            <span class="small fw-bold text-uppercase tracking-widest">Live Planner Active</span>
+          </div>
+          <h1 class="display-3 fw-bold mb-3">Academic <span class="text-warning">Command</span></h1>
+          <p class="lead opacity-75 mb-4 fs-4 fw-light">Your unified destination for real-time timetables, assignments, and faculty coordination.</p>
+          
+          <div class="d-flex flex-wrap gap-3 justify-content-center justify-content-lg-start">
+            <button routerLink="/student-login" class="btn btn-warning btn-lg px-5 py-3 rounded-3 fw-bold shadow-lg">
+              <i class="bi bi-door-open-fill me-2"></i>GO TO PORTAL
+            </button>
+            <button routerLink="/register" class="btn btn-outline-light btn-lg px-4 py-3 rounded-3 fw-bold border-2">
+              Apply Now
+            </button>
+          </div>
+        </div>
+
+        <div class="col-lg-5">
+          <div class="bg-white bg-opacity-10 p-4 rounded-4 border border-white border-opacity-10">
+            <h6 class="text-white mb-3 fw-bold opacity-75 small text-uppercase tracking-wider">Management Entry</h6>
+            <div class="row g-3">
+              <div class="col-6">
+                <a routerLink="/admin/admin-login" class="text-decoration-none">
+                  <div class="bg-white p-3 rounded-3 text-center shadow-sm border-bottom border-4 border-warning transition-up">
+                    <i class="bi bi-shield-lock-fill d-block mb-1 fs-3 text-primary"></i>
+                    <span class="fw-bold text-dark d-block">Admin</span>
+                    <span class="extra-small text-muted text-uppercase">Systems</span>
+                  </div>
+                </a>
+              </div>
+              <div class="col-6">
+                <a routerLink="/staff/staff-login" class="text-decoration-none">
+                  <div class="bg-white p-3 rounded-3 text-center shadow-sm border-bottom border-4 border-info transition-up">
+                    <i class="bi bi-person-workspace d-block mb-1 fs-3 text-primary"></i>
+                    <span class="fw-bold text-dark d-block">Staff</span>
+                    <span class="extra-small text-muted text-uppercase">Faculty</span>
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+  </header>
+
+  <div class="container" style="margin-top: -3rem;">
+    <div class="row g-4">
+      
+      <div class="col-xl-4">
+        <div class="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden bg-white">
+          <div class="card-body p-4 border-start border-5 border-warning">
+            <h6 class="fw-bold text-dark mb-1"><i class="bi bi-person-plus me-2 text-primary"></i>New Student?</h6>
+            <p class="small text-muted">Register to get your personalized timetable and assignment tracker.</p>
+            <button routerLink="/register" class="btn btn-primary w-100 rounded-3 fw-bold py-2 mt-2 shadow-sm">
+              Register Now
+            </button>
+          </div>
+        </div>
+
+        <div class="card border-0 shadow-sm rounded-4 bg-white overflow-hidden">
+          <div class="card-header bg-dark text-white p-4 border-0">
+            <h6 class="mb-0 fw-bold tracking-widest small text-uppercase"><i class="bi bi-clock-history text-warning me-2"></i>Planner Radar</h6>
+          </div>
+          <div class="card-body p-4">
+            @if (academicNotice()) {
+              <div class="vstack gap-4">
+                <div class="d-flex align-items-start">
+                  <div class="bg-primary bg-opacity-10 text-primary p-2 rounded-3 me-3"><i class="bi bi-calendar2-week"></i></div>
+                  <div>
+                    <label class="d-block extra-small text-muted text-uppercase fw-bold">Commencement</label>
+                    <span class="fw-bold text-dark">{{academicNotice().collegeStart | date:'mediumDate'}}</span>
+                  </div>
+                </div>
+                <div class="d-flex align-items-start">
+                  <div class="bg-info bg-opacity-10 text-info p-2 rounded-3 me-3"><i class="bi bi-clipboard-data"></i></div>
+                  <div>
+                    <label class="d-block extra-small text-muted text-uppercase fw-bold">Internal Practical</label>
+                    <span class="fw-bold text-dark">{{academicNotice().internalPracticalStart | date:'mediumDate'}}</span>
+                  </div>
+                </div>
+                <div class="d-flex align-items-start">
+                  <div class="bg-danger bg-opacity-10 text-danger p-2 rounded-3 me-3"><i class="bi bi-mortarboard"></i></div>
+                  <div>
+                    <label class="d-block extra-small text-muted text-uppercase fw-bold">External Theory</label>
+                    <span class="fw-bold text-danger">{{academicNotice().externalTheoryStart | date:'mediumDate'}}</span>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="col-xl-8">
+        <div class="card border-0 shadow-sm rounded-4 bg-white overflow-hidden">
+          <div class="card-header bg-white p-4 border-bottom d-flex justify-content-between align-items-center">
+            <h5 class="mb-0 fw-bold text-dark"><i class="bi bi-list-stars text-primary me-2"></i>Global Activity Feed</h5>
+            <span class="badge bg-light text-primary border rounded-pill px-3 py-2 fw-normal"><i class="bi bi-dot text-success"></i> Real-time</span>
+          </div>
+          <div class="card-body p-0">
+            <div class="table-responsive">
+              <table class="table table-hover align-middle mb-0">
+                <thead class="bg-light bg-opacity-50 text-muted extra-small text-uppercase fw-bold">
+                  <tr>
+                    <th class="ps-4 py-3">Term</th>
+                    <th class="py-3">Details & Subject</th>
+                    <th class="py-3">Type</th>
+                    <th class="pe-4 py-3 text-end">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (item of recentUpdates(); track item.id) {
+                    <tr>
+                      <td class="ps-4">
+                        <span class="badge bg-primary bg-opacity-10 text-primary px-2 py-1">Sem {{item.semester}}</span>
+                      </td>
+                      <td class="py-3">
+                        <div class="d-flex align-items-center">
+                          <div class="me-3 fs-5">
+                            @if(item.type === 'HOME') { <i class="bi bi-house-door text-info"></i> }
+                            @else if(item.type === 'CLASS') { <i class="bi bi-journal-bookmark-fill text-primary"></i> }
+                            @else { <i class="bi bi-megaphone text-warning"></i> }
+                          </div>
+                          <div>
+                            <div class="fw-bold text-dark mb-0">{{item.subject}}</div>
+                            <div class="extra-small text-muted">{{item.title}}</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td class="py-3">
+                         <span class="badge bg-light text-dark border px-3 py-1 fw-normal text-uppercase" style="font-size: 0.65rem;">
+                            {{item.type}}
+                         </span>
+                      </td>
+                      <td class="pe-4 text-end">
+                        <button routerLink="/student-login" class="btn btn-sm btn-light border rounded-circle shadow-sm">
+                          <i class="bi bi-chevron-right"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="card-footer bg-light bg-opacity-50 p-4 border-0 text-center border-top">
+             <p class="text-muted small mb-0">Viewing public metadata. <a routerLink="/student-login" class="text-primary fw-bold text-decoration-none border-bottom border-primary">Login to see Assignments & Grades</a></p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <footer class="py-5 mt-5 bg-white border-top">
+    <div class="container text-center text-md-start">
+      <div class="row align-items-center">
+        <div class="col-md-6">
+          <h6 class="fw-bold text-dark mb-1">BCA PLANNER v2.0</h6>
+          <p class="extra-small text-muted mb-0">Partnered with VNSGU | Secure Academic Infrastructure</p>
+        </div>
+        <div class="col-md-6 text-md-end mt-3 mt-md-0">
+          <span class="extra-small text-muted opacity-50">© 2026 Academic Management. All Rights Reserved.</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+</div>  

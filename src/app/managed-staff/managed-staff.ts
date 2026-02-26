@@ -1,4 +1,4 @@
-import { Component, signal, OnInit, inject, computed, OnDestroy } from '@angular/core';
+import { Component, signal, OnInit, inject, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FirebaseService } from '../services/firebaseservice';
@@ -9,8 +9,7 @@ import { Subscription } from 'rxjs';
   selector: 'app-manage-staff',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: './managed-staff.html',
-  styleUrls: ['./managed-staff.css'] // I will provide this below
+  templateUrl: './managed-staff.html'
 })
 export class ManageStaff implements OnInit, OnDestroy {
   private fb = inject(FirebaseService);
@@ -18,59 +17,45 @@ export class ManageStaff implements OnInit, OnDestroy {
 
   // --- SIGNALS ---
   staffList = signal<any[]>([]);
-  availableSubjects = signal<any[]>([]);
-  selectedSubjectIds = signal<string[]>([]);
-  selectedSemester = signal<number>(1);
+  selectedSemesters = signal<number[]>([]); 
   editingId = signal<string | null>(null);
 
   newStaff = signal({
     name: '',
     email: '',
-    password: '', // 🟢 NEW
-    semester: 1
-  });
-
-  // --- COMPUTED ---
-  // This combines staff data with subject names for the table
-  enrichedStaff = computed(() => {
-    const subjects = this.availableSubjects();
-    return this.staffList().map(staff => ({
-      ...staff,
-      displaySubjects: (staff.subjectIds || []).map((id: string) => 
-        subjects.find(sub => sub.id === id)?.name || 'Unknown'
-      )
-    }));
+    password: '', 
   });
 
   ngOnInit() {
-    this.sub.add(this.fb.getCollection(FirebaseCollections.Staff).subscribe(data => this.staffList.set(data)));
-    this.sub.add(this.fb.getCollection(FirebaseCollections.Subjects).subscribe(data => this.availableSubjects.set(data)));
+    // Only fetch staff list now
+    this.sub.add(this.fb.getCollection(FirebaseCollections.Staff).subscribe(data => {
+      this.staffList.set(data);
+    }));
+  }
+
+  toggleSemester(sem: number) {
+    const current = this.selectedSemesters();
+    if (current.includes(sem)) {
+      this.selectedSemesters.set(current.filter(s => s !== sem));
+    } else {
+      this.selectedSemesters.set([...current, sem].sort());
+    }
   }
 
   updateStaffField(field: 'name' | 'email' | 'password', value: string) {
     this.newStaff.set({ ...this.newStaff(), [field]: value });
   }
 
-  toggleSubject(subjectId: string) {
-    const current = this.selectedSubjectIds();
-    if (current.includes(subjectId)) {
-      this.selectedSubjectIds.set(current.filter(id => id !== subjectId));
-    } else {
-      this.selectedSubjectIds.set([...current, subjectId]);
-    }
-  }
-
   async saveStaff() {
     const staff = this.newStaff();
-    if (!staff.name || !staff.email || !staff.password) {
-      return alert('All fields including Password are required');
+    if (!staff.name || !staff.email || !staff.password || this.selectedSemesters().length === 0) {
+      return alert('All fields and at least one Semester are required');
     }
 
     const payload = {
       ...staff,
-      role: 'staff', // 🟢 This allows them to use the common login page
-      semester: this.selectedSemester(),
-      subjectIds: this.selectedSubjectIds(),
+      role: 'staff',
+      semesters: this.selectedSemesters(), 
       updatedAt: new Date()
     };
 
@@ -80,7 +65,7 @@ export class ManageStaff implements OnInit, OnDestroy {
         alert('Staff updated successfully');
       } else {
         await this.fb.addDocument(FirebaseCollections.Staff, payload);
-        alert('Staff account created with password');
+        alert('Staff account created');
       }
       this.cancelAction();
     } catch (err) {
@@ -90,13 +75,14 @@ export class ManageStaff implements OnInit, OnDestroy {
 
   editStaff(staff: any) {
     this.editingId.set(staff.id);
-    this.selectedSemester.set(staff.semester || 1);
-    this.selectedSubjectIds.set([...(staff.subjectIds || [])]);
+    // Handle migration from single semester to multiple
+    const sems = staff.semesters ? [...staff.semesters] : (staff.semester ? [staff.semester] : []);
+    this.selectedSemesters.set(sems);
+    
     this.newStaff.set({
       name: staff.name,
       email: staff.email,
-      password: staff.password || '', // 🟢 Load the password
-      semester: staff.semester || 1
+      password: staff.password || '',
     });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
@@ -109,9 +95,8 @@ export class ManageStaff implements OnInit, OnDestroy {
 
   cancelAction() {
     this.editingId.set(null);
-    this.selectedSubjectIds.set([]);
-    this.selectedSemester.set(1);
-    this.newStaff.set({ name: '', email: '', password: '', semester: 1 });
+    this.selectedSemesters.set([]); 
+    this.newStaff.set({ name: '', email: '', password: '' });
   }
 
   ngOnDestroy() { this.sub.unsubscribe(); }
