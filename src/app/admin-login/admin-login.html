@@ -1,30 +1,75 @@
-<div class="container vh-100 d-flex justify-content-center align-items-center">
-  <div class="card shadow p-4" style="width:380px">
-    <h3 class="text-center mb-3">Admin Login</h3>
+<div class="container-fluid vh-100 d-flex align-items-center justify-content-center bg-light">
 
-    <div *ngIf="error()" class="alert alert-danger">
-      {{ error() }}
+  <div class="card border-0 shadow-lg rounded-4 overflow-hidden" style="width: 100%; max-width: 900px;">
+    <div class="row g-0">
+
+      <div class="col-md-6 d-none d-md-flex align-items-center justify-content-center bg-white p-5">
+        <img src="https://img.freepik.com/free-vector/tablet-login-concept-illustration_114360-7863.jpg"
+          alt="Login Illustration" class="img-fluid" style="max-height: 400px;">
+      </div>
+
+      <div class="col-14 col-md-6 bg-white p-4 p-lg-4 d-flex align-items-center justify-content-center">
+        <div class="d-flex flex-column h-100 justify-content-center">
+
+          <h2 class="fw-bold mb-5 text-dark">Log In For Admin / Staff</h2>
+
+          <div *ngIf="error()" class="alert alert-danger py-2 small border-0 rounded-0 mb-3">
+            {{ error() }}
+          </div>
+          <div *ngIf="success()" class="alert alert-success py-2 small border-0 rounded-0 mb-3">
+            {{ success() }}
+          </div>
+
+          <div class="mb-4">
+            <div class="input-group">
+              <span class="input-group-text bg-transparent border-0 border-bottom rounded-0 ps-0">
+                <i class="bi bi-person text-muted"></i>
+              </span>
+              <input type="email" class="form-control border-0 border-bottom rounded-0 ps-2"
+                placeholder="Enter your Email" style="box-shadow: none;" [(ngModel)]="email">
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <div class="input-group">
+              <span class="input-group-text bg-transparent border-0 border-bottom rounded-0 ps-0">
+                <i class="bi bi-lock text-muted"></i>
+              </span>
+              <input type="password" class="form-control border-0 border-bottom rounded-0 ps-2" placeholder="Password"
+                style="box-shadow: none;" [(ngModel)]="password">
+            </div>
+          </div>
+
+          <div class="mb-4 form-check">
+            <input type="checkbox" class="form-check-input" id="rememberMe">
+            <label class="form-check-label text-muted small" for="rememberMe">Remember me</label>
+          </div>
+
+          <button class="btn btn-primary w-100 py-2 mb-4 rounded-1 shadow-sm border-0"
+            style="--bs-btn-bg: #2172bd; --bs-btn-border-color: #2172bd; --bs-btn-hover-bg: #185694; --bs-btn-hover-border-color: #185694;"
+            (click)="login()" [disabled]="loading()">
+
+            <span *ngIf="loading()" class="spinner-border spinner-border-sm me-2"></span>
+            {{ loading() ? 'Logging in...' : 'Log in' }}
+          </button>
+
+          <div class="d-flex justify-content-between align-items-center mt-3">
+            <a href="#" class="text-muted text-decoration-underline small">Create an account</a>
+
+            <div class="d-flex align-items-center">
+              <span class="text-muted small me-2">Or login with</span>
+              <button class="btn btn-sm btn-primary rounded-1 me-1" style="background-color: #3b5998; border: none;"><i
+                  class="bi bi-google"></i></button>
+              <button class="btn btn-sm btn-info text-white rounded-1 me-1"
+                style="background-color: #1da1f2; border: none;"><i class="bi bi-instagram"></i></button>
+              <button class="btn btn-sm btn-danger rounded-1" style="background-color: #db4437; border: none;"><i
+                  class="bi bi-twitter"></i></button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
     </div>
-
-    <div *ngIf="success()" class="alert alert-success">
-      {{ success() }}
-    </div>
-
-    <div class="mb-3">
-      <label>Email</label>
-      <input type="email" class="form-control" [(ngModel)]="email">
-    </div>
-
-    <div class="mb-3">
-      <label>Password</label>
-      <input type="password" class="form-control" [(ngModel)]="password">
-    </div>
-
-    <button 
-      class="btn btn-primary w-100"
-      (click)="login()"
-      [disabled]="loading()">
-      {{ loading() ? 'Logging in...' : 'Login' }}
-    </button>
   </div>
 </div>

@@ -1,138 +1,344 @@
-<div class="min-vh-100 bg-light p-4">
-  <div class="container">
-    
-    <!-- Header Section -->
-    <div class="row mb-5 align-items-center">
-      <div class="col-md-8">
-        <h1 class="display-5 fw-bold text-dark">Admin Dashboard</h1>
-        <p class="lead text-muted">Core Institution & Academic Control Center</p>
-      </div>
-      <div class="col-md-4 text-md-end">
-        <div class="badge bg-white text-primary p-2 px-4 rounded-pill shadow-sm border">
-          <span class="dot bg-success me-2"></span> Secure Admin Session
-        </div>
-      </div>
-    </div>
+<div class="d-flex">
 
-    <!-- Grid Layout -->
-    <div class="row g-4">
-      
-      <!-- Staff Management -->
-      <div class="col-md-6 col-lg-4">
-        <div class="card border-0 shadow-sm h-100 action-card" (click)="setView('staff')">
-          <div class="card-body text-center p-4">
-            <div class="icon-circle bg-primary-subtle text-primary mb-3">
-              <i class="bi bi-people-fill fs-2"></i>
+  <!-- SIDEBAR -->
+  <div class="bg-dark text-white p-3 vh-100 position-sticky top-0"
+       style="width:260px;">
+
+    <h4 class="fw-semibold mb-4">
+      <i class="bi bi-mortarboard-fill me-2 text-info"></i>
+      CollegeERP
+    </h4>
+
+    <ul class="nav flex-column gap-2">
+
+      <li>
+        <a class="nav-link text-white active bg-primary rounded">
+          <i class="bi bi-grid me-2"></i> Dashboard
+        </a>
+      </li>
+
+      <li>
+        <a class="nav-link text-white-50"
+           [routerLink]="['/admin/managed-staff']">
+          <i class="bi bi-people me-2"></i> Staff
+        </a>
+      </li>
+
+      <li>
+        <a class="nav-link text-white-50">
+          <i class="bi bi-mortarboard me-2"></i> Students
+        </a>
+      </li>
+
+      <li>
+        <a class="nav-link text-white-50"
+           [routerLink]="['/timetable']">
+          <i class="bi bi-calendar3 me-2"></i> Timetable
+        </a>
+      </li>
+
+      <li>
+        <a class="nav-link text-white-50"
+           [routerLink]="['/admin/subjects']">
+          <i class="bi bi-book me-2"></i> Subjects
+        </a>
+      </li>
+
+      <hr>
+
+      <button class="btn btn-outline-light rounded-pill w-100"
+              (click)="logout()">
+        Logout
+      </button>
+
+    </ul>
+  </div>
+
+
+
+  <!-- MAIN -->
+  <div class="flex-grow-1 bg-body-tertiary">
+
+    <!-- TOP -->
+    <nav class="navbar bg-white shadow-sm px-4 py-3">
+      <h5 class="fw-semibold mb-0">Admin Dashboard</h5>
+
+      <div class="d-flex gap-3 align-items-center">
+
+        <span class="small text-muted">
+          Academic Year: 2025-26
+        </span>
+
+        <div class="badge bg-success-subtle text-success p-2">
+          System Healthy
+        </div>
+
+        <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center"
+             style="width:38px;height:38px;">
+          A
+        </div>
+
+      </div>
+    </nav>
+
+
+
+    <div class="p-4">
+
+      <!-- STATS -->
+      <div class="row g-4 mb-4">
+
+        <div class="col-md-6 col-xl-3">
+          <div class="card stat-card science text-white border-0 shadow">
+            <div class="card-body">
+              <small>Total Students</small>
+              <h2 class="fw-bold">2,540</h2>
+              <small>Across all streams</small>
             </div>
-            <h5 class="fw-bold">Staff Portal</h5>
-            <p class="small text-muted mb-4">Faculty records, departments, and roles.</p>
-            <button class="btn btn-primary w-100 rounded-pill fw-bold" [routerLink]="['/admin/managed-staff']">Open Records</button>
           </div>
         </div>
-      </div>
 
-      <!-- Student Management -->
-      <div class="col-md-6 col-lg-4">
-        <div class="card border-0 shadow-sm h-100 action-card" (click)="setView('students')">
-          <div class="card-body text-center p-4">
-            <div class="icon-circle bg-success-subtle text-success mb-3">
-              <i class="bi bi-mortarboard-fill fs-2"></i>
+        <div class="col-md-6 col-xl-3">
+          <div class="card stat-card commerce text-white border-0 shadow">
+            <div class="card-body">
+              <small>Faculty</small>
+              <h2 class="fw-bold">124</h2>
+              <small>Highly qualified</small>
             </div>
-            <h5 class="fw-bold">Student Hub</h5>
-            <p class="small text-muted mb-4">Enrollments, profiles, and attendance sync.</p>
-            <button class="btn btn-success w-100 rounded-pill fw-bold text-white">Manage Registry</button>
           </div>
         </div>
-      </div>
 
-      <!-- Timetable -->
-      <div class="col-md-6 col-lg-4">
-        <div class="card border-0 shadow-sm h-100 action-card">
-          <div class="card-body text-center p-4">
-            <div class="icon-circle bg-warning-subtle text-warning mb-3">
-              <i class="bi bi-calendar3 fs-2"></i>
+        <div class="col-md-6 col-xl-3">
+          <div class="card stat-card arts text-white border-0 shadow">
+            <div class="card-body">
+              <small>Departments</small>
+              <h2 class="fw-bold">12</h2>
+              <small>Multidisciplinary</small>
             </div>
-            <h5 class="fw-bold">Auto Timetable</h5>
-            <p class="small text-muted mb-4">Generate schedules and resolve conflicts.</p>
-            <button class="btn btn-warning w-100 rounded-pill fw-bold text-dark" [routerLink]="['/timetable']">Manage Schedule</button>
           </div>
         </div>
-      </div>
 
-      <!-- 🟢 NEW: ACADEMIC PLANNER -->
-      <div class="col-md-6 col-lg-4">
-        <div class="card border-0 shadow-sm h-100 action-card">
-          <div class="card-body text-center p-4">
-            <div class="icon-circle mb-3" style="background-color: #e0f2f1; color: #00897b;">
-              <i class="bi bi-calendar-check-fill fs-2"></i>
+        <div class="col-md-6 col-xl-3">
+          <div class="card stat-card engineering text-white border-0 shadow">
+            <div class="card-body">
+              <small>Avg Attendance</small>
+              <h2 class="fw-bold">94%</h2>
+              <small>Excellent</small>
             </div>
-            <h5 class="fw-bold">Academic Planner</h5>
-            <p class="small text-muted mb-4">Set Exam dates, assignments, & project vivas.</p>
-            <button class="btn w-100 rounded-pill fw-bold text-white" 
-                    style="background-color: #00897b;"
-                    [routerLink]="['/admin/academic-planner']">Configure Terms</button>
           </div>
         </div>
+
       </div>
 
-      <!-- Subjects -->
-      <div class="col-md-6 col-lg-4">
-        <div class="card border-0 shadow-sm h-100 action-card">
-          <div class="card-body text-center p-4">
-            <div class="icon-circle bg-secondary-subtle text-secondary mb-3">
-              <i class="bi bi-book-fill fs-2"></i>
+
+
+      <!-- CHART AREA -->
+      <div class="row g-4">
+
+        <!-- Student Distribution -->
+        <div class="col-lg-7">
+          <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body">
+              <h5 class="fw-semibold mb-3">
+                Student Distribution by Stream
+              </h5>
+
+              <canvas id="studentsChart" height="120"></canvas>
             </div>
-            <h5 class="fw-bold">Curriculum</h5>
-            <p class="small text-muted mb-4">Manage subjects and credit allocations.</p>
-            <button class="btn btn-secondary w-100 rounded-pill fw-bold" [routerLink]="['/admin/subjects']">Manage Subjects</button>
           </div>
         </div>
+
+
+
+        <!-- Portal Usage -->
+        <div class="col-lg-5">
+          <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body">
+              <h5 class="fw-semibold mb-3">
+                Portal Activity
+              </h5>
+
+              <canvas id="usageChart"></canvas>
+            </div>
+          </div>
+        </div>
+
       </div>
 
-      <!-- Infrastructure / Div Allocation -->
-      <div class="col-md-6 col-lg-4">
-        <div class="card border-0 shadow-sm h-100 action-card">
-          <div class="card-body text-center p-4">
-            <div class="icon-circle mb-3" style="background-color: #f3e5f5; color: #6f42c1;">
-              <i class="bi bi-geo-alt-fill fs-2"></i>
-            </div>
-            <h5 class="fw-bold">Div Allocation</h5>
-            <p class="small text-muted mb-4">Assign Home rooms and mapping lab spaces.</p>
-            <button class="btn w-100 rounded-pill fw-bold text-white" 
-                    style="background-color: #6f42c1;"
-                    [routerLink]="['/admin/division-allocation']">Set Infrastructure</button>
-          </div>
-        </div>
-      </div>
 
-      <!-- Broadcast -->
-      <div class="col-md-6 col-lg-4">
-        <div class="card border-0 shadow-sm h-100 action-card">
-          <div class="card-body text-center p-4">
-            <div class="icon-circle bg-danger-subtle text-danger mb-3">
-              <i class="bi bi-megaphone-fill fs-2"></i>
-            </div>
-            <h5 class="fw-bold">Broadcaster</h5>
-            <p class="small text-muted mb-4">Push announcements to apps instantly.</p>
-            <button class="btn btn-danger w-100 rounded-pill fw-bold text-white">Send Notice</button>
-          </div>
-        </div>
-      </div>
 
-      <!-- Exit Card -->
-      <div class="col-md-6 col-lg-4">
-        <div class="card border-0 shadow-sm h-100 action-card bg-dark text-white">
-          <div class="card-body text-center p-4">
-            <div class="icon-circle bg-light bg-opacity-10 text-white mb-3">
-              <i class="bi bi-power fs-2"></i>
+      <!-- QUICK INFO -->
+      <div class="row g-4 mt-2">
+
+        <div class="col-lg-6">
+          <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body">
+
+              <h5 class="fw-semibold mb-3">
+                Academic Insights
+              </h5>
+
+              <p class="text-muted">
+                Science stream continues to maintain the highest enrollment,
+                while Commerce admissions have grown by 12% this year.
+                Infrastructure expansion is planned to support the rising intake.
+              </p>
+
+              <div class="progress mb-3">
+                <div class="progress-bar bg-primary"
+                     style="width:85%">
+                  Science Capacity
+                </div>
+              </div>
+
+              <div class="progress">
+                <div class="progress-bar bg-success"
+                     style="width:72%">
+                  Commerce Capacity
+                </div>
+              </div>
+
             </div>
-            <h5 class="fw-bold">Logout Session</h5>
-            <p class="small text-white-50 mb-4">Safely disconnect from admin portal.</p>
-            <button class="btn btn-outline-light w-100 rounded-pill fw-bold" (click)="logout()">Sign Out</button>
           </div>
         </div>
+
+
+
+        <div class="col-lg-6">
+          <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body">
+
+              <h5 class="fw-semibold mb-3">
+                Upcoming Events
+              </h5>
+
+              <ul class="list-group list-group-flush">
+
+                <li class="list-group-item">
+                  Semester Exams – March 15
+                </li>
+
+                <li class="list-group-item">
+                  Tech Fest – April 02
+                </li>
+
+                <li class="list-group-item">
+                  Campus Placements – April 18
+                </li>
+
+                <li class="list-group-item">
+                  New Admission Cycle – May 10
+                </li>
+
+              </ul>
+
+            </div>
+          </div>
+        </div>
+
       </div>
 
     </div>
   </div>
 </div>
+
+
+
+<style>
+
+/* STREAM COLORS */
+
+.science{
+  background:linear-gradient(45deg,#0d6efd,#3d8bfd);
+}
+
+.commerce{
+  background:linear-gradient(45deg,#198754,#43c59e);
+}
+
+.arts{
+  background:linear-gradient(45deg,#6f42c1,#9b6bff);
+}
+
+.engineering{
+  background:linear-gradient(45deg,#fd7e14,#ffb067);
+}
+
+
+/* HOVER */
+
+.stat-card{
+  transition:.3s;
+}
+
+.stat-card:hover{
+  transform:translateY(-6px);
+}
+
+.nav-link:hover{
+  background:#0d6efd;
+  color:white!important;
+  border-radius:8px;
+}
+
+</style>
+
+
+
+<script>
+
+/////////////////////////
+// STUDENT STREAM CHART
+/////////////////////////
+
+new Chart(document.getElementById('studentsChart'), {
+    type: 'bar',
+    data: {
+        labels: ['Science','Commerce','Arts','Engineering'],
+        datasets: [{
+            label:'Students',
+            data:[900,650,400,590],
+            backgroundColor:[
+                '#0d6efd',
+                '#198754',
+                '#6f42c1',
+                '#fd7e14'
+            ],
+            borderRadius:8
+        }]
+    },
+    options:{
+        animation:true,
+        plugins:{legend:{display:false}},
+        scales:{y:{beginAtZero:true}}
+    }
+});
+
+
+
+/////////////////////////
+// PORTAL USAGE CHART
+/////////////////////////
+
+new Chart(document.getElementById('usageChart'), {
+    type: 'doughnut',
+    data: {
+        labels:['Students','Staff','Admin','Guests'],
+        datasets:[{
+            data:[55,25,12,8],
+            backgroundColor:[
+                '#0d6efd',
+                '#20c997',
+                '#ffc107',
+                '#dc3545'
+            ]
+        }]
+    },
+    options:{
+        animation:{
+            animateScale:true
+        }
+    }
+});
+
+</script>
