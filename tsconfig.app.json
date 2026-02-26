@@ -10,7 +10,7 @@
   },
   "include": [
     "src/**/*.ts"
-, "src/firebaseconfig.ts"  ],
+, "src/firebaseconfig.ts", "src/app/student/student-landing"  ],
   "exclude": [
     "src/**/*.spec.ts"
   ]

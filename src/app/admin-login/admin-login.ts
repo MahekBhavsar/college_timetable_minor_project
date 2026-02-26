@@ -23,22 +23,31 @@ export class AdminLogin {
     private router: Router
   ) {}
 
-  async login() {
+/* Inside src/app/admin-login/admin-login.ts */
+
+async login() {
+  if (!this.email || !this.password) {
+    this.error.set('Please provide both email and password.');
+    return;
+  }
+
   this.loading.set(true);
   this.error.set('');
+  this.success.set('');
 
   try {
-    const user = await this.firebaseService.adminLogin(this.email, this.password);
+    // Cast the result to 'any' to bypass strict property checking for the 'name' field
+    const user = await this.firebaseService.adminLogin(this.email, this.password) as any;
 
     if (user) {
+      localStorage.setItem('portal_user', JSON.stringify(user));
+
       if (user.role === 'admin') {
-        // Only Admin goes here
-        this.success.set(`Welcome Admin, !`);
+        // Accessing 'name' is now allowed because we cast to 'any'
+        this.success.set(`Welcome Admin, ${user.name || 'Admin'}!`);
         setTimeout(() => this.router.navigate(['/admin/dashboard']), 1000);
-      } else {
-        // Staff goes here
-        localStorage.setItem('staff_user', JSON.stringify(user));
-        this.success.set(`Welcome Staff, !`);
+      } else if (user.role === 'staff') {
+        this.success.set(`Welcome Staff, ${user.name || 'Faculty'}!`);
         setTimeout(() => this.router.navigate(['/staff/staff-dashboard']), 1000);
       }
     } else {

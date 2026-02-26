@@ -1,4 +1,4 @@
-import { Component, inject, signal, effect } from '@angular/core';
+import { Component, inject, signal, effect, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FirebaseService } from '../services/firebaseservice';
@@ -13,6 +13,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 })
 export class AcademicPlanner {
   private fb = inject(FirebaseService);
+  private cdr = inject(ChangeDetectorRef);
 
   // Configuration
   semesters = [1, 2, 3, 4, 5, 6];
@@ -29,24 +30,33 @@ export class AcademicPlanner {
     internalPracticalStart: '', internalPracticalEnd: '',
     externalPracticalStart: '', externalPracticalEnd: '',
     externalTheoryStart: '', externalTheoryEnd: '',
-    // Project fields (optional)
     hasProject: false,
     intProjectVivaStart: '', intProjectVivaEnd: '',
     extProjectVivaStart: '', extProjectVivaEnd: '',
   };
 
   // Fetch all planners from Firebase
-  allPlanners = toSignal(this.fb.getCollection<any>('academic_planner' as any), { initialValue: [] });
+  allPlanners = toSignal(this.fb.getCollection<any>('academic_planner'), { initialValue: [] });
 
   constructor() {
-    // When semester changes, load existing data if available
+    // Logic moved to a safe sync method to avoid NG0100 errors
     effect(() => {
-      const existing = this.allPlanners().find(p => p.semester === this.selectedSem());
+      this.syncPlannerData();
+    });
+  }
+
+  private syncPlannerData() {
+    const sem = this.selectedSem();
+    const existing = this.allPlanners().find(p => p.semester === sem);
+
+    // setTimeout pushes the update to the next browser tick, resolving lifecycle conflicts
+    setTimeout(() => {
       if (existing) {
         this.plannerData = { ...existing };
       } else {
         this.resetForm();
       }
+      this.cdr.detectChanges(); // Manually notify Angular of the update
     });
   }
 
@@ -60,7 +70,7 @@ export class AcademicPlanner {
       internalPracticalStart: '', internalPracticalEnd: '',
       externalPracticalStart: '', externalPracticalEnd: '',
       externalTheoryStart: '', externalTheoryEnd: '',
-      hasProject: this.selectedSem() === 6, // Default true for Sem 6
+      hasProject: this.selectedSem() === 6,
       intProjectVivaStart: '', intProjectVivaEnd: '',
       extProjectVivaStart: '', extProjectVivaEnd: '',
     };

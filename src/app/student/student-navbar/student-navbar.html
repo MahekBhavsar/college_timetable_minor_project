@@ -1,0 +1,97 @@
+<div class="d-flex min-vh-100 bg-light">
+
+  @if (sidebarOpen()) {
+  <aside class="bg-white border-end shadow-sm sticky-top vh-100 d-flex flex-column p-3" style="width: 280px; transition: all 0.3s ease;">
+    <div class="d-flex align-items-center mb-5 px-3 py-2">
+      <div class="bg-primary rounded-3 p-2 me-2 shadow-sm">
+        <i class="bi bi-mortarboard-fill text-white fs-4"></i>
+      </div>
+      <span class="fw-bold fs-5 tracking-tight text-uppercase text-dark">Student Hub</span>
+    </div>
+
+    <ul class="nav nav-pills flex-column mb-auto gap-2">
+      <li class="nav-item">
+        <a routerLink="/student/dashboard" routerLinkActive="active bg-primary-subtle text-primary shadow-sm" class="nav-link text-secondary d-flex align-items-center py-3 rounded-3">
+          <i class="bi bi-grid-1x2-fill me-3 text-primary"></i> 
+          <span class="fw-semibold">Dashboard</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a routerLink="/student/view-assignments" routerLinkActive="active bg-warning-subtle text-warning shadow-sm" class="nav-link text-secondary d-flex align-items-center py-3 rounded-3">
+          <i class="bi bi-journal-check me-3 text-warning"></i> 
+          <span class="fw-semibold">Assignments</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a routerLink="/student/view-planner" routerLinkActive="active bg-success-subtle text-success shadow-sm" class="nav-link text-secondary d-flex align-items-center py-3 rounded-3">
+          <i class="bi bi-calendar-event-fill me-3 text-success"></i> 
+          <span class="fw-semibold">Academic Planner</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a routerLink="/student/view-timetable" routerLinkActive="active bg-info-subtle text-info shadow-sm" class="nav-link text-secondary d-flex align-items-center py-3 rounded-3">
+          <i class="bi bi-clock-fill me-3 text-info"></i> 
+          <span class="fw-semibold">Timetable</span>
+        </a>
+      </li>
+    </ul>
+
+    <div class="border-top pt-3 mt-auto">
+      <a routerLink="/student-login" class="nav-link text-danger d-flex align-items-center py-3 px-3 fw-bold">
+        <i class="bi bi-box-arrow-right me-3"></i> Logout
+      </a>
+    </div>
+  </aside>
+  }
+
+  <div class="flex-grow-1 d-flex flex-column">
+
+    <nav class="navbar navbar-expand bg-white border-bottom sticky-top px-4 shadow-sm py-3">
+      <div class="container-fluid d-flex justify-content-between align-items-center p-0">
+        
+        <div class="d-flex align-items-center">
+          <button class="btn btn-light border rounded-3 me-3" (click)="toggleSidebar()">
+            <i class="bi bi-list fs-4 text-dark"></i>
+          </button>
+          <div class="d-none d-md-block">
+             <h6 class="mb-0 fw-bold text-dark">Welcome back, {{ student()?.name }}</h6>
+             <small class="text-muted">You have 3 tasks today</small>
+          </div>
+        </div>
+
+        <div class="d-flex align-items-center gap-3">
+          <div class="position-relative">
+            <button class="btn btn-light rounded-circle border-0 shadow-sm" (click)="toggleDropdown()">
+              <i class="bi bi-bell-fill text-primary"></i>
+              @if (notifications().length > 0) {
+                <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-white rounded-circle"></span>
+              }
+            </button>
+
+            @if (dropdownOpen()) {
+            <div class="card shadow-lg border-0 position-absolute end-0 mt-3 overflow-hidden" style="width: 300px; z-index: 1050;">
+              <div class="card-header bg-white py-3 border-bottom fw-bold text-dark">Notifications</div>
+              <div class="list-group list-group-flush">
+                @for (n of notifications(); track $index) {
+                  <div class="list-group-item small py-3 border-0 border-bottom text-dark">{{ n.message }}</div>
+                }
+              </div>
+            </div>
+            }
+          </div>
+
+          <div class="d-flex align-items-center ps-3 border-start">
+            <div class="bg-primary-subtle text-primary rounded-circle d-flex align-items-center justify-content-center fw-bold shadow-sm" style="width: 42px; height: 42px;">
+              {{ student()?.name?.[0] }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <main class="container-fluid p-4">
+      <ng-content></ng-content>
+    </main>
+
+  </div>
+</div>

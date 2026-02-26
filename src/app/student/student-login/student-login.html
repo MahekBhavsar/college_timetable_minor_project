@@ -1,0 +1,65 @@
+<div class="min-vh-100 d-flex align-items-center justify-content-center bg-dark">
+
+  <div class="card shadow-lg border-0" style="width: 420px; border-radius: 20px;">
+
+    <div class="card-body p-5">
+
+      <!-- Logo / Title -->
+      <div class="text-center mb-4">
+        <h3 class="fw-bold text-dark">Portal Access</h3>
+        <p class="text-muted small">Admin • Staff • Student</p>
+      </div>
+
+      <!-- Error -->
+      @if(errorMessage()) {
+        <div class="alert alert-danger text-center py-2">
+          {{ errorMessage() }}
+        </div>
+      }
+
+      <!-- Email -->
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Email Address</label>
+        <input type="email"
+               class="form-control form-control-lg"
+               placeholder="Enter your email"
+               [ngModel]="email()"
+               (ngModelChange)="email.set($event)">
+      </div>
+
+      <!-- Password -->
+      <div class="mb-4">
+        <label class="form-label fw-semibold">Password</label>
+        <input type="password"
+               class="form-control form-control-lg"
+               placeholder="Enter your password"
+               [ngModel]="password()"
+               (ngModelChange)="password.set($event)">
+      </div>
+
+      <!-- Login Button -->
+      <button class="btn btn-dark w-100 btn-lg rounded-pill"
+              (click)="onLogin()"
+              [disabled]="isLoading()">
+
+        @if(isLoading()) {
+          <span class="spinner-border spinner-border-sm me-2"></span>
+          Signing In...
+        } @else {
+          Sign In
+        }
+
+      </button>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="card-footer bg-white text-center border-0 pb-4">
+      <small class="text-muted">
+        Secure Institution Portal
+      </small>
+    </div>
+
+  </div>
+
+</div>
