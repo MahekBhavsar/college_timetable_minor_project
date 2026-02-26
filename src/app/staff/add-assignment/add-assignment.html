@@ -1,0 +1,158 @@
+<div class="container py-4">
+  <div class="card shadow-sm border-0 rounded-4 mb-5 border-top border-primary border-4">
+    <div class="card-header bg-white p-3 d-flex justify-content-between align-items-center">
+      <h5 class="mb-0 fw-bold text-primary">
+        <i class="bi" [class]="editingId() ? 'bi-pencil-square' : 'bi-plus-circle-dotted'"></i>
+        {{ editingId() ? 'Update Assignment' : 'Publish New Assignment' }}
+      </h5>
+      <span class="badge bg-light text-dark border small">Semester {{staffUser()?.semester}}</span>
+    </div>
+
+    <div class="card-body p-4">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label fw-semibold small text-uppercase text-muted">Subject</label>
+          <select class="form-select bg-light border-0 shadow-sm" [ngModel]="subject()" (ngModelChange)="subject.set($event)">
+            <option value="" disabled>Select Subject</option>
+            @for (s of assignedSubjects(); track s) { <option [value]="s">{{s}}</option> }
+          </select>
+        </div>
+<div class="col-12">
+  <label class="form-label fw-semibold small text-uppercase text-muted">Divisions</label>
+
+  <div class="border rounded-3 p-3 bg-light">
+
+    <!-- Select All -->
+    <div class="form-check mb-2">
+      <input class="form-check-input" type="checkbox"
+        [checked]="selectAll()"
+        (change)="toggleSelectAll($event.target.checked)">
+      <label class="form-check-label fw-bold">Select All</label>
+    </div>
+
+    <div class="d-flex gap-4 flex-wrap">
+      @for (div of availableDivisions; track div) {
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox"
+            [checked]="selectedDivisions().includes(div)"
+            (change)="toggleDivision(div,$event.target.checked)">
+          <label class="form-check-label">Division {{div}}</label>
+        </div>
+      }
+    </div>
+
+  </div>
+</div>
+
+        <div class="col-md-6">
+          <label class="form-label fw-semibold small text-uppercase text-muted">Category</label>
+          <select class="form-select bg-light border-0 shadow-sm" [ngModel]="type()" (ngModelChange)="type.set($event)">
+            <option value="HOME">🏠 Home Assignment</option>
+            <option value="CLASS">🏫 Class Assignment</option>
+          </select>
+        </div>
+
+        <div class="col-12">
+          <label class="form-label fw-semibold small text-uppercase text-muted">Assignment Title</label>
+          <input type="text" class="form-control bg-light border-0 shadow-sm" [ngModel]="title()" (ngModelChange)="title.set($event)" placeholder="e.g. Unit 1 Quiz">
+        </div>
+
+        <div class="col-12">
+          <label class="form-label fw-semibold small text-uppercase text-muted">Instructions</label>
+          <textarea class="form-control bg-light border-0 shadow-sm" rows="3" [ngModel]="description()" (ngModelChange)="description.set($event)" placeholder="Enter specific instructions for students..."></textarea>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label fw-semibold small text-uppercase text-muted">Submission Date</label>
+          <input type="date" class="form-control bg-light border-0 shadow-sm" [ngModel]="selectedDate()" (ngModelChange)="selectedDate.set($event)">
+          <div class="mt-1 small text-primary"><i class="bi bi-info-circle me-1"></i>System will verify your lecture on this date.</div>
+        </div>
+
+        <div class="col-md-6">
+          @if (type() === 'HOME') {
+            <label class="form-label fw-semibold small text-uppercase text-muted">Attachment (PDF/Image)</label>
+            <input #attachment type="file" class="form-control bg-light border-0 shadow-sm" (change)="onFile($event)">
+            @if (editingId() && currentBase64) { <div class="text-info small mt-1"><i class="bi bi-file-earmark-check me-1"></i>Existing file attached.</div> }
+          } @else {
+            <div class="h-100 d-flex align-items-center">
+              <div class="alert alert-warning mb-0 py-2 border-0 small w-100 rounded-3">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>No file upload for Class Assignments.
+              </div>
+            </div>
+          }
+        </div>
+
+        <div class="col-12 text-end pt-3">
+          @if (editingId()) {
+            <button class="btn btn-outline-secondary me-2 rounded-pill px-4 fw-bold" (click)="resetForm()">Cancel</button>
+          }
+          <button class="btn btn-primary px-5 rounded-pill shadow fw-bold" [disabled]="isSubmitting()" (click)="submit()">
+            {{ isSubmitting() ? 'Processing...' : (editingId() ? 'Update Now' : 'Publish Assignment') }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+    <div class="card-header bg-dark text-white p-3">
+      <h6 class="mb-0 fw-bold"><i class="bi bi-table me-2"></i>Recently Published Tasks</h6>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light text-uppercase small fw-bold">
+          <tr>
+            <th class="ps-4">Subject & Title</th>
+            <th>Type</th>
+            <th>Description</th>
+            <th>Due Date</th>
+            <th class="text-end pe-4">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of allAssignments(); track item.id) {
+            <tr>
+              <td class="ps-4">
+                <div class="fw-bold text-primary">{{item.subject}}</div>
+                <div class="small fw-semibold text-dark">{{item.title}}</div>
+              </td>
+              <td>
+                <span class="badge rounded-pill" [ngClass]="item.type === 'HOME' ? 'bg-primary-subtle text-primary border border-primary' : 'bg-warning-subtle text-warning-emphasis border border-warning'">
+                  {{item.type}}
+                </span>
+              </td>
+              <td>
+                <div class="text-muted small text-truncate" style="max-width: 150px;" [title]="item.description">
+                  {{item.description || 'No instructions'}}
+                </div>
+              </td>
+              <td class="small">{{item.date | date:'dd MMM yyyy'}}</td>
+              <td class="text-end pe-4">
+                <div class="btn-group shadow-sm rounded-pill overflow-hidden">
+                  @if (item.fileData) {
+                    <button class="btn btn-sm btn-light border-end" (click)="viewAssignment(item.fileData)" title="View File">
+                      <i class="bi bi-eye text-primary"></i>
+                    </button>
+                  }
+                  <button class="btn btn-sm btn-light border-end" (click)="editAssignment(item)" title="Edit">
+                    <i class="bi bi-pencil-square text-secondary"></i>
+                  </button>
+                  <button class="btn btn-sm btn-light" (click)="deleteAssignment(item.id)" title="Delete">
+                    <i class="bi bi-trash text-danger"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="5" class="text-center py-5 text-muted small">
+                <i class="bi bi-inbox fs-2 d-block mb-2"></i>
+                You haven't published any assignments yet.
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

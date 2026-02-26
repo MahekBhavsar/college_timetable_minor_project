@@ -1,0 +1,112 @@
+<app-student-navbar>
+  <div class="container-fluid py-4">
+    
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+      <div>
+        <h3 class="fw-bold text-dark mb-1">Academic Timetable 📅</h3>
+        <p class="text-muted small mb-0">Manage and review the official weekly lecture schedule.</p>
+      </div>
+      <button class="btn btn-primary rounded-pill px-4 shadow-sm d-flex align-items-center gap-2 fw-semibold" (click)="exportToPDF()">
+        <i class="bi bi-file-earmark-pdf-fill"></i> Download PDF
+      </button>
+    </div>
+
+    @if (student()) {
+      <div id="timetable-pdf-area" class="card shadow-sm border-0 rounded-4 overflow-hidden bg-white">
+        
+        <div class="card-header bg-white border-bottom py-3 px-4 d-flex justify-content-between align-items-center">
+          <span class="fw-bold text-primary fs-5">
+            <i class="bi bi-grid-3x3-gap-fill me-2"></i> Weekly Schedule Matrix
+          </span>
+          <div class="d-flex gap-2">
+             <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-2 fw-normal">BCA - 2026</span>
+             <span class="badge bg-success-subtle text-success rounded-pill px-3 py-2 fw-normal text-uppercase">Active</span>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table table-bordered align-middle text-center mb-0 border-light">
+            <thead class="bg-light">
+              <tr class="text-muted small text-uppercase tracking-wider">
+                <th class="py-3 bg-white" style="width:160px">Time Slot</th>
+                @for (d of days; track $index) {
+                  <th class="py-3 bg-white text-dark fw-bold">{{ d }}</th>
+                }
+              </tr>
+            </thead>
+
+            <tbody>
+              @for (time of timeSlots(); track $index) {
+                
+                @if (time === '01:30 PM - 02:00 PM' || time.toLowerCase().includes('break')) {
+                  <tr class="bg-warning-subtle border-warning border-opacity-10">
+                    <td class="fw-bold text-warning-emphasis small py-3 border-end border-warning border-opacity-25">{{ time }}</td>
+                    <td [attr.colspan]="days.length" class="py-3">
+                      <div class="text-uppercase tracking-widest fw-bold text-warning-emphasis small d-flex align-items-center justify-content-center gap-2">
+                        <i class="bi bi-cup-hot-fill fs-5"></i> Afternoon Recess & Refreshment
+                      </div>
+                    </td>
+                  </tr>
+                } 
+
+                @else {
+                  <tr>
+                    <td class="fw-bold text-primary bg-light-subtle small py-4 border-start-0">
+                      {{ time }}
+                    </td>
+
+                    @for (d of days; track $index) {
+                      <td class="p-2" style="min-width: 170px; height: 120px;">
+                        @if (timetableGrid()[time]?.[d]) {
+                          <div class="p-3 rounded-4 border-0 shadow-sm text-start bg-white border-start border-4 border-primary h-100 d-flex flex-column justify-content-between transition-hover">
+                            <div class="mb-2">
+                              <div class="fw-bold text-dark mb-1 lh-sm" style="font-size: 0.85rem;">
+                                {{ timetableGrid()[time][d].subject }}
+                              </div>
+                              <div class="text-primary fw-medium d-flex align-items-center" style="font-size: 0.75rem;">
+                                <i class="bi bi-person-circle me-1"></i> {{ timetableGrid()[time][d].staffName }}
+                              </div>
+                            </div>
+                            <div class="mt-auto pt-2 border-top border-light d-flex justify-content-between align-items-center">
+                              <span class="text-danger small fw-semibold d-flex align-items-center" style="font-size: 0.7rem;">
+                                <i class="bi bi-geo-alt-fill me-1"></i> {{ timetableGrid()[time][d].roomName }}
+                              </span>
+                              <span class="badge bg-light text-secondary fw-normal rounded-pill" style="font-size: 0.65rem;">
+                                Sem {{ timetableGrid()[time][d].sem }}
+                              </span>
+                            </div>
+                          </div>
+                        } @else {
+                          <div class="h-100 w-100 rounded-4 border border-dashed opacity-25 bg-light d-flex align-items-center justify-content-center">
+                             <small class="text-muted" style="font-size: 0.6rem;">No Lecture</small>
+                          </div>
+                        }
+                      </td>
+                    }
+                  </tr>
+                }
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card-footer bg-light border-0 py-3 px-4">
+          <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+            <div class="d-flex align-items-center gap-2">
+              <span class="p-2 bg-warning bg-opacity-10 rounded-circle">
+                <i class="bi bi-clock-history text-warning"></i>
+              </span>
+              <span class="small text-dark fw-semibold">Daily Recess Period:</span>
+              <span class="badge bg-white text-warning-emphasis border border-warning border-opacity-25 rounded-pill px-3 py-2 fw-bold">
+                01:30 PM — 02:00 PM
+              </span>
+            </div>
+            <div class="text-muted small italic">
+              * Faculty and students are requested to resume lectures promptly after the recess.
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+</app-student-navbar>

@@ -1,13 +1,9 @@
 <div class="container-fluid p-4 bg-light min-vh-100">
 
-  <!-- HEADER -->
   <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
       <h2 class="fw-bold mb-1">Faculty Registry</h2>
-      <div class="d-flex align-items-center">
-        <span class="p-1 bg-success rounded-circle me-2" style="width:8px;height:8px"></span>
-        <p class="text-muted small mb-0">Portal Access Management</p>
-      </div>
+      <p class="text-muted small mb-0">Portal Access & Semester Management</p>
     </div>
     <div class="badge bg-primary px-3 py-2 rounded-pill shadow-sm">
       Total Faculty: {{ staffList().length }}
@@ -16,7 +12,6 @@
 
   <div class="row g-4">
 
-    <!-- LEFT: FORM CARD -->
     <div class="col-xl-4">
       <div class="card shadow-sm border-0 rounded-4 sticky-top" style="top:20px">
         <div class="card-header bg-white border-0 py-3">
@@ -28,45 +23,38 @@
         <div class="card-body">
           <label class="small fw-bold text-muted">Full Name</label>
           <input type="text" class="form-control bg-light border-0 mb-3 py-2"
-            placeholder="Dr. Rajesh Kumar" [ngModel]="newStaff().name"
+            placeholder="Name" [ngModel]="newStaff().name"
             (ngModelChange)="updateStaffField('name', $event)">
 
           <label class="small fw-bold text-muted">Portal Login Email</label>
           <input type="email" class="form-control bg-light border-0 mb-3 py-2"
-            placeholder="staff@college.com" [ngModel]="newStaff().email"
+            placeholder="email@college.com" [ngModel]="newStaff().email"
             (ngModelChange)="updateStaffField('email', $event)">
 
-          <!-- 🟢 NEW PASSWORD FIELD -->
           <label class="small fw-bold text-muted">Set Access Password</label>
           <div class="input-group mb-3">
             <span class="input-group-text bg-light border-0"><i class="bi bi-lock-fill"></i></span>
             <input type="password" class="form-control bg-light border-0 py-2"
-              placeholder="Min 6 characters" [ngModel]="newStaff().password"
+              placeholder="Password" [ngModel]="newStaff().password"
               (ngModelChange)="updateStaffField('password', $event)">
           </div>
 
-          <label class="small fw-bold text-muted">Assign to Semester</label>
-          <select class="form-select bg-light border-0 mb-3 py-2"
-            [ngModel]="selectedSemester()" (ngModelChange)="selectedSemester.set(+$event)">
-            @for (s of [1,2,3,4,5,6]; track s) { <option [value]="s">Semester {{ s }}</option> }
-          </select>
-
-          <label class="small fw-bold text-muted d-block mb-2">Subject Specialization</label>
-          <div class="d-flex flex-wrap gap-2 p-3 bg-white border border-light rounded-3 mb-4" style="max-height: 200px; overflow-y: auto;">
-            @for (sub of availableSubjects(); track sub.id) {
-              <label class="btn btn-sm px-3 rounded-pill transition-all" 
-                [class.btn-primary]="selectedSubjectIds().includes(sub.id)"
-                [class.btn-outline-light]="!selectedSubjectIds().includes(sub.id)"
-                [class.text-dark]="!selectedSubjectIds().includes(sub.id)">
-                <input type="checkbox" class="d-none" [checked]="selectedSubjectIds().includes(sub.id)" (change)="toggleSubject(sub.id)">
-                {{ sub.name }}
-              </label>
+          <label class="small fw-bold text-muted d-block mb-2">Assign to Semesters</label>
+          <div class="d-flex flex-wrap gap-2 mb-4">
+            @for (s of [1,2,3,4,5,6]; track s) {
+              <button type="button" 
+                class="btn btn-sm rounded-pill px-3 transition-all"
+                [class.btn-primary]="selectedSemesters().includes(s)"
+                [class.btn-outline-secondary]="!selectedSemesters().includes(s)"
+                (click)="toggleSemester(s)">
+                Sem {{ s }}
+              </button>
             }
           </div>
 
           <div class="d-grid gap-2">
             <button class="btn btn-primary fw-bold py-3 rounded-3" (click)="saveStaff()">
-              {{ editingId() ? 'Update Faculty Member' : 'Deploy Staff Account' }}
+              {{ editingId() ? 'Update Faculty' : 'Create Account' }}
             </button>
             @if (editingId()) {
               <button class="btn btn-link text-decoration-none text-muted" (click)="cancelAction()">Cancel Edit</button>
@@ -76,30 +64,28 @@
       </div>
     </div>
 
-    <!-- RIGHT: TABLE CARD -->
     <div class="col-xl-8">
       <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
         <table class="table align-middle mb-0">
           <thead class="bg-dark text-white">
             <tr class="small text-uppercase">
-              <th class="px-4 py-3">Faculty & Login Details</th>
-              <th>Core Expertise</th>
-              <th class="text-end px-4">Management</th>
+              <th class="px-4 py-3">Faculty Details</th>
+              <th>Assigned Semesters</th>
+              <th class="text-end px-4">Actions</th>
             </tr>
           </thead>
           <tbody>
-            @for (s of enrichedStaff(); track s.id) {
+            @for (s of staffList(); track s.id) {
               <tr class="bg-white">
                 <td class="px-4">
                   <div class="fw-bold fs-6">{{ s.name }}</div>
                   <div class="text-primary small fw-semibold">{{ s.email }}</div>
-                  <div class="text-muted extra-small">Semester {{ s.semester }} Active</div>
                 </td>
                 <td>
                   <div class="d-flex flex-wrap gap-1">
-                    @for (subName of s.displaySubjects; track subName) {
-                      <span class="badge bg-secondary-subtle text-dark border-0 px-2 py-1" style="font-size: 0.7rem;">
-                        {{ subName }}
+                    @for (sem of (s.semesters || [s.semester]); track sem) {
+                      <span class="badge bg-info-subtle text-info border-0 px-2 py-1" style="font-size: 0.75rem;">
+                        Sem {{ sem }}
                       </span>
                     }
                   </div>
@@ -118,6 +104,5 @@
         </table>
       </div>
     </div>
-
   </div>
 </div>

@@ -1,0 +1,150 @@
+<app-student-navbar>
+  <div class="container-fluid py-2">
+
+    <div class="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden">
+      <div class="bg-primary p-4 text-white">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+          <div>
+            <h2 class="fw-bold mb-1">
+              <i class="bi bi-calendar-check me-2"></i>
+              Academic Milestone Tracker
+            </h2>
+            <p class="mb-0 opacity-75 small">
+              Official academic schedule for your semester.
+            </p>
+          </div>
+
+          <div class="bg-white bg-opacity-25 px-4 py-2 rounded-3 fw-bold shadow-sm">
+            Semester {{ selectedSemester() }}
+          </div>
+        </div>
+      </div>
+
+      <div class="card-body bg-white py-3 px-4 border-bottom">
+        <div class="text-primary small fw-semibold d-flex align-items-center">
+          <i class="bi bi-info-circle me-2"></i>
+          College Session Commenced:
+          <span class="text-dark ms-2">
+            {{ planner()?.collegeStart | date:'fullDate' }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    @if (isLoading()) {
+      <div class="text-center py-5">
+        <div class="spinner-border text-primary" role="status"></div>
+        <p class="text-muted mt-2 small">Syncing academic dates...</p>
+      </div>
+    }
+
+    @else if (planner()) {
+      <div class="row g-4">
+
+        <div class="col-md-6">
+          <div class="card shadow-sm rounded-4 border-0 p-4 h-100 bg-white">
+            <h5 class="fw-bold mb-4 text-primary d-flex align-items-center">
+              <i class="bi bi-journal-text me-2"></i> Assignments
+            </h5>
+
+            <div class="mb-3">
+              <p class="mb-1 fw-bold text-dark small">Home Assignment Window</p>
+              <div class="d-flex justify-content-between align-items-center bg-light p-3 rounded-3">
+                <span class="small">{{ planner().homeAssignmentStart | date:'mediumDate' }}</span>
+                <i class="bi bi-arrow-right text-muted"></i>
+                <span class="text-danger small fw-bold">
+                  {{ planner().homeAssignmentEnd | date:'mediumDate' }}
+                </span>
+              </div>
+            </div>
+
+            <div class="mb-2">
+              <p class="mb-1 fw-bold text-dark small">Class Assignment Window</p>
+              <div class="d-flex justify-content-between align-items-center bg-light p-3 rounded-3">
+                <span class="small">{{ planner().classAssignmentStart | date:'mediumDate' }}</span>
+                <i class="bi bi-arrow-right text-muted"></i>
+                <span class="text-danger small fw-bold">
+                  {{ planner().classAssignmentEnd | date:'mediumDate' }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="card shadow-sm rounded-4 border-0 p-4 h-100 bg-white">
+            <h5 class="fw-bold mb-4 text-success d-flex align-items-center">
+              <i class="bi bi-laptop me-2"></i> Practical & Viva
+            </h5>
+
+            <div class="mb-3">
+              <p class="mb-1 fw-bold text-dark small">Internal Practical Dates</p>
+              <div class="d-flex justify-content-between align-items-center bg-light p-3 rounded-3">
+                <span class="small">{{ planner().internalPracticalStart | date:'mediumDate' }}</span>
+                <i class="bi bi-arrow-right text-muted"></i>
+                <span class="text-danger small fw-bold">
+                  {{ planner().internalPracticalEnd | date:'mediumDate' }}
+                </span>
+              </div>
+            </div>
+
+            <div class="mb-2">
+              <p class="mb-1 fw-bold text-dark small">External Practical Dates</p>
+              <div class="d-flex justify-content-between align-items-center bg-light p-3 rounded-3">
+                <span class="small">{{ planner().externalPracticalStart | date:'mediumDate' }}</span>
+                <i class="bi bi-arrow-right text-muted"></i>
+                <span class="text-danger small fw-bold">
+                  {{ planner().externalPracticalEnd | date:'mediumDate' }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12">
+          <div class="card border-0 bg-danger text-white rounded-4 p-4 shadow-sm">
+            <div class="d-flex align-items-center mb-3">
+              <div class="bg-white bg-opacity-25 p-2 rounded-3 me-3">
+                <i class="bi bi-pen fs-4"></i>
+              </div>
+              <h4 class="fw-bold mb-0">External Theory Examination</h4>
+            </div>
+            <div class="d-flex justify-content-between align-items-center p-3 bg-white bg-opacity-10 rounded-3">
+              <div class="text-center flex-grow-1">
+                <small class="d-block opacity-75">Commences</small>
+                <span class="fs-5 fw-bold">{{ planner().externalTheoryStart | date:'longDate' }}</span>
+              </div>
+              <div class="px-3">
+                <i class="bi bi-chevron-right fs-4 opacity-50"></i>
+              </div>
+              <div class="text-center flex-grow-1">
+                <small class="d-block opacity-75">Concludes</small>
+                <span class="fs-5 fw-bold">{{ planner().externalTheoryEnd | date:'longDate' }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="text-center mt-4 pb-4">
+        <span class="badge bg-light text-muted border py-2 px-3 fw-normal rounded-pill">
+          <i class="bi bi-clock-history me-1"></i>
+          Last Synchronized: {{ planner().updatedAt | date:'medium' }}
+        </span>
+      </div>
+    }
+
+    @else {
+      <div class="text-center py-5 bg-white rounded-4 shadow-sm border border-dashed">
+        <i class="bi bi-calendar-x fs-1 text-muted opacity-25 mb-3"></i>
+        <h5 class="fw-bold text-muted">No Planner Published Yet</h5>
+        <p class="small text-muted mb-0">
+          The academic planner for Semester {{ selectedSemester() }}
+          has not been finalized by the administration.
+        </p>
+      </div>
+    }
+
+  </div>
+</app-student-navbar>

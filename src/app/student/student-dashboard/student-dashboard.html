@@ -1,0 +1,95 @@
+<app-student-navbar>
+  <div class="row g-4 mb-5">
+    <div class="col-md-3">
+      <div class="card border-0 shadow-sm rounded-4 p-4 border-top border-4 border-danger h-100 bg-white">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+          <small class="text-uppercase fw-bold text-muted">Assignments</small>
+          <i class="bi bi-pencil-square text-danger fs-5"></i>
+        </div>
+        <h2 class="fw-bold mb-0">03</h2>
+        <small class="text-danger fw-medium">Action required</small>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card border-0 shadow-sm rounded-4 p-4 border-top border-4 border-success h-100 bg-white">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+          <small class="text-uppercase fw-bold text-muted">Completed</small>
+          <i class="bi bi-check-all text-success fs-5"></i>
+        </div>
+        <h2 class="fw-bold mb-0">12</h2>
+        <small class="text-success fw-medium">Well done!</small>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card border-0 shadow-sm rounded-4 p-4 border-top border-4 border-warning h-100 bg-white">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+          <small class="text-uppercase fw-bold text-muted">Exams</small>
+          <i class="bi bi-exclamation-triangle text-warning fs-5"></i>
+        </div>
+        <h2 class="fw-bold mb-0">02</h2>
+        <small class="text-warning fw-medium">Prepare now</small>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card border-0 shadow-sm rounded-4 p-4 border-top border-4 border-primary h-100 bg-white">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+          <small class="text-uppercase fw-bold text-muted">Attendance</small>
+          <i class="bi bi-person-check text-primary fs-5"></i>
+        </div>
+        <h2 class="fw-bold mb-0">85%</h2>
+        <small class="text-primary fw-medium">Regular</small>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-lg-8">
+      <div class="card border-0 shadow-sm rounded-4 bg-white p-4 h-100">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h5 class="fw-bold mb-0 text-dark">University Notice Board</h5>
+          <button class="btn btn-sm btn-outline-primary rounded-pill px-3">View All</button>
+        </div>
+        
+        <div class="list-group list-group-flush">
+          @for (notice of notices(); track $index) {
+            <div class="list-group-item border-0 border-bottom py-3 px-0">
+              <div class="d-flex align-items-start gap-3">
+                <div class="bg-primary-subtle text-primary p-2 rounded-3">
+                  <i class="bi bi-megaphone-fill"></i>
+                </div>
+                <div>
+                  <h6 class="fw-bold mb-1 text-dark">{{ notice.title }}</h6>
+                  <p class="text-muted small mb-0">{{ notice.content }}</p>
+                </div>
+              </div>
+            </div>
+          } @empty {
+            <div class="p-4 text-center text-muted">No notices available.</div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="card border-0 shadow-sm rounded-4 bg-white p-4 h-100">
+        <h5 class="fw-bold mb-4 text-dark">Daily Planner</h5>
+        <div class="d-grid gap-3">
+          <div class="p-3 bg-warning-subtle rounded-3 d-flex align-items-center border-start border-4 border-warning">
+            <i class="bi bi-journal-text me-3 fs-4 text-warning"></i>
+            <div>
+              <p class="mb-0 fw-bold text-dark">Practical Exam</p>
+              <small class="text-secondary fw-medium">Today, 02:00 PM</small>
+            </div>
+          </div>
+          <div class="p-3 bg-info-subtle rounded-3 d-flex align-items-center border-start border-4 border-info">
+            <i class="bi bi-clock-history me-3 fs-4 text-info"></i>
+            <div>
+              <p class="mb-0 fw-bold text-dark">Python Class</p>
+              <small class="text-secondary fw-medium">Tomorrow, 10:00 AM</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-student-navbar>

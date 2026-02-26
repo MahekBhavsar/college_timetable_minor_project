@@ -1,0 +1,92 @@
+<div class="container-fluid min-vh-100 d-flex align-items-center justify-content-center p-3" 
+     style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+  
+  <div class="card shadow-lg border-0 rounded-4 overflow-hidden" style="max-width: 480px; width: 100%;">
+    <div class="card-header border-0 text-center py-4 text-white" 
+         style="background: linear-gradient(to right, #0052D4, #4364F7, #6FB1FC);">
+      <div class="bg-white rounded-circle d-inline-flex p-3 mb-3 shadow-sm">
+        <i class="bi bi-mortarboard-fill text-primary fs-3"></i>
+      </div>
+      <h3 class="fw-bold mb-0">Join BCA Portal</h3>
+      <p class="small opacity-75 mb-0">Student Registration & Verification</p>
+    </div>
+
+    <div class="card-body p-4 p-md-5 bg-white">
+      <div class="mb-3">
+        <label class="form-label small fw-bold text-muted">FULL NAME</label>
+        <div class="input-group">
+          <span class="input-group-text border-0 bg-light"><i class="bi bi-person text-primary"></i></span>
+          <input type="text" class="form-control border-0 bg-light py-2" [(ngModel)]="name" placeholder="Enter full name">
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label small fw-bold text-muted">EMAIL ADDRESS</label>
+        <div class="input-group">
+          <span class="input-group-text border-0 bg-light"><i class="bi bi-envelope text-primary"></i></span>
+          <input type="email" class="form-control border-0 bg-light py-2" [(ngModel)]="email" placeholder="college@example.com">
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label small fw-bold text-muted">INITIAL SEMESTER</label>
+        <div class="input-group">
+          <span class="input-group-text border-0 bg-light"><i class="bi bi-book text-primary"></i></span>
+          <select class="form-select border-0 bg-light py-2" [(ngModel)]="semester">
+            @for (s of [1,2,3,4,5,6]; track s) {
+              <option [value]="s">Semester {{s}}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <label class="form-label small fw-bold text-muted">PASSWORD</label>
+        <div class="input-group">
+          <span class="input-group-text border-0 bg-light"><i class="bi bi-lock text-primary"></i></span>
+          <input type="password" class="form-control border-0 bg-light py-2" [(ngModel)]="password" placeholder="••••••••">
+        </div>
+      </div>
+
+      <div class="mb-4 p-3 rounded-3 border-dashed border-2 text-center" 
+           [style.background-color]="fileError() ? '#fff5f5' : '#f8f9fa'"
+           [style.border-color]="fileError() ? '#dc3545' : '#dee2e6'"
+           style="border-style: dashed;">
+        
+        <label class="form-label small fw-bold mb-2 d-block" [class.text-danger]="fileError()" [class.text-primary]="!fileError()">
+          <i class="bi bi-cloud-arrow-up-fill me-1"></i> VERIFICATION DOCUMENT
+        </label>
+        
+        <input type="file" class="form-control form-control-sm shadow-sm" 
+               (change)="onFileSelected($event)" accept="image/*,application/pdf">
+        
+        @if (fileError()) {
+          <div class="mt-2 small text-danger fw-bold animate__animated animate__shakeX">
+            <i class="bi bi-exclamation-triangle-fill me-1"></i> {{ fileError() }}
+          </div>
+        } @else if (fileName()) {
+          <div class="mt-2 small text-success fw-bold animate__animated animate__fadeIn">
+            <i class="bi bi-check-circle-fill me-1"></i> {{ fileName() }}
+          </div>
+        } @else {
+          <div class="mt-1 small text-muted">Please upload PDF or Image only</div>
+        }
+      </div>
+
+      <button class="btn btn-primary w-100 rounded-pill py-3 fw-bold shadow-sm" 
+              [disabled]="isSubmitting() || !!fileError()" (click)="register()">
+        @if (isSubmitting()) {
+          <span class="spinner-border spinner-border-sm me-2"></span> Processing...
+        } @else {
+          Create Account
+        }
+      </button>
+
+      <div class="text-center mt-4">
+        <p class="small text-muted mb-0">Already have an account? 
+          <a routerLink="/login" class="text-primary text-decoration-none fw-bold">Login Here</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
