@@ -7,6 +7,7 @@
   </div>
 
   <div class="row g-4">
+
     <div class="col-xl-4">
       <div class="card border-0 shadow-sm sticky-top" style="top: 20px;">
         <div class="card-header bg-white border-0 py-3">
@@ -14,19 +15,31 @@
             {{ editingId() ? 'Update Subject' : 'Add New Subject' }}
           </h5>
         </div>
+
         <div class="card-body pt-0">
           <div class="row g-3">
+
             <div class="col-12">
               <label class="form-label small fw-bold text-muted">Subject Name</label>
-              <input type="text" class="form-control bg-light border-0" [(ngModel)]="newSubject.name">
+              <input type="text" class="form-control bg-light border-0" [(ngModel)]="newSubject.name" placeholder="e.g. Java Programming">
+            </div>
+
+            <div class="col-12">
+              <label class="form-label small fw-bold text-muted">Department</label>
+              <input type="text" class="form-control bg-light border-0" [(ngModel)]="newSubject.department" placeholder="e.g. BCA, Mathematics, IT">
             </div>
 
             <div class="col-12 bg-light p-3 rounded-3">
-              <label class="form-label small fw-bold text-primary mb-2">Division Assignments</label>
+              <label class="form-label small fw-bold text-primary mb-2">
+                Division Staff Assignment
+              </label>
+
               <div class="row g-2">
                 @for (div of ['A', 'B', 'C']; track div) {
                   <div class="col-4">
-                    <label class="extra-small fw-bold text-muted">Div {{div}}</label>
+                    <label class="extra-small fw-bold text-muted">
+                      Div {{div}}
+                    </label>
                     <select class="form-select form-select-sm border-0" [(ngModel)]="newSubject.divisionStaff[div]">
                       <option value="">None</option>
                       @for (st of staffList(); track st.id) {
@@ -38,10 +51,29 @@
               </div>
             </div>
 
+            <div class="col-12 bg-light p-3 rounded-3">
+              <label class="form-label small fw-bold text-success mb-2">
+                Allowed Divisions (Timetable Control)
+              </label>
+
+              <div class="d-flex gap-3">
+                @for (div of ['A', 'B', 'C']; track div) {
+                  <div class="form-check">
+                    <input type="checkbox" class="form-check-input" [checked]="newSubject.allowedDivisions.includes(div)" (change)="toggleDivision(div, $event)">
+                    <label class="form-check-label small fw-bold">
+                      Division {{ div }}
+                    </label>
+                  </div>
+                }
+              </div>
+            </div>
+
             <div class="col-6">
               <label class="small fw-bold text-muted">Semester</label>
               <select class="form-select bg-light border-0" [(ngModel)]="newSubject.semester">
-                @for (s of semesterNumbers; track s) { <option [value]="s">Sem {{s}}</option> }
+                @for (s of semesterNumbers; track s) {
+                  <option [value]="s">Sem {{s}}</option>
+                }
               </select>
             </div>
 
@@ -50,6 +82,9 @@
               <select class="form-select bg-light border-0" [(ngModel)]="newSubject.type">
                 <option value="Major">Major</option>
                 <option value="Minor">Minor</option>
+                <option value="AEC">AEC</option>
+                <option value="SEC">SEC</option>
+                <option value="VAC">VAC</option>
               </select>
             </div>
 
@@ -57,10 +92,12 @@
               <label class="small fw-bold text-muted">Lec</label>
               <input type="number" class="form-control bg-light border-0" [(ngModel)]="newSubject.lectureCount">
             </div>
+
             <div class="col-4">
               <label class="small fw-bold text-muted">Lab</label>
               <input type="number" class="form-control bg-light border-0" [(ngModel)]="newSubject.labCount">
             </div>
+
             <div class="col-4">
               <label class="small fw-bold text-muted">Credits</label>
               <input type="number" class="form-control bg-light border-0" [(ngModel)]="newSubject.credits">
@@ -70,10 +107,14 @@
               <button class="btn btn-primary w-100 fw-bold py-2" (click)="saveSubject()">
                 {{ editingId() ? 'Update Subject' : 'Add Subject' }}
               </button>
+
               @if (editingId()) {
-                <button class="btn btn-link w-100 text-muted btn-sm mt-1" (click)="cancelEdit()">Cancel Edit</button>
+                <button class="btn btn-link w-100 text-muted btn-sm mt-1" (click)="cancelEdit()">
+                  Cancel Edit
+                </button>
               }
             </div>
+
           </div>
         </div>
       </div>
@@ -86,6 +127,7 @@
             <div class="card-header bg-dark text-white py-3">
               <h6 class="fw-bold mb-0">Semester {{ sem }} Curriculum</h6>
             </div>
+
             <div class="table-responsive">
               <table class="table align-middle mb-0">
                 <tbody>
@@ -93,22 +135,43 @@
                     <tr class="hover-row">
                       <td class="px-4 py-3" style="width: 50%;">
                         <div class="fw-bold text-dark">{{ s.name }}</div>
-                        <div class="d-flex gap-1 mt-2">
+                        
+                        <div class="extra-small text-muted mb-1">
+                           <i class="bi bi-building"></i> Dept: {{ s.department || 'Not Specified' }}
+                        </div>
+
+                        <div class="d-flex flex-wrap gap-1 mt-2">
                           @for (div of ['A', 'B', 'C']; track div) {
                             <div class="extra-small px-2 py-1 bg-light border rounded">
-                              <span class="text-primary fw-bold">{{ div }}:</span> 
+                              <span class="text-primary fw-bold">{{ div }}:</span>
                               {{ getStaffName(s.divisionStaff?.[div]) }}
                             </div>
                           }
                         </div>
+
+                        <div class="mt-2">
+                          <span class="extra-small text-muted">Allowed:</span>
+                          @for (div of s.allowedDivisions || []; track div) {
+                            <span class="badge bg-success ms-1" style="font-size: 10px;">{{ div }}</span>
+                          }
+                        </div>
                       </td>
+
                       <td>
-                        <span [class]="s.type === 'Major' ? 'badge-major' : 'badge-minor'">{{ s.type }}</span>
+                        <span [class]="s.type === 'Major' ? 'badge-major' : 'badge-minor'">
+                          {{ s.type }}
+                        </span>
                       </td>
+
                       <td class="text-center">
-                        <div class="small fw-bold">{{ s.lectureCount }}L + {{ s.labCount }}P</div>
-                        <div class="extra-small text-muted">{{ s.credits }} Credits</div>
+                        <div class="small fw-bold">
+                          {{ s.lectureCount }}L + {{ s.labCount }}P
+                        </div>
+                        <div class="extra-small text-muted">
+                          {{ s.credits }} Credits
+                        </div>
                       </td>
+
                       <td class="text-end px-4">
                         <button class="btn-icon text-primary me-1" (click)="editSubject(s)">✏️</button>
                         <button class="btn-icon text-danger" (click)="deleteSubject(s.id)">🗑️</button>

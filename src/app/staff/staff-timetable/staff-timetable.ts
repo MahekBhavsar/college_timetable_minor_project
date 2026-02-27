@@ -8,61 +8,50 @@ import { FirebaseService } from '../../services/firebaseservice';
   standalone: true,
   imports: [CommonModule, RouterLink],
   templateUrl: './staff-timetable.html',
-  styleUrls: ['./staff-timetable.css'] // Use the same CSS as the student view
+  styleUrls: ['./staff-timetable.css']
 })
 export class StaffTimetable implements OnInit {
   staffUser = signal<any>(null);
-  timetableGrid = signal<any>({});
-  
+  allAssignments = signal<any[]>([]);
   days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-  timeSlots = [
-    '08:00 AM - 08:50 AM', '08:50 AM - 09:40 AM', '09:40 AM - 10:30 AM',
-    '10:30 AM - 11:20 AM', '11:20 AM - 12:10 PM', '12:10 PM - 01:00 PM',
-    '01:30 PM - 02:00 PM', '02:00 PM - 02:50 PM', '02:50 PM - 03:40 PM'
-  ];
 
   constructor(
     private firebaseService: FirebaseService,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {}
 
-  // src/app/staff/staff-timetable/staff-timetable.ts
-
-ngOnInit(): void {
-  if (isPlatformBrowser(this.platformId)) {
-    // 1. CHANGE THIS from 'staff_user' to 'portal_user'
-    const storedData = localStorage.getItem('portal_user'); 
-    
-    if (storedData) {
-      const user = JSON.parse(storedData);
-      this.staffUser.set(user);
-      
-      // 2. Ensure user.name exists before calling the grid
-      if (user.name) {
-        this.loadMyGrid(user.name);
+  ngOnInit(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      const storedData = localStorage.getItem('portal_user'); 
+      if (storedData) {
+        const user = JSON.parse(storedData);
+        this.staffUser.set(user);
+        if (user.name) {
+          this.loadAllAvailableLectures(user.name);
+        }
       }
     }
   }
-}
 
-  loadMyGrid(name: string): void {
+  loadAllAvailableLectures(name: string): void {
+    // Fetches every assignment across all semesters for this professor
     this.firebaseService.getFilteredCollection<any>('Timetable', 'staffName', name)
       .subscribe(data => {
-        const grid: any = {};
-        // Initialize empty grid
-        this.timeSlots.forEach(slot => {
-          grid[slot] = {};
-          this.days.forEach(day => grid[slot][day] = null);
-        });
-
-        // Fill grid with personal data
-        data.forEach(item => {
-          const cleanTime = item.time?.trim();
-          if (grid[cleanTime]) {
-            grid[cleanTime][item.day] = item;
-          }
-        });
-        this.timetableGrid.set(grid);
+        // Sort by time so morning lectures appear first
+        const sorted = data.sort((a, b) => a.time.localeCompare(b.time));
+        this.allAssignments.set(sorted);
       });
+  }
+
+  // 🔥 This helper provides the data for each day column
+  getLecturesByDay(day: string) {
+    return this.allAssignments().filter(a => a.day === day);
+  }
+
+  // 🔥 Conflict Detector: Checks for overlapping time slots
+  hasConflict(currentLec: any, dayLectures: any[]): boolean {
+    return dayLectures.some(lec => 
+      lec.id !== currentLec.id && lec.time.trim() === currentLec.time.trim()
+    );
   }
 }
