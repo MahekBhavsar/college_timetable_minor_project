@@ -20,51 +20,46 @@ import { FirebaseCollections } from '../services/firebase-enums';
 })
 export class Subject implements OnInit {
   public fb = inject(FirebaseService);
-  
+
   subjects = signal<any[]>([]);
   staffList = signal<any[]>([]);
   editingId = signal<string | null>(null);
   semesterNumbers = [1, 2, 3, 4, 5, 6];
 
-  // Automatically group subjects by semester whenever subjects() signal changes
+  // Group subjects by semester for the list view
   groupedSubjects = computed(() => {
     const grouped: { [key: number]: any[] } = {};
     this.semesterNumbers.forEach(sem => grouped[sem] = []);
-    
     this.subjects().forEach(sub => {
-      if (grouped[sub.semester]) {
-        grouped[sub.semester].push(sub);
-      }
+      if (grouped[sub.semester]) grouped[sub.semester].push(sub);
     });
     return grouped;
   });
 
   newSubject: any = {
     name: '',
-    semester: 1,
+    semester: 4,
     type: 'Major',
     credits: 4,
     lectureCount: 3,
-    labCount: 1,
+    labCount: 2,
     course: 'BCA',
-    divisionStaff: { A: '', B: '', C: '' } 
+    department: 'BCA', // 🔥 BCA, Mathematics, or Communication
+    divisionStaff: { A: '', B: '', C: '' },
+    allowedDivisions: ['A', 'B', 'C']
   };
 
-  ngOnInit() { 
-    this.loadSubjects(); 
-    this.loadStaff(); 
+  ngOnInit() {
+    this.loadSubjects();
+    this.loadStaff();
   }
 
   loadSubjects() {
-    this.fb.getCollection<any>(FirebaseCollections.Subjects).subscribe(data => {
-      this.subjects.set(data);
-    });
+    this.fb.getCollection<any>(FirebaseCollections.Subjects).subscribe(data => this.subjects.set(data));
   }
 
   loadStaff() {
-    this.fb.getCollection<any>(FirebaseCollections.Staff).subscribe(data => {
-      this.staffList.set(data);
-    });
+    this.fb.getCollection<any>(FirebaseCollections.Staff).subscribe(data => this.staffList.set(data));
   }
 
   getStaffName(id: string): string {
@@ -74,19 +69,35 @@ export class Subject implements OnInit {
 
   editSubject(subject: any) {
     this.editingId.set(subject.id);
-    this.newSubject = { 
+    this.newSubject = {
       ...subject,
-      divisionStaff: subject.divisionStaff || { A: '', B: '', C: '' }
+      divisionStaff: subject.divisionStaff || { A: '', B: '', C: '' },
+      allowedDivisions: subject.allowedDivisions || ['A', 'B', 'C']
     };
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   async saveSubject() {
     if (!this.newSubject.name.trim()) return;
+
+    const nameLower = this.newSubject.name.toLowerCase();
+    const typeUpper = this.newSubject.type.toUpperCase();
+
+    // 🔥 STRICT RULE: Math, Communication, AEC, SEC, VAC strictly DO NOT have labs
+    const restrictedTypes = ['AEC', 'SEC', 'VAC'];
+    const isSpecialized = nameLower.includes('math') || nameLower.includes('comm');
+    
+    if (restrictedTypes.includes(typeUpper) || isSpecialized) {
+      this.newSubject.labCount = 0; 
+    }
+
     const subjectData = {
       ...this.newSubject,
       semester: Number(this.newSubject.semester),
-      totalWeeklySlots: Number(this.newSubject.lectureCount) + Number(this.newSubject.labCount)
+      lectureCount: Number(this.newSubject.lectureCount),
+      labCount: Number(this.newSubject.labCount),
+      totalWeeklySlots: Number(this.newSubject.lectureCount) + Number(this.newSubject.labCount),
+      allowedDivisions: this.newSubject.allowedDivisions?.length ? this.newSubject.allowedDivisions : ['A', 'B', 'C']
     };
 
     try {
@@ -98,15 +109,22 @@ export class Subject implements OnInit {
       }
       this.resetForm();
     } catch (error) {
-      console.error("Operation failed", error);
+      console.error("Save failed", error);
     }
   }
 
   resetForm() {
-    this.newSubject = { 
-      name: '', semester: 1, type: 'Major', credits: 4, 
-      lectureCount: 3, labCount: 1, course: 'BCA',
-      divisionStaff: { A: '', B: '', C: '' }
+    this.newSubject = {
+      name: '',
+      semester: 4,
+      type: 'Major',
+      credits: 4,
+      lectureCount: 3,
+      labCount: 2,
+      course: 'BCA',
+      department: 'BCA',
+      divisionStaff: { A: '', B: '', C: '' },
+      allowedDivisions: ['A', 'B', 'C']
     };
   }
 
@@ -119,5 +137,13 @@ export class Subject implements OnInit {
   cancelEdit() {
     this.editingId.set(null);
     this.resetForm();
+  }
+
+  toggleDivision(div: string, event: any) {
+    if (event.target.checked) {
+      if (!this.newSubject.allowedDivisions.includes(div)) this.newSubject.allowedDivisions.push(div);
+    } else {
+      this.newSubject.allowedDivisions = this.newSubject.allowedDivisions.filter((d: string) => d !== div);
+    }
   }
 }
