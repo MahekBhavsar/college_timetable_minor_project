@@ -1,187 +1,194 @@
-<div class="container py-5 bg-light min-vh-100">
+<div class="container-fluid px-4 py-5"
+     style="background: linear-gradient(135deg,#eef2f7 0%,#f8f9fa 100%); min-height:100vh;">
 
   <!-- ================= HEADER ================= -->
   <div class="row mb-5">
     <div class="col-12">
-      <div class="card border-0 shadow-lg p-4 bg-white rounded-4 position-relative overflow-hidden">
+      <div class="card border-0 shadow rounded-4 p-4 bg-white bg-opacity-75 backdrop-blur">
 
-        <div class="position-absolute top-0 end-0 p-4 opacity-10 text-primary">
-          <i class="bi bi-mortarboard-fill display-3"></i>
-        </div>
+        <div class="row align-items-center g-4">
 
-        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-4">
+          <!-- Left Profile -->
+          <div class="col-lg-8 d-flex align-items-center">
 
-          <div class="d-flex align-items-center">
-            <div class="bg-primary text-white d-flex align-items-center justify-content-center rounded-circle me-3 shadow"
-                 style="width: 70px; height: 70px;">
-              <span class="h2 mb-0 fw-bold">
+            <div class="me-4 position-relative">
+              <div class="rounded-circle bg-primary text-white d-flex 
+                          align-items-center justify-content-center shadow"
+                   style="width:80px;height:80px;font-size:28px;font-weight:600;">
                 {{ staffUser()?.name?.charAt(0) }}
-              </span>
+              </div>
+              <span class="position-absolute bottom-0 end-0 
+                           bg-success border border-white rounded-circle"
+                    style="width:14px;height:14px;"></span>
             </div>
 
             <div>
-              <span class="badge bg-primary-subtle text-primary px-3 py-1 rounded-pill mb-2 fw-semibold">
-                Staff Portal
-              </span>
-              <h3 class="fw-bold text-dark mb-1">
-                Welcome back, {{ staffUser()?.name }} 👋
+              <h3 class="fw-bold mb-1">
+                Welcome back, {{ staffUser()?.name }}
               </h3>
-              <p class="text-muted mb-0 small">
-                <i class="bi bi-envelope-at me-1"></i>
+              <div class="text-muted small">
+                <i class="bi bi-envelope me-1"></i>
                 {{ staffUser()?.email }}
                 <span class="mx-2 opacity-25">|</span>
-                <i class="bi bi-book me-1"></i>
                 Semester {{ staffUser()?.semester }}
-              </p>
+              </div>
             </div>
+
           </div>
 
-          <button (click)="logout()"
-                  class="btn btn-outline-danger px-4 rounded-pill fw-semibold shadow-sm">
-            <i class="bi bi-box-arrow-right me-2"></i> Logout
-          </button>
+          <!-- Right Logout -->
+          <div class="col-lg-4 text-lg-end">
+            <button (click)="logout()"
+              class="btn btn-outline-dark rounded-pill px-4 fw-semibold">
+              <i class="bi bi-box-arrow-right me-2"></i> Logout
+            </button>
+          </div>
 
         </div>
+
       </div>
     </div>
   </div>
 
 
-  <!-- ================= MAIN FEATURES ================= -->
+  <!-- ================= FEATURE CARDS ================= -->
   <div class="row g-4 mb-5">
 
     <!-- Timetable -->
     <div class="col-xl-4 col-md-6">
-      <div class="card border-0 shadow-sm h-100 rounded-4 border-bottom border-4 border-primary">
-        <div class="card-body p-4 text-center">
-          <div class="bg-primary-subtle text-primary mx-auto mb-3 rounded-3 d-flex align-items-center justify-content-center shadow"
-               style="width: 60px; height: 60px;">
-            <i class="bi bi-calendar3 h3 mb-0"></i>
-          </div>
-          <h5 class="fw-bold">My Timetable</h5>
-          <p class="text-muted small">
-            Check your <strong>{{ timetableCount() }}</strong> lectures this week.
-          </p>
-          <a routerLink="/staff/timetable"
-             class="btn btn-primary w-100 rounded-pill fw-semibold">
-            View Schedule
-          </a>
+      <div class="card border-0 shadow h-100 rounded-4 
+                  bg-white p-4 text-center">
+
+        <div class="mb-4">
+          <i class="bi bi-calendar3 fs-1 text-primary"></i>
         </div>
+
+        <h5 class="fw-bold mb-2">My Timetable</h5>
+        <p class="text-muted small mb-4">
+          You have <strong>{{ timetableCount() }}</strong> lectures scheduled.
+        </p>
+
+        <a routerLink="/staff/timetable"
+           class="btn btn-primary rounded-pill px-4">
+          View Schedule
+        </a>
+
       </div>
     </div>
 
     <!-- Assignments -->
     <div class="col-xl-4 col-md-6">
-      <div class="card border-0 shadow-sm h-100 rounded-4 border-bottom border-4 border-danger">
-        <div class="card-body p-4 text-center">
-          <div class="bg-danger-subtle text-danger mx-auto mb-3 rounded-3 d-flex align-items-center justify-content-center shadow"
-               style="width: 60px; height: 60px;">
-            <i class="bi bi-file-earmark-plus h3 mb-0"></i>
-          </div>
-          <h5 class="fw-bold">Assignments</h5>
-          <p class="text-muted small">
-            Managed <strong>{{ assignmentCount() }}</strong> tasks so far.
-          </p>
-          <a routerLink="/staff/assignment"
-             class="btn btn-danger w-100 rounded-pill fw-semibold">
-            Manage Tasks
-          </a>
+      <div class="card border-0 shadow h-100 rounded-4 
+                  bg-white p-4 text-center">
+
+        <div class="mb-4">
+          <i class="bi bi-file-earmark-plus fs-1 text-danger"></i>
         </div>
+
+        <h5 class="fw-bold mb-2">Assignments</h5>
+        <p class="text-muted small mb-4">
+          Managed <strong>{{ assignmentCount() }}</strong> tasks.
+        </p>
+
+        <a routerLink="/staff/assignment"
+           class="btn btn-danger rounded-pill px-4">
+          Manage Tasks
+        </a>
+
       </div>
     </div>
 
     <!-- Academic Planner -->
     <div class="col-xl-4 col-md-6">
-      <div class="card border-0 shadow-sm h-100 rounded-4 border-bottom border-4 border-success">
-        <div class="card-body p-4 text-center">
-          <div class="bg-success-subtle text-success mx-auto mb-3 rounded-3 d-flex align-items-center justify-content-center shadow"
-               style="width: 60px; height: 60px;">
-            <i class="bi bi-calendar-check h3 mb-0"></i>
-          </div>
-          <h5 class="fw-bold">Academic Planner</h5>
-          <p class="text-muted small">
-            Semester {{ staffUser()?.semester }} academic schedule.
-          </p>
-          <a routerLink="/staff/academic-planner"
-             class="btn btn-success w-100 rounded-pill fw-semibold">
-            View Planner
-          </a>
+      <div class="card border-0 shadow h-100 rounded-4 
+                  bg-white p-4 text-center">
+
+        <div class="mb-4">
+          <i class="bi bi-calendar-check fs-1 text-success"></i>
         </div>
+
+        <h5 class="fw-bold mb-2">Academic Planner</h5>
+        <p class="text-muted small mb-4">
+          Semester {{ staffUser()?.semester }} planning overview.
+        </p>
+
+        <a routerLink="/staff/academic-planner"
+           class="btn btn-success rounded-pill px-4">
+          View Planner
+        </a>
+
       </div>
     </div>
 
   </div>
 
 
-  <!-- ================= SECOND ROW ================= -->
-  <div class="row g-4">
+  <!-- ================= TOOL GRID ================= -->
+  <div class="card border-0 shadow rounded-4 p-4 bg-white">
 
-    <!-- Student Search -->
-    <div class="col-xl-3 col-md-6">
-      <div class="card border-0 shadow-sm h-100 rounded-4 border-start border-4 border-info">
-        <div class="card-body p-4 text-center">
-          <i class="bi bi-people-fill display-6 text-info mb-3"></i>
+    <h5 class="fw-bold mb-4">Quick Access Tools</h5>
+
+    <div class="row g-4">
+
+      <!-- Student Timetable -->
+      <div class="col-xl-3 col-md-6">
+        <div class="text-center p-4 rounded-4 bg-light h-100">
+          <i class="bi bi-people-fill fs-2 text-info mb-3"></i>
           <h6 class="fw-bold">Student Timetable</h6>
-          <p class="text-muted small">Access student-wise schedules.</p>
+          <p class="small text-muted mb-3">Access student schedules.</p>
           <a routerLink="/staff/student-timetable"
-             class="btn btn-info text-white w-100 rounded-pill fw-semibold">
+             class="btn btn-info text-white btn-sm rounded-pill px-3">
             Open
           </a>
         </div>
       </div>
-    </div>
 
-    <!-- Personal Planner -->
-    <div class="col-xl-3 col-md-6">
-      <div class="card border-0 shadow-sm h-100 rounded-4 border-start border-4 border-warning">
-        <div class="card-body p-4 text-center">
-          <i class="bi bi-journal-check display-6 text-warning mb-3"></i>
+      <!-- Personal Planner -->
+      <div class="col-xl-3 col-md-6">
+        <div class="text-center p-4 rounded-4 bg-light h-100">
+          <i class="bi bi-journal-check fs-2 text-warning mb-3"></i>
           <h6 class="fw-bold">Personal Planner</h6>
-          <p class="text-muted small">
-            Manage <strong>{{ personalNotes() }}</strong> private entries.
+          <p class="small text-muted mb-3">
+            {{ personalNotes() }} private notes.
           </p>
           <a routerLink="/staff/planner"
-             class="btn btn-warning text-white w-100 rounded-pill fw-semibold">
+             class="btn btn-warning text-white btn-sm rounded-pill px-3">
             Manage
           </a>
         </div>
       </div>
-    </div>
 
-    <!-- Manage Students -->
-    <div class="col-xl-3 col-md-6">
-      <div class="card border-0 shadow-sm h-100 rounded-4 border-start border-4 border-primary">
-        <div class="card-body p-4 text-center">
-          <i class="bi bi-person-check-fill display-6 text-primary mb-3"></i>
+      <!-- Manage Students -->
+      <div class="col-xl-3 col-md-6">
+        <div class="text-center p-4 rounded-4 bg-light h-100">
+          <i class="bi bi-person-check-fill fs-2 text-primary mb-3"></i>
           <h6 class="fw-bold">Manage Students</h6>
-          <p class="text-muted small">
-            Approve & allocate student divisions.
+          <p class="small text-muted mb-3">
+            Approve & allocate divisions.
           </p>
           <a routerLink="/staff/manage-students"
-             class="btn btn-primary w-100 rounded-pill fw-semibold">
-            Open Registry
+             class="btn btn-primary btn-sm rounded-pill px-3">
+            Open
           </a>
         </div>
       </div>
-    </div>
 
-    <!-- ⭐ Assignment Responses -->
-    <div class="col-xl-3 col-md-6">
-      <div class="card border-0 shadow-sm h-100 rounded-4 border-start border-4 border-dark">
-        <div class="card-body p-4 text-center">
-          <i class="bi bi-upload display-6 text-dark mb-3"></i>
+      <!-- Assignment Responses -->
+      <div class="col-xl-3 col-md-6">
+        <div class="text-center p-4 rounded-4 bg-light h-100">
+          <i class="bi bi-upload fs-2 text-dark mb-3"></i>
           <h6 class="fw-bold">Assignment Responses</h6>
-          <p class="text-muted small">
-            View student uploaded answers division-wise.
+          <p class="small text-muted mb-3">
+            View uploaded submissions.
           </p>
           <a routerLink="/staff/view-submissions"
-             class="btn btn-dark w-100 rounded-pill fw-semibold">
-            Open Responses
+             class="btn btn-dark btn-sm rounded-pill px-3">
+            Open
           </a>
         </div>
       </div>
-    </div>
 
+    </div>
   </div>
 
 </div>

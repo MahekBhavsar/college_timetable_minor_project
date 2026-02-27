@@ -1,60 +1,94 @@
 <div class="min-vh-100" style="background-color: #f0f4f8;">
-  
-  <nav class="navbar navbar-expand-lg navbar-dark shadow-sm py-3" style="background: #002d72;">
-    <div class="container">
+
+  <nav class="navbar navbar-expand-lg navbar-dark shadow-sm py-3 sticky-top"
+    style="background: linear-gradient(90deg,#002d72,#001f4d);">
+
+    <div class="container-fluid px-4">
+
       <a class="navbar-brand fw-bold d-flex align-items-center" href="#">
-        <div class="bg-warning rounded-circle p-1 me-2">
-          <i class="bi bi-shield-lock-fill text-dark fs-5"></i>
+        <div class="bg-warning rounded-circle d-flex align-items-center justify-content-center me-2"
+          style="width:32px;height:32px;">
+          <i class="bi bi-shield-lock-fill text-dark"></i>
         </div>
-        ACADEMIC COMMAND <span class="ms-2 badge bg-white bg-opacity-10 fw-light" style="font-size: 0.7rem;">v2.0</span>
+        ACADEMIC COMMAND
+        <span class="ms-2 badge bg-light text-dark fw-semibold small">v2.0</span>
       </a>
-      <div class="ms-auto d-flex align-items-center">
-        <div class="text-white me-3 d-none d-md-block">
-          <small class="d-block opacity-50 text-end" style="font-size: 0.7rem;">CURRENT SESSION</small>
-          <span class="fw-bold">Feb 20, 2026</span>
+
+      <div class="ms-auto d-flex align-items-center gap-3">
+
+        <div class="text-white text-end d-none d-md-block">
+          <small class="opacity-50 d-block">CURRENT SESSION</small>
+          <span class="fw-semibold">Feb 20, 2026</span>
         </div>
-        <button class="btn btn-outline-light rounded-pill px-4 btn-sm fw-bold" (click)="logout()">
-          <i class="bi bi-power me-2"></i>Logout
+
+        <button class="btn btn-outline-light rounded-pill px-4 btn-sm fw-semibold" (click)="logout()">
+          <i class="bi bi-power me-1"></i> Logout
         </button>
+
       </div>
     </div>
   </nav>
 
   <div class="container py-4">
-    
-    <div class="row g-3 mb-4">
+
+    <div class="row g-4 mb-5">
+
       <div class="col-6 col-md-3">
-        <div class="card border-0 shadow-sm rounded-4 p-3 bg-white">
+        <div class="card stat-card border-0 shadow-sm rounded-4 p-3 bg-white h-100">
           <div class="d-flex align-items-center">
-            <div class="bg-primary bg-opacity-10 text-primary p-3 rounded-3 me-3"><i class="bi bi-people-fill fs-4"></i></div>
-            <div><h4 class="mb-0 fw-bold">1,240</h4><small class="text-muted">Students</small></div>
+            <div class="bg-primary bg-opacity-10 text-primary p-3 rounded-3 me-3">
+              <i class="bi bi-people-fill fs-4"></i>
+            </div>
+            <div>
+              <h4 class="mb-0 fw-bold">1,240</h4>
+              <small class="text-muted">Students</small>
+            </div>
           </div>
         </div>
       </div>
+
       <div class="col-6 col-md-3">
-        <div class="card border-0 shadow-sm rounded-4 p-3 bg-white">
+        <div class="card stat-card border-0 shadow-sm rounded-4 p-3 bg-white h-100">
           <div class="d-flex align-items-center">
-            <div class="bg-success bg-opacity-10 text-success p-3 rounded-3 me-3"><i class="bi bi-person-check-fill fs-4"></i></div>
-            <div><h4 class="mb-0 fw-bold">84</h4><small class="text-muted">Staff</small></div>
+            <div class="bg-success bg-opacity-10 text-success p-3 rounded-3 me-3">
+              <i class="bi bi-person-check-fill fs-4"></i>
+            </div>
+            <div>
+              <h4 class="mb-0 fw-bold">84</h4>
+              <small class="text-muted">Staff</small>
+            </div>
           </div>
         </div>
       </div>
+
       <div class="col-6 col-md-3">
-        <div class="card border-0 shadow-sm rounded-4 p-3 bg-white">
+        <div class="card stat-card border-0 shadow-sm rounded-4 p-3 bg-white h-100">
           <div class="d-flex align-items-center">
-            <div class="bg-warning bg-opacity-10 text-warning p-3 rounded-3 me-3"><i class="bi bi-calendar-event fs-4"></i></div>
-            <div><h4 class="mb-0 fw-bold">12</h4><small class="text-muted">Active Terms</small></div>
+            <div class="bg-warning bg-opacity-10 text-warning p-3 rounded-3 me-3">
+              <i class="bi bi-calendar-event fs-4"></i>
+            </div>
+            <div>
+              <h4 class="mb-0 fw-bold">12</h4>
+              <small class="text-muted">Active Terms</small>
+            </div>
           </div>
         </div>
       </div>
+
       <div class="col-6 col-md-3">
-        <div class="card border-0 shadow-sm rounded-4 p-3 bg-white">
+        <div class="card stat-card border-0 shadow-sm rounded-4 p-3 bg-white h-100">
           <div class="d-flex align-items-center">
-            <div class="bg-danger bg-opacity-10 text-danger p-3 rounded-3 me-3"><i class="bi bi-broadcast fs-4"></i></div>
-            <div><h4 class="mb-0 fw-bold">5</h4><small class="text-muted">Alerts</small></div>
+            <div class="bg-danger bg-opacity-10 text-danger p-3 rounded-3 me-3">
+              <i class="bi bi-broadcast fs-4"></i>
+            </div>
+            <div>
+              <h4 class="mb-0 fw-bold">5</h4>
+              <small class="text-muted">Alerts</small>
+            </div>
           </div>
         </div>
       </div>
+
     </div>
 
     <div class="row g-4 mb-5">
@@ -107,7 +141,8 @@
                 </div>
               </div>
             </div>
-            <button class="btn btn-outline-primary w-100 rounded-pill mt-4 fw-bold btn-sm" [routerLink]="['/admin/academic-planner']">
+            <button class="btn btn-outline-primary w-100 rounded-pill mt-4 fw-bold btn-sm"
+              [routerLink]="['/admin/academic-planner']">
               Full Calendar
             </button>
           </div>
@@ -116,182 +151,259 @@
     </div>
 
     <h5 class="fw-bold mb-4 text-dark">Administrative Modules</h5>
+
     <div class="row g-4">
-      <div class="col-md-4 col-lg-3">
-        <div class="card border-0 shadow-sm rounded-4 text-center p-4 bg-white transition-up">
-          <div class="rounded-circle bg-primary-subtle text-primary mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
-            <i class="bi bi-people-fill fs-3"></i>
+
+      <!-- Staff Portal -->
+      <div class="col-sm-6 col-lg-4">
+        <div class="card border-0 shadow rounded-4 text-center p-5 h-100 bg-white hover-card">
+          <div
+            class="rounded-circle bg-primary bg-opacity-10 text-primary mx-auto mb-4 d-flex align-items-center justify-content-center"
+            style="width:75px;height:75px;">
+            <i class="bi bi-people-fill fs-2"></i>
           </div>
-          <h6 class="fw-bold">Staff Portal</h6>
-          <button class="btn btn-light btn-sm w-100 rounded-pill mt-3 fw-bold" [routerLink]="['/admin/managed-staff']">Manage</button>
-        </div>
-
-      <div class="col-md-4 col-lg-3">
-        <div class="card border-0 shadow-sm rounded-4 text-center p-4 bg-white transition-up border-bottom border-4 border-success">
-          <div class="rounded-circle bg-success-subtle text-success mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
-            <i class="bi bi-mortarboard-fill fs-3"></i>
-          </div>
-          <h6 class="fw-bold">Student Registry</h6>
-          <button class="btn btn-light btn-sm w-100 rounded-pill mt-3 fw-bold" [routerLink]="['/admin/manage-students']">Manage</button>
-        </div>
-
-      <div class="col-md-4 col-lg-3">
-        <div class="card border-0 shadow-sm rounded-4 text-center p-4 bg-white transition-up">
-          <div class="rounded-circle bg-warning-subtle text-warning mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
-            <i class="bi bi-calendar3 fs-3"></i>
-          </div>
-          <h6 class="fw-bold">Timetables</h6>
-          <button class="btn btn-light btn-sm w-100 rounded-pill mt-3 fw-bold" [routerLink]="['/timetable']">Configure</button>
-        </div>
-
-      <div class="col-md-4 col-lg-3">
-        <div class="card border-0 shadow-sm rounded-4 text-center p-4 bg-white transition-up">
-          <div class="rounded-circle bg-secondary-subtle text-secondary mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
-            <i class="bi bi-book-fill fs-3"></i>
-          </div>
-          <h6 class="fw-bold">Curriculum</h6>
-          <button class="btn btn-light btn-sm w-100 rounded-pill mt-3 fw-bold" [routerLink]="['/admin/subjects']">Manage</button>
-        </div>
-
-      </div>
-
-      <div class="col-md-4 col-lg-3">
-        <div class="card border-0 shadow-sm rounded-4 text-center p-4 bg-white transition-up">
-          <div class="rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; background: #f3e5f5; color: #6f42c1;">
-            <i class="bi bi-geo-alt-fill fs-3"></i>
-          </div>
-          <h6 class="fw-bold">Div Allocation</h6>
-          <button class="btn btn-light btn-sm w-100 rounded-pill mt-3 fw-bold" [routerLink]="['/admin/division-allocation']">Mapping</button>
-        </div>
-
-
-
-        <!-- Portal Usage -->
-        <div class="col-lg-5">
-          <div class="card border-0 shadow-sm rounded-4">
-            <div class="card-body">
-              <h5 class="fw-semibold mb-3">
-                Portal Activity
-              </h5>
-
-              <canvas id="usageChart"></canvas>
-            </div>
-          </div>
-        </div>
-
-      </div>
-
-      <div class="col-md-4 col-lg-3">
-        <div class="card border-0 shadow-sm rounded-4 text-center p-4 bg-white transition-up">
-          <div class="rounded-circle bg-danger-subtle text-danger mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
-            <i class="bi bi-megaphone-fill fs-3"></i>
-          </div>
-          <h6 class="fw-bold">Broadcaster</h6>
-          <button class="btn btn-light btn-sm w-100 rounded-pill mt-3 fw-bold">Send Alert</button>
+          <h5 class="fw-bold">Staff Portal</h5>
+          <button class="btn btn-light w-100 rounded-pill mt-4 fw-semibold"
+            [routerLink]="['/admin/managed-staff']">Manage</button>
         </div>
       </div>
+
+      <!-- Student Registry -->
+      <div class="col-sm-6 col-lg-4">
+        <div class="card border-0 shadow rounded-4 text-center p-5 h-100 bg-white hover-card">
+          <div
+            class="rounded-circle bg-success bg-opacity-10 text-success mx-auto mb-4 d-flex align-items-center justify-content-center"
+            style="width:75px;height:75px;">
+            <i class="bi bi-mortarboard-fill fs-2"></i>
+          </div>
+          <h5 class="fw-bold">Student Registry</h5>
+          <button class="btn btn-light w-100 rounded-pill mt-4 fw-semibold"
+            [routerLink]="['/admin/manage-students']">Manage</button>
+        </div>
+      </div>
+
+      <!-- Timetables -->
+      <div class="col-sm-6 col-lg-4">
+        <div class="card border-0 shadow rounded-4 text-center p-5 h-100 bg-white hover-card">
+          <div
+            class="rounded-circle bg-warning bg-opacity-10 text-warning mx-auto mb-4 d-flex align-items-center justify-content-center"
+            style="width:75px;height:75px;">
+            <i class="bi bi-calendar3 fs-2"></i>
+          </div>
+          <h5 class="fw-bold">Timetables</h5>
+          <button class="btn btn-light w-100 rounded-pill mt-4 fw-semibold"
+            [routerLink]="['/timetable']">Configure</button>
+        </div>
+      </div>
+
+      <!-- Curriculum -->
+      <div class="col-sm-6 col-lg-4">
+        <div class="card border-0 shadow rounded-4 text-center p-5 h-100 bg-white hover-card">
+          <div
+            class="rounded-circle bg-secondary bg-opacity-10 text-secondary mx-auto mb-4 d-flex align-items-center justify-content-center"
+            style="width:75px;height:75px;">
+            <i class="bi bi-book-fill fs-2"></i>
+          </div>
+          <h5 class="fw-bold">Curriculum</h5>
+          <button class="btn btn-light w-100 rounded-pill mt-4 fw-semibold"
+            [routerLink]="['/admin/subjects']">Manage</button>
+        </div>
+      </div>
+
+      <!-- Div Allocation -->
+      <div class="col-sm-6 col-lg-4">
+        <div class="card border-0 shadow rounded-4 text-center p-5 h-100 bg-white hover-card">
+          <div class="rounded-circle mx-auto mb-4 d-flex align-items-center justify-content-center"
+            style="width:75px;height:75px;background:#f3e5f5;color:#6f42c1;">
+            <i class="bi bi-geo-alt-fill fs-2"></i>
+          </div>
+          <h5 class="fw-bold">Div Allocation</h5>
+          <button class="btn btn-light w-100 rounded-pill mt-4 fw-semibold"
+            [routerLink]="['/admin/division-allocation']">Mapping</button>
+        </div>
+      </div>
+
+      <!-- Broadcaster -->
+      <div class="col-sm-6 col-lg-4">
+        <div class="card border-0 shadow rounded-4 text-center p-5 h-100 bg-white hover-card">
+          <div
+            class="rounded-circle bg-danger bg-opacity-10 text-danger mx-auto mb-4 d-flex align-items-center justify-content-center"
+            style="width:75px;height:75px;">
+            <i class="bi bi-megaphone-fill fs-2"></i>
+          </div>
+          <h5 class="fw-bold">Broadcaster</h5>
+          <button class="btn btn-light w-100 rounded-pill mt-4 fw-semibold">
+            Send Alert
+          </button>
+        </div>
+      </div>
+
     </div>
+
 
   </div>
 </div>
 
+<!-- FOOTER -->
+<footer class="mt-5 pt-5 pb-4 text-white"
+        style="background: linear-gradient(90deg,#001f4d,#002d72);">
 
+  <div class="container">
+    <div class="row g-4">
 
+      <!-- Brand -->
+      <div class="col-md-4">
+        <h5 class="fw-bold">ACADEMIC COMMAND</h5>
+        <p class="small opacity-75 mb-3">
+          Centralized academic administration system for managing students,
+          staff, curriculum and institutional planning efficiently.
+        </p>
+        <div class="d-flex gap-3">
+          <i class="bi bi-facebook fs-5"></i>
+          <i class="bi bi-twitter fs-5"></i>
+          <i class="bi bi-linkedin fs-5"></i>
+        </div>
+      </div>
+
+      <!-- Quick Links -->
+      <div class="col-md-4">
+        <h6 class="fw-bold mb-3">Quick Access</h6>
+        <ul class="list-unstyled small">
+          <li class="mb-2">
+            <a routerLink="/admin/managed-staff"
+               class="text-white text-decoration-none opacity-75">Staff Management</a>
+          </li>
+          <li class="mb-2">
+            <a routerLink="/admin/manage-students"
+               class="text-white text-decoration-none opacity-75">Student Registry</a>
+          </li>
+          <li class="mb-2">
+            <a routerLink="/admin/subjects"
+               class="text-white text-decoration-none opacity-75">Curriculum</a>
+          </li>
+          <li>
+            <a routerLink="/admin/academic-planner"
+               class="text-white text-decoration-none opacity-75">Academic Planner</a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Contact -->
+      <div class="col-md-4">
+        <h6 class="fw-bold mb-3">Contact Administration</h6>
+        <p class="small opacity-75 mb-1">
+          <i class="bi bi-geo-alt me-2"></i> Campus Headquarters
+        </p>
+        <p class="small opacity-75 mb-1">
+          <i class="bi bi-envelope me-2"></i> admin@academiccommand.edu
+        </p>
+        <p class="small opacity-75">
+          <i class="bi bi-telephone me-2"></i> +91 98765 43210
+        </p>
+      </div>
+
+    </div>
+
+    <hr class="border-light opacity-25 my-4">
+
+    <div class="text-center small opacity-75">
+      © 2026 Academic Command. All rights reserved.
+    </div>
+  </div>
+</footer>
 <style>
+  /* STREAM COLORS */
 
-/* STREAM COLORS */
+  .science {
+    background: linear-gradient(45deg, #0d6efd, #3d8bfd);
+  }
 
-.science{
-  background:linear-gradient(45deg,#0d6efd,#3d8bfd);
-}
+  .commerce {
+    background: linear-gradient(45deg, #198754, #43c59e);
+  }
 
-.commerce{
-  background:linear-gradient(45deg,#198754,#43c59e);
-}
+  .arts {
+    background: linear-gradient(45deg, #6f42c1, #9b6bff);
+  }
 
-.arts{
-  background:linear-gradient(45deg,#6f42c1,#9b6bff);
-}
-
-.engineering{
-  background:linear-gradient(45deg,#fd7e14,#ffb067);
-}
+  .engineering {
+    background: linear-gradient(45deg, #fd7e14, #ffb067);
+  }
 
 
-/* HOVER */
+  /* HOVER */
 
-.stat-card{
-  transition:.3s;
-}
+  .stat-card {
+    transition: .3s;
+  }
 
-.stat-card:hover{
-  transform:translateY(-6px);
-}
+  .stat-card:hover {
+    transform: translateY(-6px);
+  }
 
-.nav-link:hover{
-  background:#0d6efd;
-  color:white!important;
-  border-radius:8px;
-}
-
+  .nav-link:hover {
+    background: #0d6efd;
+    color: white !important;
+    border-radius: 8px;
+  }
 </style>
 
 
 
 <script>
 
-/////////////////////////
-// STUDENT STREAM CHART
-/////////////////////////
+  /////////////////////////
+  // STUDENT STREAM CHART
+  /////////////////////////
 
-new Chart(document.getElementById('studentsChart'), {
+  new Chart(document.getElementById('studentsChart'), {
     type: 'bar',
     data: {
-        labels: ['Science','Commerce','Arts','Engineering'],
-        datasets: [{
-            label:'Students',
-            data:[900,650,400,590],
-            backgroundColor:[
-                '#0d6efd',
-                '#198754',
-                '#6f42c1',
-                '#fd7e14'
-            ],
-            borderRadius:8
-        }]
+      labels: ['Science', 'Commerce', 'Arts', 'Engineering'],
+      datasets: [{
+        label: 'Students',
+        data: [900, 650, 400, 590],
+        backgroundColor: [
+          '#0d6efd',
+          '#198754',
+          '#6f42c1',
+          '#fd7e14'
+        ],
+        borderRadius: 8
+      }]
     },
-    options:{
-        animation:true,
-        plugins:{legend:{display:false}},
-        scales:{y:{beginAtZero:true}}
+    options: {
+      animation: true,
+      plugins: { legend: { display: false } },
+      scales: { y: { beginAtZero: true } }
     }
-});
+  });
 
 
 
-/////////////////////////
-// PORTAL USAGE CHART
-/////////////////////////
+  /////////////////////////
+  // PORTAL USAGE CHART
+  /////////////////////////
 
-new Chart(document.getElementById('usageChart'), {
+  new Chart(document.getElementById('usageChart'), {
     type: 'doughnut',
     data: {
-        labels:['Students','Staff','Admin','Guests'],
-        datasets:[{
-            data:[55,25,12,8],
-            backgroundColor:[
-                '#0d6efd',
-                '#20c997',
-                '#ffc107',
-                '#dc3545'
-            ]
-        }]
+      labels: ['Students', 'Staff', 'Admin', 'Guests'],
+      datasets: [{
+        data: [55, 25, 12, 8],
+        backgroundColor: [
+          '#0d6efd',
+          '#20c997',
+          '#ffc107',
+          '#dc3545'
+        ]
+      }]
     },
-    options:{
-        animation:{
-            animateScale:true
-        }
+    options: {
+      animation: {
+        animateScale: true
+      }
     }
-});
+  });
 
 </script>
