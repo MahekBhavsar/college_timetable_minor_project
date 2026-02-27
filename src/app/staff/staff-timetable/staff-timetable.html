@@ -1,52 +1,71 @@
 <div class="container-fluid py-4 bg-light min-vh-100">
   <div class="d-flex justify-content-between align-items-center mb-4 px-3">
     <div>
-      <h3 class="fw-bold text-primary mb-0">My Personal Schedule</h3>
-      <p class="text-muted mb-0">Weekly view for <strong>{{ staffUser()?.name }}</strong></p>
+      <h3 class="fw-bold text-primary mb-0">My Academic Timeline</h3>
+      <p class="text-muted mb-0">Assignments for <strong>{{ staffUser()?.name }}</strong></p>
     </div>
-    <button routerLink="/staff/staff-dashboard" class="btn btn-outline-secondary border-2 fw-bold">
-      <i class="bi bi-arrow-left"></i> Dashboard
+    <button routerLink="/staff/staff-dashboard" class="btn btn-white shadow-sm border-0 fw-bold px-4">
+      Dashboard
     </button>
   </div>
 
-  <div class="card border-0 shadow-sm overflow-hidden rounded-4">
-    <div class="table-responsive">
-      <table class="table table-bordered mb-0 scheduler-grid">
-        <thead class="bg-dark text-white text-center">
-          <tr>
-            <th style="width: 140px;">TIME</th>
-            @for (day of days; track day) { <th>{{ day }}</th> }
-          </tr>
-        </thead>
-        <tbody>
-          @for (slot of timeSlots; track slot) {
-            <tr>
-              <td class="text-center align-middle small fw-bold bg-light text-secondary">{{ slot }}</td>
-              @for (day of days; track day) {
-                <td class="p-1" style="height: 110px; width: 15%;">
-                  @if (slot === '01:30 PM - 02:00 PM') {
-                    <div class="h-100 d-flex align-items-center justify-content-center bg-warning-subtle text-warning fw-bold small rounded">
-                      ☕ BREAK
-                    </div>
-                  } @else if (timetableGrid()[slot] && timetableGrid()[slot][day]) {
-                    <div class="lecture-box border-primary">
-                      <div class="subject text-truncate">{{ timetableGrid()[slot][day].subject }}</div>
-                      <div class="class-info text-primary fw-bold">
-                        🎓 Sem {{ timetableGrid()[slot][day].sem }} - Div {{ timetableGrid()[slot][day].div }}
-                      </div>
-                      <div class="room-info mt-2">
-                        <span class="badge bg-secondary-subtle text-secondary border">
-                          📍 {{ timetableGrid()[slot][day].roomName }}
-                        </span>
-                      </div>
-                    </div>
-                  }
-                </td>
-              }
-            </tr>
-          }
-        </tbody>
-      </table>
-    </div>
+  <div class="row g-3 px-2">
+    @for (day of days; track day) {
+      <div class="col-12 col-md-6 col-lg-4 col-xl-2">
+        <div class="card border-0 shadow-sm rounded-4 h-100 bg-white overflow-hidden">
+          <div class="card-header bg-dark text-white text-center py-2 fw-bold border-0 uppercase">
+            {{ day }}
+          </div>
+          <div class="card-body p-2">
+            
+            @for (lec of getLecturesByDay(day); track lec.id) {
+              <div class="d-flex mb-3 p-2 rounded-3 border shadow-xs" 
+                   [class.bg-conflict]="hasConflict(lec, getLecturesByDay(day))"
+                   [style.border-left]="lec.type === 'Lab' ? '4px solid #ffc107' : '4px solid #0d6efd'">
+                
+                <div class="text-center pe-2 border-end border-2" style="min-width: 80px;">
+                  <div class="fw-bold text-dark" style="font-size: 11px;">
+                    {{ lec.time.split('-')[0] }}
+                  </div>
+                  <div class="text-muted" style="font-size: 8px; line-height: 1;">to</div>
+                  <div class="fw-bold text-dark" style="font-size: 11px;">
+                    {{ lec.time.split('-')[1] }}
+                  </div>
+                </div>
+
+                <div class="ps-2 flex-grow-1 overflow-hidden">
+                  <div class="d-flex justify-content-between align-items-center mb-1">
+                    <span class="fw-bold text-uppercase" style="font-size: 9px;"
+                          [class.text-warning]="lec.type === 'Lab'"
+                          [class.text-primary]="lec.type === 'Lecture'">
+                      {{ lec.type }}
+                    </span>
+                    @if (hasConflict(lec, getLecturesByDay(day))) {
+                      <i class="bi bi-exclamation-triangle-fill text-danger small"></i>
+                    }
+                  </div>
+                  
+                  <div class="fw-bold text-dark text-truncate mb-1" style="font-size: 11px;">
+                    {{ lec.subject }}
+                  </div>
+                  
+                  <div class="text-muted fw-bold" style="font-size: 10px;">
+                    Sem {{ lec.sem }} - Div {{ lec.div }}
+                  </div>
+                  
+                  <div class="mt-1">
+                    <span class="badge bg-light text-secondary border rounded-pill" style="font-size: 9px;">
+                      📍 {{ lec.roomName }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            } @empty {
+              <div class="text-center text-muted py-5 small italic">No Assignments</div>
+            }
+          </div>
+        </div>
+      </div>
+    }
   </div>
 </div>

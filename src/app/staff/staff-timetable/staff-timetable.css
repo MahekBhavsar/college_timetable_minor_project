@@ -1,0 +1,47 @@
+.bg-conflict {
+  background-color: #fff5f5 !important;
+  border: 1px dashed #dc3545 !important;
+}
+
+.shadow-xs {
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.uppercase {
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.lecture-row:hover {
+  background-color: #f1f3f5;
+  cursor: pointer;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+
+.animated {
+  animation-duration: 1s;
+  animation-iteration-count: infinite;
+}
+.bg-conflict {
+  background-color: #fff5f5 !important;
+  border: 1px dashed #dc3545 !important;
+}
+
+.shadow-xs {
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.uppercase {
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.btn-white {
+  background: white;
+  color: #333;
+}
