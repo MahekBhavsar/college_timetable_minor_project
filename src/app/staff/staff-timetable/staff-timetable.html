@@ -9,28 +9,23 @@
     </button>
   </div>
 
-  <div class="row g-3 px-2">
+  <div class="row g-3 px-2 mb-5">
     @for (day of days; track day) {
       <div class="col-12 col-md-6 col-lg-4 col-xl-2">
         <div class="card border-0 shadow-sm rounded-4 h-100 bg-white overflow-hidden">
-          <div class="card-header bg-dark text-white text-center py-2 fw-bold border-0 uppercase">
+          <div class="card-header bg-dark text-white text-center py-2 fw-bold border-0 uppercase small">
             {{ day }}
           </div>
           <div class="card-body p-2">
-            
             @for (lec of getLecturesByDay(day); track lec.id) {
               <div class="d-flex mb-3 p-2 rounded-3 border shadow-xs" 
-                   [class.bg-conflict]="hasConflict(lec, getLecturesByDay(day))"
+                   [class.bg-danger-subtle]="hasConflict(lec, getLecturesByDay(day))"
                    [style.border-left]="lec.type === 'Lab' ? '4px solid #ffc107' : '4px solid #0d6efd'">
                 
                 <div class="text-center pe-2 border-end border-2" style="min-width: 80px;">
-                  <div class="fw-bold text-dark" style="font-size: 11px;">
-                    {{ lec.time.split('-')[0] }}
-                  </div>
+                  <div class="fw-bold text-dark" style="font-size: 11px;">{{ lec.time.split('-')[0] }}</div>
                   <div class="text-muted" style="font-size: 8px; line-height: 1;">to</div>
-                  <div class="fw-bold text-dark" style="font-size: 11px;">
-                    {{ lec.time.split('-')[1] }}
-                  </div>
+                  <div class="fw-bold text-dark" style="font-size: 11px;">{{ lec.time.split('-')[1] }}</div>
                 </div>
 
                 <div class="ps-2 flex-grow-1 overflow-hidden">
@@ -44,15 +39,8 @@
                       <i class="bi bi-exclamation-triangle-fill text-danger small"></i>
                     }
                   </div>
-                  
-                  <div class="fw-bold text-dark text-truncate mb-1" style="font-size: 11px;">
-                    {{ lec.subject }}
-                  </div>
-                  
-                  <div class="text-muted fw-bold" style="font-size: 10px;">
-                    Sem {{ lec.sem }} - Div {{ lec.div }}
-                  </div>
-                  
+                  <div class="fw-bold text-dark text-truncate mb-1" style="font-size: 11px;">{{ lec.subject }}</div>
+                  <div class="text-muted fw-bold" style="font-size: 10px;">Sem {{ lec.sem }} - Div {{ lec.div }}</div>
                   <div class="mt-1">
                     <span class="badge bg-light text-secondary border rounded-pill" style="font-size: 9px;">
                       📍 {{ lec.roomName }}
@@ -67,5 +55,75 @@
         </div>
       </div>
     }
+  </div>
+
+  <hr class="my-5 opacity-25">
+
+  <div class="row px-2">
+    <div class="col-12">
+      <div class="card border-0 shadow rounded-4 bg-white overflow-hidden">
+        <div class="card-header bg-white border-bottom py-3">
+          <div class="d-flex justify-content-between align-items-center">
+            <h5 class="fw-bold text-dark mb-0"><i class="bi bi-bar-chart-line me-2 text-primary"></i>Workload Summary Report</h5>
+            <div class="d-flex gap-3">
+              <div class="text-center">
+                <div class="small text-muted text-uppercase fw-bold" style="font-size: 10px;">Weekly Lectures</div>
+                <div class="h5 mb-0 fw-bold text-primary">{{ summary().grandLectures }}</div>
+              </div>
+              <div class="vr"></div>
+              <div class="text-center">
+                <div class="small text-muted text-uppercase fw-bold" style="font-size: 10px;">Weekly Labs</div>
+                <div class="h5 mb-0 fw-bold text-warning">{{ summary().grandLabs }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-borderless mb-0">
+              <thead class="bg-light border-bottom small text-uppercase text-muted">
+                <tr>
+                  <th class="ps-4 py-3">Working Day</th>
+                  <th class="text-center py-3">Lectures (L)</th>
+                  <th class="text-center py-3">Laboratories (B)</th>
+                  <th class="text-center py-3 bg-primary-subtle text-primary border-start">Daily Load</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (day of days; track day) {
+                  <tr class="border-bottom">
+                    <td class="ps-4 py-3 fw-bold text-secondary">{{ day }}</td>
+                    <td class="text-center py-3">
+                      <span class="badge bg-primary-subtle text-primary px-3 py-2 rounded-pill">
+                        {{ summary().dayWise[day].lectures }} Sessions
+                      </span>
+                    </td>
+                    <td class="text-center py-3">
+                      <span class="badge bg-warning-subtle text-warning-emphasis px-3 py-2 rounded-pill">
+                        {{ summary().dayWise[day].labs }} Batches
+                      </span>
+                    </td>
+                    <td class="text-center py-3 bg-primary-subtle fw-bold text-dark border-start">
+                      {{ summary().dayWise[day].total }}
+                    </td>
+                  </tr>
+                }
+              </tbody>
+              <tfoot class="bg-dark text-white shadow-lg">
+                <tr class="align-middle">
+                  <td class="ps-4 py-3 fw-bold">TOTAL ACADEMIC LOAD</td>
+                  <td class="text-center py-3">{{ summary().grandLectures }} Total Lectures</td>
+                  <td class="text-center py-3">{{ summary().grandLabs }} Total Labs</td>
+                  <td class="text-center py-3 bg-primary fw-bold" style="font-size: 1.1rem;">
+                    {{ summary().grandTotal }} Total
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+      </div>
+      <p class="text-center text-muted small mt-3">Generated automatically based on the current academic timetable.</p>
+    </div>
   </div>
 </div>

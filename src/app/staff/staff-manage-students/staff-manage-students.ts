@@ -2,25 +2,28 @@ import { Component, OnInit, signal, Inject, PLATFORM_ID, computed } from '@angul
 import { isPlatformBrowser, CommonModule } from '@angular/common';
 import { FirebaseService } from '../../services/firebaseservice';
 import { FirebaseCollections } from '../../services/firebase-enums';
-import { SafePipe } from '../../safe-pipe'; //
+import { SafePipe } from '../../safe-pipe'; 
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-staff-manage-student',
   standalone: true,
-  imports: [CommonModule, SafePipe], //
+  imports: [CommonModule, SafePipe, FormsModule], 
   templateUrl: './staff-manage-students.html'
 })
 export class StaffManageStudent implements OnInit {
   students = signal<any[]>([]);
-  staffSem = signal<number>(0);
-  selectedDoc = signal<string | null>(null);
+  staffSemesters = signal<number[]>([]); 
+  selectedSemester = signal<number>(1); // Default view
+  availableSemesters = [1, 2, 3, 4, 5, 6]; 
 
+  // These update AUTOMATICALLY when you change the dropdown
   pendingStudents = computed(() => 
-    this.students().filter(s => s.status === 'pending')
+    this.students().filter(s => s.status === 'pending' && Number(s.semester) === Number(this.selectedSemester()))
   );
 
   approvedRecords = computed(() => 
-    this.students().filter(s => s.status === 'Application approved by staff')
+    this.students().filter(s => s.status === 'Application approved by staff' && Number(s.semester) === Number(this.selectedSemester()))
   );
 
   constructor(
@@ -30,85 +33,61 @@ export class StaffManageStudent implements OnInit {
 
   ngOnInit() {
     if (isPlatformBrowser(this.platformId)) {
-      const staff = JSON.parse(localStorage.getItem('portal_user') || '{}');
-      this.staffSem.set(Number(staff.semester));
-      this.loadMyStudents();
+      const userData = localStorage.getItem('portal_user');
+      const staff = JSON.parse(userData || '{}');
+
+      // Keep track of what this staff is assigned to, but allow them to see all
+      if (staff.semesters && Array.isArray(staff.semesters)) {
+        this.staffSemesters.set(staff.semesters.map((s: any) => Number(s)));
+      }
+      
+      this.loadAllData();
     }
   }
 
-  loadMyStudents() {
+  loadAllData() {
     this.firebaseService.getCollection<any>(FirebaseCollections.Application).subscribe(data => {
-      const filtered = data.filter(s => Number(s.semester) === this.staffSem());
-      const sorted = filtered.sort((a, b) => {
-        const valA = a.appliedAt || ''; 
-        const valB = b.appliedAt || '';
-        return valB.localeCompare(valA);
-      });
-      this.students.set(sorted);
+      this.students.set(data); // Store everything; filtering happens in computed signals
     });
   }
 
-  viewDocument(base64Data: string) {
-    if (!base64Data || base64Data.length < 500) {
-      alert("Error: Document data is missing or invalid.");
+  viewDocument(student: any) {
+    const data = student.document || student.verificationDocBase64 || student.verificationDocUrl;
+    if (!data) {
+      alert("No document data found.");
       return;
     }
 
-    // 1. Handle Word Documents (DOCX) via Download
-    if (base64Data.includes('officedocument.wordprocessingml.document')) {
-      const link = document.createElement('a');
-      link.href = base64Data;
-      link.download = `student_verification_${Date.now()}.docx`;
-      link.click();
-      return;
-    }
-
-    // 2. Set the signal for the modal preview
-    this.selectedDoc.set(base64Data);
-
-    // 3. Open in New Tab for better visibility
     const newTab = window.open();
     if (newTab) {
-      let content = '';
-      if (base64Data.includes('pdf')) {
-        content = `<iframe src="${base64Data}" width="100%" height="100%" style="border:none;"></iframe>`;
-      } else {
-        content = `<img src="${base64Data}" style="max-width:100%; max-height:100vh; object-fit:contain;">`;
-      }
-
-      newTab.document.write(`
-        <body style="margin:0; background:#222; display:flex; justify-content:center; align-items:center; height:100vh;">
-          ${content}
-        </body>
-      `);
+      const content = data.includes('pdf') 
+        ? `<iframe src="${data}" width="100%" height="100%" style="border:none;"></iframe>`
+        : `<img src="${data}" style="max-width:100%; margin:auto; display:block;">`;
+      newTab.document.write(`<body style="margin:0;background:#222;display:flex;justify-content:center;align-items:center;min-height:100vh;">${content}</body>`);
       newTab.document.close();
     }
   }
 
   async verify(student: any) {
-    if(!confirm(`Are you sure you want to approve ${student.name}?`)) return;
+    if(!confirm(`Approve ${student.name}?`)) return;
     try {
       await this.firebaseService.updateDocument(FirebaseCollections.Application, student.id, {
         status: 'Application approved by staff'
       });
+      
       const studentData = {
-        applicationId: student.id,
-        name: student.name,
-        email: student.email,
-        semester: student.semester,
-        division: student.division || 'A',
-        approvedAt: new Date().toISOString(),
-        role: 'student'
+        ...student,
+        status: 'Application approved by staff',
+        approvedAt: new Date().toISOString()
       };
+      
       await this.firebaseService.addDocument('students' as any, studentData);
       await this.firebaseService.sendApprovalEmail(student.email, student.name);
-      alert(`${student.name} approved and moved to registry!`);
+      
+      alert("Verified!");
+      this.loadAllData(); // Refresh list to reflect changes
     } catch (error) {
-      alert("Error approving student.");
+      alert("Error processing approval.");
     }
-  }
-
-  closePreview() {
-    this.selectedDoc.set(null);
   }
 }

@@ -6,33 +6,28 @@
     </div>
   } @else {
     <div class="card border-0 shadow-sm mb-4">
-      <div class="card-body d-flex flex-wrap gap-3 align-items-center bg-white rounded shadow-sm">
-        <h4 class="fw-bold mb-0 text-primary">Department Scheduler</h4>
+      <div class="card-body d-flex flex-wrap gap-3 align-items-center bg-white rounded shadow-sm p-3">
+        <h4 class="fw-bold mb-0 text-primary me-2">BCA Department Scheduler</h4>
         
-        <div class="btn-group btn-group-sm ms-3">
-          <button class="btn" [class.btn-primary]="viewMode() === 'class'" (click)="viewMode.set('class')">By Class</button>
-          <button class="btn" [class.btn-primary]="viewMode() === 'staff'" (click)="viewMode.set('staff')">By Professor</button>
+        <div class="btn-group btn-group-sm me-3">
+          <button class="btn" [class.btn-primary]="viewMode() === 'class'" (click)="viewMode.set('class')">Division</button>
+          <button class="btn" [class.btn-primary]="viewMode() === 'staff'" (click)="viewMode.set('staff')">Faculty</button>
         </div>
 
-        <div class="d-flex gap-2 ms-2">
-          <button class="btn btn-success btn-sm px-3 shadow-sm" (click)="generateFullTimetable()" [disabled]="isGenerating()">⚡ Generate Rooms</button>
-          <button class="btn btn-outline-danger btn-sm px-3 shadow-sm" (click)="clearFullTimetable()" [disabled]="isGenerating()">🗑️ Clear</button>
-        </div>
-
-        <div class="d-flex gap-2 ms-3 align-items-center bg-light p-2 rounded border">
-          <label class="small fw-bold">Start:</label>
-          <input type="time" [ngModel]="startTime()" (ngModelChange)="startTime.set($event)" class="form-control form-control-sm border-0 bg-transparent">
-          <label class="small fw-bold ms-2">End:</label>
-          <input type="time" [ngModel]="endTime()" (ngModelChange)="endTime.set($event)" class="form-control form-control-sm border-0 bg-transparent">
-        </div>
+        <button class="btn btn-success btn-sm px-3 shadow-sm ms-2" (click)="generateFullTimetable()" [disabled]="isGenerating()">⚡ Generate Cycle</button>
 
         <div class="ms-auto d-flex gap-2 align-items-center">
           @if (viewMode() === 'class') {
-            <select [ngModel]="selectedSem()" (ngModelChange)="selectedSem.set(+$event)" class="form-select form-select-sm w-auto border-primary">
-              @for (s of [1,2,3,4,5,6]; track s) { <option [value]="s">Semester {{s}}</option> }
+            <select [ngModel]="selectedSem()" (ngModelChange)="selectedSem.set(+$event)" class="form-select form-select-sm w-auto border-primary fw-bold">
+              <optgroup label="Odd Cycle">
+                @for (s of [1,3,5]; track s) { <option [value]="s">Sem {{s}}</option> }
+              </optgroup>
+              <optgroup label="Even Cycle (Replacement Mode)">
+                @for (s of [2,4,6]; track s) { <option [value]="s">Sem {{s}}</option> }
+              </optgroup>
             </select>
-            <select [ngModel]="selectedDiv()" (ngModelChange)="selectedDiv.set($event)" class="form-select form-select-sm w-auto border-primary">
-              <option value="A">Div A</option><option value="B">Div B</option><option value="C">Div C</option>
+            <select [ngModel]="selectedDiv()" (ngModelChange)="selectedDiv.set($event)" class="form-select form-select-sm w-auto border-primary fw-bold">
+              @for (d of ['A', 'B', 'C']; track d) { <option [value]="d">Div {{d}}</option> }
             </select>
           } @else {
             <select [ngModel]="selectedStaffId()" (ngModelChange)="selectedStaffId.set($event)" class="form-select form-select-sm w-auto border-info">
@@ -44,8 +39,7 @@
       </div>
     </div>
 
-    <!-- MAIN TIMETABLE GRID -->
-    <div class="card border-0 shadow-sm overflow-hidden">
+    <div class="card border-0 shadow-sm overflow-hidden rounded-4">
       <table class="table table-bordered mb-0 text-center align-middle bg-white">
         <thead class="table-dark small">
           <tr><th style="width: 180px;">TIME</th> @for (d of days; track d) { <th>{{d}}</th> } </tr>
@@ -55,34 +49,29 @@
             @if (slot.isRecess) {
               <tr class="recess-row">
                 <td class="small fw-bold text-danger">{{ slot.label }}</td>
-                <td [attr.colspan]="days.length" class="py-2 small fw-bold text-center">🍱 BREAK 🍱</td>
+                <td [attr.colspan]="days.length" class="py-2 small text-center">🍱 COMPULSORY BREAK 🍱</td>
               </tr>
             } @else {
               <tr>
                 <td class="bg-light small fw-bold text-secondary">{{ slot.label }}</td>
                 @for (dayName of days; track dayName) {
-                  <td class="slot-cell p-1" (click)="openEdit(dayName, slot.label)">
-                    
+                  <td class="slot-cell p-1">
                     @for (s of (timetable$ | async); track s.id) {
-                      <!-- Class View -->
                       @if (viewMode() === 'class' && s.day === dayName && s.time === slot.label && s.sem === selectedSem() && s.div === selectedDiv()) {
-                        <div class="lecture-card p-2 text-start shadow-sm mb-1 bg-white" [class.type-lab]="s.type === 'Lab'" [class.type-lecture]="s.type === 'Lecture'">
-                          <div class="fw-bold small">{{ s.subject }}</div>
-                          <div class="text-primary small">👨‍🏫 {{ s.staffName }}</div>
-                          <div class="room-badge"><i class="bi bi-geo-alt"></i> {{ s.roomName || 'Check Infrastructure' }}</div>
+                        <div class="card p-2 text-start shadow-sm border-start border-4 mb-1" [class.type-lab]="s.type === 'Lab'" [class.type-lecture]="s.type === 'Lecture'">
+                          <div class="fw-bold extra-small text-dark">{{ s.subject }}</div>
+                          <div class="text-primary extra-small">👨‍🏫 {{ s.staffName }}</div>
+                          <div class="extra-small badge bg-light text-dark border mt-1 w-fit">{{ s.roomName }}</div>
                         </div>
                       }
-                      
-                      <!-- Staff View -->
                       @if (viewMode() === 'staff' && s.day === dayName && s.time === slot.label && s.staffId === selectedStaffId() && s.staffId !== '') {
-                        <div class="lecture-card p-2 text-start shadow-sm mb-1 bg-white" [class.type-lab]="s.type === 'Lab'" [class.type-lecture]="s.type === 'Lecture'">
-                          <div class="fw-bold small">{{ s.subject }}</div>
-                          <div class="text-success small">🏫 Sem {{ s.sem }} - Div {{ s.div }}</div>
-                          <div class="room-badge fw-bold">📍 {{ s.roomName }}</div>
+                        <div class="card p-2 text-start shadow-sm mb-1 border-start border-4" [class.type-lab]="s.type === 'Lab'" [class.type-lecture]="s.type === 'Lecture'">
+                          <div class="fw-bold extra-small text-dark">{{ s.subject }}</div>
+                          <div class="text-success extra-small fw-bold">🏫 Sem {{ s.sem }} - Div {{ s.div }}</div>
+                          <div class="extra-small badge bg-light text-dark border mt-1 w-fit">{{ s.roomName }}</div>
                         </div>
                       }
                     }
-
                   </td>
                 }
               </tr>
@@ -91,44 +80,5 @@
         </tbody>
       </table>
     </div>
-
-    <!-- EDIT MODAL -->
-    @if (showEditModal()) {
-      <div class="modal-backdrop" (click)="showEditModal.set(false)"></div>
-      <div class="modal show d-block" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-          <div class="modal-content border-0 shadow-lg">
-            <div class="modal-header bg-primary text-white py-2"><h6 class="modal-title">Edit Slot</h6></div>
-            <div class="modal-body py-3">
-              <label class="small fw-bold">Subject</label>
-              <select [(ngModel)]="editingSlot().subject" class="form-select mb-2">
-                @for (sub of allSubjects(); track sub.id) { <option [value]="sub.name">{{ sub.name }}</option> }
-              </select>
-              <label class="small fw-bold">Professor</label>
-              <select [(ngModel)]="editingSlot().staffId" class="form-select mb-2">
-                @for (st of staffList(); track st.id) { <option [value]="st.id">{{ st.name }}</option> }
-              </select>
-              <div class="row">
-                <div class="col-6">
-                  <label class="small fw-bold">Type</label>
-                  <select [(ngModel)]="editingSlot().type" class="form-select">
-                    <option value="Lecture">Lecture</option><option value="Lab">Lab</option>
-                  </select>
-                </div>
-                <div class="col-6">
-                  <label class="small fw-bold">Room Name</label>
-                  <input type="text" [(ngModel)]="editingSlot().roomName" class="form-control" placeholder="Room No">
-                </div>
-              </div>
-            </div>
-            <div class="modal-footer">
-              @if (editingSlot()?.id) { <button class="btn btn-danger btn-sm me-auto" (click)="deleteSlot()">Delete</button> }
-              <button class="btn btn-secondary btn-sm" (click)="showEditModal.set(false)">Cancel</button>
-              <button class="btn btn-primary btn-sm px-4" (click)="saveSlot()">Update</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    }
   }
 </div>
