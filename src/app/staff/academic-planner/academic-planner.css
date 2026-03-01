@@ -1,0 +1,43 @@
+/* Sidebar sizing */
+.sidebar-wrapper {
+  min-width: fit-content;
+  background: #fff;
+  border-right: 1px solid #eee;
+  z-index: 1000;
+}
+
+/* Ensure content takes all remaining space */
+.flex-grow-1 {
+  flex: 1;
+  min-width: 0; /* Prevents content from overflowing and causing scrollbars */
+  background-color: #f8f9fa;
+}
+
+/* Page Polish */
+.backdrop-blur { backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+.tracking-widest { letter-spacing: 0.12rem; }
+.shadow-inner { box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); }
+
+/* College session indicator animation */
+.pulse-status {
+  width: 10px;
+  height: 10px;
+  background: #0d6efd;
+  border-radius: 50%;
+  position: relative;
+}
+
+.pulse-status::after {
+  content: '';
+  position: absolute;
+  width: 100%; height: 100%;
+  background: inherit;
+  border-radius: 50%;
+  animation: ripple 1.5s infinite;
+  opacity: 0.5;
+}
+
+@keyframes ripple {
+  0% { transform: scale(1); opacity: 0.5; }
+  100% { transform: scale(3); opacity: 0; }
+}

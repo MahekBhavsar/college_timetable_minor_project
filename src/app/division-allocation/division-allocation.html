@@ -1,95 +1,101 @@
-<div class="container-fluid p-4 bg-light min-vh-100">
+<app-admin-layout>
+  <div class="container-fluid p-4 bg-light min-vh-100">
 
-  <!-- 🟢 STEP 1: ADD ROOM NAMES HERE (This was missing in your screenshot) -->
-  <div class="card border-0 shadow-sm rounded-4 mb-4 bg-primary text-white">
-    <div class="card-body p-4">
-      <h5 class="fw-bold mb-3"><i class="bi bi-plus-circle me-2"></i>Step 1: Add New Classroom or Lab</h5>
-      <div class="row g-3 align-items-end">
-        <div class="col-md-4">
-          <label class="small fw-bold opacity-75">Type Room Name</label>
-          <input type="text" class="form-control border-0 py-2" [(ngModel)]="roomNameInput" placeholder="e.g. CR-101 or Lab-1">
-        </div>
-        <div class="col-md-3">
-          <label class="small fw-bold opacity-75">Select Category</label>
-          <select class="form-select border-0 py-2" [(ngModel)]="roomTypeInput">
-            <option value="Lecture Room">Lecture Room (Classroom)</option>
-            <option value="Lab Room">Lab Room</option>
-          </select>
-        </div>
-        <div class="col-md-2">
-          <button class="btn btn-dark w-100 fw-bold py-2" (click)="addRoom()">Add To List</button>
-        </div>
-        <div class="col-md-3">
-          <div class="d-flex flex-wrap gap-2">
-            @for (r of rooms(); track r.id) {
+    <!-- 🟢 STEP 1: ADD ROOM NAMES HERE (This was missing in your screenshot) -->
+    <div class="card border-0 shadow-sm rounded-4 mb-4 bg-primary text-white">
+      <div class="card-body p-4">
+        <h5 class="fw-bold mb-3"><i class="bi bi-plus-circle me-2"></i>Step 1: Add New Classroom or Lab</h5>
+        <div class="row g-3 align-items-end">
+          <div class="col-md-4">
+            <label class="small fw-bold opacity-75">Type Room Name</label>
+            <input type="text" class="form-control border-0 py-2" [(ngModel)]="roomNameInput"
+              placeholder="e.g. CR-101 or Lab-1">
+          </div>
+          <div class="col-md-3">
+            <label class="small fw-bold opacity-75">Select Category</label>
+            <select class="form-select border-0 py-2" [(ngModel)]="roomTypeInput">
+              <option value="Lecture Room">Lecture Room (Classroom)</option>
+              <option value="Lab Room">Lab Room</option>
+            </select>
+          </div>
+          <div class="col-md-2">
+            <button class="btn btn-dark w-100 fw-bold py-2" (click)="addRoom()">Add To List</button>
+          </div>
+          <div class="col-md-3">
+            <div class="d-flex flex-wrap gap-2">
+              @for (r of rooms(); track r.id) {
               <span class="badge bg-white text-dark border p-2">
                 {{r.name}} <i class="bi bi-x text-danger ms-1 cursor-pointer" (click)="deleteRoom(r.id)"></i>
               </span>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 2 & 3: Selection Side -->
+    <div class="row g-4">
+      <div class="col-md-3">
+        <div class="card border-0 shadow-sm rounded-4 p-3 bg-white h-100">
+          <p class="small fw-bold text-muted text-uppercase mb-3">Step 2: Select Division</p>
+          <div class="d-flex flex-column gap-2 mb-4">
+            @for (d of divisions; track d) {
+            <button (click)="selectedDiv.set(d)"
+              [class]="selectedDiv() === d ? 'btn btn-primary' : 'btn btn-light text-start'"
+              class="py-3 px-4 rounded-3 border-0 fw-bold">Division {{d}}</button>
+            }
+          </div>
+          <p class="small fw-bold text-muted text-uppercase mb-2">Step 3: Semester</p>
+          <div class="row g-1">
+            @for (s of semesters; track s) {
+            <div class="col-4">
+              <button (click)="selectedSem.set(s)" [class]="selectedSem() === s ? 'btn-dark' : 'btn-light'"
+                class="btn w-100 py-2 small fw-bold">S{{s}}</button>
+            </div>
             }
           </div>
         </div>
       </div>
-    </div>
-  </div>
 
-  <!-- STEP 2 & 3: Selection Side -->
-  <div class="row g-4">
-    <div class="col-md-3">
-      <div class="card border-0 shadow-sm rounded-4 p-3 bg-white h-100">
-        <p class="small fw-bold text-muted text-uppercase mb-3">Step 2: Select Division</p>
-        <div class="d-flex flex-column gap-2 mb-4">
-          @for (d of divisions; track d) {
-            <button (click)="selectedDiv.set(d)"
-                    [class]="selectedDiv() === d ? 'btn btn-primary' : 'btn btn-light text-start'"
-                    class="py-3 px-4 rounded-3 border-0 fw-bold">Division {{d}}</button>
-          }
-        </div>
-        <p class="small fw-bold text-muted text-uppercase mb-2">Step 3: Semester</p>
-        <div class="row g-1">
-          @for (s of semesters; track s) {
-            <div class="col-4">
-              <button (click)="selectedSem.set(s)" [class]="selectedSem() === s ? 'btn-dark' : 'btn-light'" 
-                      class="btn w-100 py-2 small fw-bold">S{{s}}</button>
-            </div>
-          }
-        </div>
-      </div>
-    </div>
-
-    <!-- Step 4: Map them -->
-    <div class="col-md-9">
-      <div class="card border-0 shadow-sm rounded-4 bg-white overflow-hidden">
-        <div class="card-header bg-white border-0 py-4 px-4 d-flex justify-content-between align-items-center">
+      <!-- Step 4: Map them -->
+      <div class="col-md-9">
+        <div class="card border-0 shadow-sm rounded-4 bg-white overflow-hidden">
+          <div class="card-header bg-white border-0 py-4 px-4 d-flex justify-content-between align-items-center">
             <h4 class="mb-0 fw-bold">Assign Space (Div {{selectedDiv()}})</h4>
             <button class="btn btn-primary px-5 rounded-pill shadow-sm" (click)="save()">Save Allocation</button>
-        </div>
-        <div class="card-body p-4 bg-light">
-          <div class="row g-4">
-            <!-- Home Room -->
-            <div class="col-md-6">
-              <div class="p-4 bg-white rounded-4 shadow-sm h-100 border-top border-4 border-primary">
-                <h5 class="fw-bold mb-3">Main Classroom</h5>
-                <div class="list-group">
-                  @for (r of lectureRooms; track r.id) {
-                    <label class="list-group-item d-flex align-items-center mb-1 border-0 rounded-3" [class.bg-primary-subtle]="form.homeRoomId === r.id">
+          </div>
+          <div class="card-body p-4 bg-light">
+            <div class="row g-4">
+              <!-- Home Room -->
+              <div class="col-md-6">
+                <div class="p-4 bg-white rounded-4 shadow-sm h-100 border-top border-4 border-primary">
+                  <h5 class="fw-bold mb-3">Main Classroom</h5>
+                  <div class="list-group">
+                    @for (r of lectureRooms; track r.id) {
+                    <label class="list-group-item d-flex align-items-center mb-1 border-0 rounded-3"
+                      [class.bg-primary-subtle]="form.homeRoomId === r.id">
                       <input type="radio" name="hr" [value]="r.id" [(ngModel)]="form.homeRoomId" class="me-3">
                       <span class="fw-bold">{{r.name}}</span>
                     </label>
-                  } @empty { <p class="text-muted small">No Classrooms found. Add one above! ↑</p> }
+                    } @empty { <p class="text-muted small">No Classrooms found. Add one above! ↑</p> }
+                  </div>
                 </div>
               </div>
-            </div>
-            <!-- Labs -->
-            <div class="col-md-6">
-              <div class="p-4 bg-white rounded-4 shadow-sm h-100 border-top border-4 border-info">
-                <h5 class="fw-bold mb-3">Shared Labs</h5>
-                <div class="list-group">
-                  @for (l of labRooms; track l.id) {
-                    <div class="list-group-item d-flex align-items-center mb-1 border-0 rounded-3" [class.bg-info-subtle]="form.selectedLabs.includes(l.id)">
-                      <input type="checkbox" [checked]="form.selectedLabs.includes(l.id)" (change)="toggleLab(l.id)" class="me-3">
+              <!-- Labs -->
+              <div class="col-md-6">
+                <div class="p-4 bg-white rounded-4 shadow-sm h-100 border-top border-4 border-info">
+                  <h5 class="fw-bold mb-3">Shared Labs</h5>
+                  <div class="list-group">
+                    @for (l of labRooms; track l.id) {
+                    <div class="list-group-item d-flex align-items-center mb-1 border-0 rounded-3"
+                      [class.bg-info-subtle]="form.selectedLabs.includes(l.id)">
+                      <input type="checkbox" [checked]="form.selectedLabs.includes(l.id)" (change)="toggleLab(l.id)"
+                        class="me-3">
                       <span class="fw-bold">{{l.name}}</span>
                     </div>
-                  } @empty { <p class="text-muted small">No Labs found. Add one above! ↑</p> }
+                    } @empty { <p class="text-muted small">No Labs found. Add one above! ↑</p> }
+                  </div>
                 </div>
               </div>
             </div>
@@ -98,4 +104,4 @@
       </div>
     </div>
   </div>
-</div>
+</app-admin-layout>

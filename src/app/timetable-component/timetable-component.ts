@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FirebaseService } from '../services/firebaseservice';
 import { FirebaseCollections } from '../services/firebase-enums';
 import { BehaviorSubject, Subscription } from 'rxjs';
+import { AdminLayoutComponent } from '../admin-layout/admin-layout';
 
 interface TimetableSlot {
   id?: string;
@@ -21,7 +22,7 @@ interface TimetableSlot {
 @Component({
   selector: 'app-timetable',
   standalone: true,
-  imports: [FormsModule, CommonModule],
+  imports: [FormsModule, CommonModule, AdminLayoutComponent],
   templateUrl: './timetable-component.html',
   styles: [`
       .modal-backdrop { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); z-index: 1040; }

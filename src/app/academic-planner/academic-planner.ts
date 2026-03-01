@@ -1,13 +1,14 @@
 import { Component, inject, signal, effect, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { AdminLayoutComponent } from '../admin-layout/admin-layout';
 import { FirebaseService } from '../services/firebaseservice';
 import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-academic-planner',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, AdminLayoutComponent],
   templateUrl: './academic-planner.html',
   styleUrl: './academic-planner.css'
 })
@@ -78,10 +79,10 @@ export class AcademicPlanner {
 
   async savePlanner() {
     this.isSaving.set(true);
-    const data = { 
-      ...this.plannerData, 
+    const data = {
+      ...this.plannerData,
       semester: this.selectedSem(),
-      updatedAt: new Date() 
+      updatedAt: new Date()
     };
 
     try {

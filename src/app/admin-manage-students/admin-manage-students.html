@@ -1,72 +1,71 @@
-<div class="container-fluid py-4 bg-light min-vh-100">
+<app-admin-layout>
+  <div class="container-fluid py-4 bg-light min-vh-100">
 
-  <!-- HEADER -->
-  <div class="card shadow-sm border-0 rounded-4 mb-4 p-4 bg-dark text-white">
-    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+    <!-- HEADER -->
+    <div class="card shadow-sm border-0 rounded-4 mb-4 p-4 bg-dark text-white">
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
 
-      <div>
-        <h4 class="fw-bold mb-1">Academic Registry</h4>
-        <small class="opacity-75">
-          Managing Semester <span class="badge bg-warning text-dark"> {{selectedSemester()}} </span>
-        </small>
-      </div>
+        <div>
+          <h4 class="fw-bold mb-1">Academic Registry</h4>
+          <small class="opacity-75">
+            Managing Semester <span class="badge bg-warning text-dark"> {{selectedSemester()}} </span>
+          </small>
+        </div>
 
-      <div class="d-flex gap-2">
-        <button class="btn btn-warning rounded-pill px-4 fw-semibold shadow-sm"
-          (click)="generateMasterRoll(selectedSemester())"
-          [disabled]="isProcessing()">
+        <div class="d-flex gap-2">
+          <button class="btn btn-warning rounded-pill px-4 fw-semibold shadow-sm"
+            (click)="generateMasterRoll(selectedSemester())" [disabled]="isProcessing()">
 
-          @if(isProcessing()){
+            @if(isProcessing()){
             <span class="spinner-border spinner-border-sm me-2"></span>
-          }
+            }
 
-          Generate Roll List
-        </button>
+            Generate Roll List
+          </button>
 
-        <button class="btn btn-success rounded-pill px-4 fw-semibold shadow-sm"
-          (click)="promoteStudents(selectedSemester())">
-          Promote Students
-        </button>
+          <button class="btn btn-success rounded-pill px-4 fw-semibold shadow-sm"
+            (click)="promoteStudents(selectedSemester())">
+            Promote Students
+          </button>
+        </div>
+
       </div>
-
     </div>
-  </div>
 
-  <!-- SEMESTER SELECTOR -->
-  <div class="card border-0 shadow-sm rounded-4 mb-4 p-2">
-    <div class="d-flex flex-wrap gap-2 justify-content-center">
+    <!-- SEMESTER SELECTOR -->
+    <div class="card border-0 shadow-sm rounded-4 mb-4 p-2">
+      <div class="d-flex flex-wrap gap-2 justify-content-center">
 
-      @for (sem of [1,2,3,4,5,6]; track sem) {
-        <button
-          class="btn rounded-pill px-4 fw-semibold"
+        @for (sem of [1,2,3,4,5,6]; track sem) {
+        <button class="btn rounded-pill px-4 fw-semibold"
           [ngClass]="selectedSemester() === sem ? 'btn-primary shadow-sm' : 'btn-outline-primary'"
           (click)="setSemester(sem)">
           Semester {{sem}}
         </button>
-      }
+        }
 
+      </div>
     </div>
-  </div>
 
-  <!-- STUDENT TABLE -->
-  <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+    <!-- STUDENT TABLE -->
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
 
-    <div class="table-responsive">
+      <div class="table-responsive">
 
-      <table class="table align-middle table-hover mb-0">
+        <table class="table align-middle table-hover mb-0">
 
-        <thead class="table-light text-uppercase small">
-          <tr>
-            <th class="ps-4">Student</th>
-            <th class="text-center">Division</th>
-            <th class="text-center">Roll No</th>
-            <th class="text-center">Action</th>
-          </tr>
-        </thead>
+          <thead class="table-light text-uppercase small">
+            <tr>
+              <th class="ps-4">Student</th>
+              <th class="text-center">Division</th>
+              <th class="text-center">Roll No</th>
+              <th class="text-center">Action</th>
+            </tr>
+          </thead>
 
-        <tbody>
+          <tbody>
 
-          @for (s of filteredStudents(); track s.id) {
+            @for (s of filteredStudents(); track s.id) {
             <tr>
 
               <!-- NAME -->
@@ -77,8 +76,7 @@
 
               <!-- DIVISION -->
               <td class="text-center">
-                <span class="badge px-3 py-2"
-                  [ngClass]="{
+                <span class="badge px-3 py-2" [ngClass]="{
                     'bg-primary': s.division === 'A',
                     'bg-success': s.division === 'B',
                     'bg-info text-dark': s.division === 'C',
@@ -95,17 +93,16 @@
 
               <!-- DELETE -->
               <td class="text-center">
-                <button class="btn btn-outline-danger btn-sm rounded-circle"
-                  (click)="deleteStudent(s.id)">
+                <button class="btn btn-outline-danger btn-sm rounded-circle" (click)="deleteStudent(s.id)">
                   <i class="bi bi-trash"></i>
                 </button>
               </td>
 
             </tr>
-          }
+            }
 
-          <!-- EMPTY STATE -->
-          @empty {
+            <!-- EMPTY STATE -->
+            @empty {
             <tr>
               <td colspan="4" class="text-center py-5 text-muted">
 
@@ -117,12 +114,13 @@
 
               </td>
             </tr>
-          }
+            }
 
-        </tbody>
+          </tbody>
 
-      </table>
+        </table>
+      </div>
     </div>
-  </div>
 
-</div>
+  </div>
+</app-admin-layout>

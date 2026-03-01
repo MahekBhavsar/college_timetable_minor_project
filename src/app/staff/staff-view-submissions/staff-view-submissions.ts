@@ -3,11 +3,12 @@ import { isPlatformBrowser, CommonModule } from '@angular/common';
 import { FirebaseService } from '../../services/firebaseservice';
 import { FirebaseCollections } from '../../services/firebase-enums';
 import { firstValueFrom } from 'rxjs';
+import { StaffLayoutComponent } from '../staff-layout/staff-layout';
 
 @Component({
   selector: 'app-staff-view-submissions',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, StaffLayoutComponent],
   templateUrl: './staff-view-submissions.html'
 })
 export class StaffViewSubmissions implements OnInit {
@@ -16,7 +17,7 @@ export class StaffViewSubmissions implements OnInit {
   assignments = signal<any[]>([]);
   selectedAssignment = signal<any>(null);
   submissions = signal<any[]>([]);
-  
+
   // Controls
   loading = signal(true);
   sendingReminders = signal(false); // Added missing signal
@@ -24,7 +25,7 @@ export class StaffViewSubmissions implements OnInit {
   constructor(
     public firebaseService: FirebaseService, // Changed to public for template access
     @Inject(PLATFORM_ID) private platformId: Object
-  ) {}
+  ) { }
 
   async ngOnInit() {
     if (!isPlatformBrowser(this.platformId)) return;
@@ -60,7 +61,7 @@ export class StaffViewSubmissions implements OnInit {
 
   async openAssignment(a: any) {
     this.selectedAssignment.set(a);
-    this.submissions.set([]); 
+    this.submissions.set([]);
 
     try {
       const data = await firstValueFrom(
@@ -79,20 +80,20 @@ export class StaffViewSubmissions implements OnInit {
   // Added missing method for the 3-day reminder
   // src/app/staff/staff-view-submissions/staff-view-submissions.ts
 
-async sendManualReminders() {
-  this.sendingReminders.set(true);
-  try {
-    // This method already contains the alert() logic for success/no-data
-    await this.firebaseService.checkAndSendReminders();
-    
-    // REMOVED THE alert() FROM HERE TO PREVENT DOUBLE POPUPS
-  } catch (error) {
-    console.error("Reminder error:", error);
-    alert('Failed to send reminders.');
-  } finally {
-    this.sendingReminders.set(false);
+  async sendManualReminders() {
+    this.sendingReminders.set(true);
+    try {
+      // This method already contains the alert() logic for success/no-data
+      await this.firebaseService.checkAndSendReminders();
+
+      // REMOVED THE alert() FROM HERE TO PREVENT DOUBLE POPUPS
+    } catch (error) {
+      console.error("Reminder error:", error);
+      alert('Failed to send reminders.');
+    } finally {
+      this.sendingReminders.set(false);
+    }
   }
-}
 
   viewFile(fileData: string) {
     if (!fileData) {

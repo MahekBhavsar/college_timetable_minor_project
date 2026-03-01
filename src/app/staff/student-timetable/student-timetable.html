@@ -1,42 +1,15 @@
-<div class="container-fluid py-5 bg-body-tertiary min-vh-100">
-
-  <!-- ================= HEADER + FILTER CARD ================= -->
-  <div class="card border-0 shadow rounded-4 mb-4">
-
-    <div class="card-body p-4">
-
-      <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-4 mb-4">
-
-        <!-- Title -->
-        <div>
-          <h4 class="fw-bold text-primary mb-1 d-flex align-items-center">
-            <i class="bi bi-calendar-week me-2"></i>
-            Student Weekly Scheduler
-          </h4>
-          <small class="text-muted">
-            View and manage the weekly timetable by semester and division.
-          </small>
-        </div>
-
-        <!-- Back Button -->
-        <button routerLink="/staff/staff-dashboard"
-                class="btn btn-outline-primary btn-sm px-4 rounded-pill">
-          <i class="bi bi-arrow-left me-1"></i>
-          Back
-        </button>
-
+<app-staff-layout>
+  <div class="container-fluid py-4 bg-light min-vh-100">
+    <div class="card border-0 shadow-sm p-4 mb-4">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="fw-bold text-primary mb-0">Student Weekly Scheduler</h4>
+        <button routerLink="/staff/dashboard" class="btn btn-outline-secondary btn-sm">Back</button>
       </div>
 
-      <!-- Filters -->
       <div class="row g-3">
-
-        <div class="col-md-4">
-          <label class="form-label small fw-semibold text-muted">
-            Semester
-          </label>
-          <select class="form-select shadow-sm"
-                  [ngModel]="selectedSem()"
-                  (ngModelChange)="selectedSem.set($event); fetchTimetable()">
+        <div class="col-md-3">
+          <select class="form-select" [ngModel]="selectedSem()"
+            (ngModelChange)="selectedSem.set($event); fetchTimetable()">
             <option value="">Select Semester</option>
             <option value="1">Semester 1</option>
             <option value="2">Semester 2</option>
@@ -44,107 +17,55 @@
             <option value="4">Semester 4</option>
             <option value="5">Semester 5</option>
             <option value="6">Semester 6</option>
+
           </select>
         </div>
-
-        <div class="col-md-4">
-          <label class="form-label small fw-semibold text-muted">
-            Division
-          </label>
-          <select class="form-select shadow-sm"
-                  [ngModel]="selectedDiv()"
-                  (ngModelChange)="selectedDiv.set($event); fetchTimetable()">
+        <div class="col-md-3">
+          <select class="form-select" [ngModel]="selectedDiv()"
+            (ngModelChange)="selectedDiv.set($event); fetchTimetable()">
             <option value="">Select Division</option>
             <option value="A">Division A</option>
             <option value="B">Division B</option>
             <option value="C">Division C</option>
           </select>
         </div>
-
       </div>
-
     </div>
-  </div>
 
-  <!-- ================= TIMETABLE CARD ================= -->
-  <div class="card border-0 shadow rounded-4 overflow-hidden">
-
-    <div class="table-responsive">
-
-      <table class="table table-bordered align-middle text-center mb-0 table-hover">
-
-        <!-- Header -->
-        <thead class="table-primary text-uppercase small">
-          <tr>
-            <th style="width:120px;" class="fw-semibold">
-              Time
-            </th>
-            @for (day of days; track day) {
-              <th class="fw-semibold">{{ day }}</th>
-            }
-          </tr>
-        </thead>
-
-        <tbody>
-
-          @for (slot of timeSlots; track slot) {
-          <tr>
-
-            <!-- Time Column -->
-            <td class="bg-light fw-semibold small text-secondary">
-              {{ slot }}
-            </td>
-
-            @for (day of days; track day) {
-            <td class="p-2" style="height:110px;">
-
-              <!-- Break -->
-              @if (slot === '01:30 PM - 02:00 PM') {
-              <div class="h-100 d-flex flex-column justify-content-center align-items-center 
-                          bg-warning-subtle rounded-3 fw-semibold text-warning">
-                <i class="bi bi-cup-hot mb-1"></i>
-                Break
-              </div>
-              }
-
-              <!-- Lecture -->
-              @else if (timetableGrid()[slot] && timetableGrid()[slot][day]) {
-
-              <div class="card border-0 shadow-sm h-100 rounded-3 text-start">
-
-                <div class="card-body p-2 d-flex flex-column justify-content-between">
-
-                  <div class="fw-bold text-primary small text-truncate">
-                    {{ timetableGrid()[slot][day].subject }}
-                  </div>
-
-                  <div class="small text-success">
-                    <i class="bi bi-person-circle me-1"></i>
-                    {{ timetableGrid()[slot][day].staffName }}
-                  </div>
-
-                  <div class="small text-muted">
-                    <i class="bi bi-geo-alt me-1"></i>
-                    {{ timetableGrid()[slot][day].roomName }}
-                  </div>
-
+    <div class="card border-0 shadow-sm overflow-hidden">
+      <div class="table-responsive">
+        <table class="table table-bordered mb-0 scheduler-grid">
+          <thead class="bg-dark text-white text-center">
+            <tr>
+              <th style="width: 120px;">TIME</th>
+              @for (day of days; track day) { <th>{{ day }}</th> }
+            </tr>
+          </thead>
+          <tbody>
+            @for (slot of timeSlots; track slot) {
+            <tr>
+              <td class="text-center align-middle small fw-bold bg-light">{{ slot }}</td>
+              @for (day of days; track day) {
+              <td class="p-1" style="height: 110px; width: 15%;">
+                @if (slot === '01:30 PM - 02:00 PM') {
+                <div
+                  class="h-100 d-flex align-items-center justify-content-center bg-warning-subtle text-warning fw-bold small">
+                  🍱 BREAK
                 </div>
-
-              </div>
-
+                } @else if (timetableGrid()[slot] && timetableGrid()[slot][day]) {
+                <div class="lecture-box">
+                  <div class="subject">{{ timetableGrid()[slot][day].subject }}</div>
+                  <div class="prof text-success">👤 {{ timetableGrid()[slot][day].staffName }}</div>
+                  <div class="room text-muted">📍 {{ timetableGrid()[slot][day].roomName }}</div>
+                </div>
+                }
+              </td>
               }
-
-            </td>
+            </tr>
             }
-
-          </tr>
-          }
-
-        </tbody>
-
-      </table>
-
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
-
-</div>
+</app-staff-layout>
