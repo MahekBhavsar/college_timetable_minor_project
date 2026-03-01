@@ -1,0 +1,60 @@
+/* Sidebar base width */
+.sidebar {
+  width: 280px;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow-x: hidden;
+  white-space: nowrap;
+}
+
+/* Collapsed width */
+.sidebar.collapsed {
+  width: 85px;
+}
+
+/* Ensure nav links stay centered when collapsed */
+.nav-link {
+  display: flex;
+  align-items: center;
+  color: #4b5563;
+  font-weight: 500;
+  border-radius: 12px !important;
+  transition: all 0.2s;
+  overflow: hidden;
+}
+
+.sidebar.collapsed .nav-link {
+  padding-left: 18px;
+}
+
+/* Animation for smooth text appearance */
+.animate-fade {
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateX(-10px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.nav-link.active {
+  background-color: #e7f1ff !important;
+  color: #0d6efd !important;
+  font-weight: 700;
+}
+
+.nav-link:hover {
+  background-color: #f3f4f6;
+  color: #0d6efd;
+}
+
+/* Responsive adjustment */
+@media (max-width: 768px) {
+  .sidebar:not(.collapsed) {
+    position: fixed;
+    z-index: 1000;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+  }
+}

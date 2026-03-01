@@ -1,92 +1,155 @@
-<div class="container-fluid p-4 bg-light min-vh-100">
-  @if (isLoading()) {
+<app-admin-layout>
+  <div class="container-fluid p-4 bg-light min-vh-100">
+    @if (isLoading()) {
     <div class="text-center py-5 mt-5">
       <div class="spinner-border text-primary"></div>
       <p class="mt-2 fw-bold text-primary">Syncing Database...</p>
     </div>
-  } @else {
+    } @else {
     <div class="card border-0 shadow-sm mb-4">
       <div class="card-body d-flex flex-wrap gap-3 align-items-center bg-white rounded shadow-sm">
         <h4 class="fw-bold mb-0 text-primary">Department Scheduler</h4>
-        
+
         <div class="btn-group btn-group-sm ms-3">
-          <button class="btn" [class.btn-primary]="viewMode() === 'class'" (click)="viewMode.set('class')">By Class</button>
-          <button class="btn" [class.btn-primary]="viewMode() === 'staff'" (click)="viewMode.set('staff')">By Professor</button>
+          <button class="btn" [class.btn-primary]="viewMode() === 'class'" (click)="viewMode.set('class')">By
+            Class</button>
+          <button class="btn" [class.btn-primary]="viewMode() === 'staff'" (click)="viewMode.set('staff')">By
+            Professor</button>
         </div>
 
         <div class="d-flex gap-2 ms-2">
-          <button class="btn btn-success btn-sm px-3 shadow-sm" (click)="generateFullTimetable()" [disabled]="isGenerating()">⚡ Generate Rooms</button>
-          <button class="btn btn-outline-danger btn-sm px-3 shadow-sm" (click)="clearFullTimetable()" [disabled]="isGenerating()">🗑️ Clear</button>
+          <button class="btn btn-success btn-sm px-3 shadow-sm" (click)="generateFullTimetable()"
+            [disabled]="isGenerating()">⚡ Generate Single Div</button>
+          <button class="btn btn-warning btn-sm px-3 shadow-sm text-dark fw-bold" (click)="generateMassTimetable('odd')"
+            [disabled]="isGenerating()">⚡ Generate Odd Sems</button>
+          <button class="btn btn-warning btn-sm px-3 shadow-sm text-dark fw-bold"
+            (click)="generateMassTimetable('even')" [disabled]="isGenerating()">⚡ Generate Even Sems</button>
+          <button class="btn btn-outline-danger btn-sm px-3 shadow-sm" (click)="clearFullTimetable()"
+            [disabled]="isGenerating()">🗑️ Clear</button>
         </div>
 
         <div class="d-flex gap-2 ms-3 align-items-center bg-light p-2 rounded border">
-          <label class="small fw-bold">Start:</label>
-          <input type="time" [ngModel]="startTime()" (ngModelChange)="startTime.set($event)" class="form-control form-control-sm border-0 bg-transparent">
-          <label class="small fw-bold ms-2">End:</label>
-          <input type="time" [ngModel]="endTime()" (ngModelChange)="endTime.set($event)" class="form-control form-control-sm border-0 bg-transparent">
+          <label class="small fw-bold">Start (Sem {{selectedSem()}}):</label>
+          <input type="time" [ngModel]="startTime()[selectedSem()]" (ngModelChange)="updateStartTime($event)"
+            class="form-control form-control-sm border-0 bg-transparent">
+          <label class="small fw-bold ms-2">End (Sem {{selectedSem()}}):</label>
+          <input type="time" [ngModel]="endTime()[selectedSem()]" (ngModelChange)="updateEndTime($event)"
+            class="form-control form-control-sm border-0 bg-transparent">
         </div>
 
         <div class="ms-auto d-flex gap-2 align-items-center">
           @if (viewMode() === 'class') {
-            <select [ngModel]="selectedSem()" (ngModelChange)="selectedSem.set(+$event)" class="form-select form-select-sm w-auto border-primary">
-              @for (s of [1,2,3,4,5,6]; track s) { <option [value]="s">Semester {{s}}</option> }
-            </select>
-            <select [ngModel]="selectedDiv()" (ngModelChange)="selectedDiv.set($event)" class="form-select form-select-sm w-auto border-primary">
-              <option value="A">Div A</option><option value="B">Div B</option><option value="C">Div C</option>
-            </select>
+          <select [ngModel]="selectedSem()" (ngModelChange)="selectedSem.set(+$event)"
+            class="form-select form-select-sm w-auto border-primary">
+            @for (s of [1,2,3,4,5,6]; track s) { <option [value]="s">Semester {{s}}</option> }
+          </select>
+          <select [ngModel]="selectedDiv()" (ngModelChange)="selectedDiv.set($event)"
+            class="form-select form-select-sm w-auto border-primary">
+            <option value="A">Div A</option>
+            <option value="B">Div B</option>
+            <option value="C">Div C</option>
+          </select>
           } @else {
-            <select [ngModel]="selectedStaffId()" (ngModelChange)="selectedStaffId.set($event)" class="form-select form-select-sm w-auto border-info">
-              <option value="">-- Choose Professor --</option>
-              @for (st of staffList(); track st.id) { <option [value]="st.id">{{st.name}}</option> }
-            </select>
+          <select [ngModel]="selectedStaffId()" (ngModelChange)="selectedStaffId.set($event)"
+            class="form-select form-select-sm w-auto border-info">
+            <option value="">-- Choose Professor --</option>
+            @for (st of staffList(); track st.id) { <option [value]="st.id">{{st.name}}</option> }
+          </select>
           }
         </div>
       </div>
     </div>
 
+    <!-- TRACKING RIBBON -->
+    @if (viewMode() === 'class') {
+    <div class="card border-0 shadow-sm mb-4 bg-white">
+      <div class="card-body py-2 d-flex align-items-center justify-content-between">
+        <div class="d-flex gap-4">
+          <div class="small">
+            <span class="text-secondary fw-bold">Expected Lectures:</span>
+            <span class="ms-1 badge bg-primary">{{ trackingMetrics.expectedLec }}</span>
+          </div>
+          <div class="small">
+            <span class="text-secondary fw-bold">Scheduled Lectures:</span>
+            <span class="ms-1 badge" [class.bg-success]="trackingMetrics.scheduledLec >= trackingMetrics.expectedLec"
+              [class.bg-warning]="trackingMetrics.scheduledLec < trackingMetrics.expectedLec">{{
+              trackingMetrics.scheduledLec }}</span>
+          </div>
+          <div class="small border-start ps-4">
+            <span class="text-secondary fw-bold">Expected Labs:</span>
+            <span class="ms-1 badge bg-primary">{{ trackingMetrics.expectedLab }}</span>
+          </div>
+          <div class="small">
+            <span class="text-secondary fw-bold">Scheduled Labs:</span>
+            <span class="ms-1 badge" [class.bg-success]="trackingMetrics.scheduledLab >= trackingMetrics.expectedLab"
+              [class.bg-warning]="trackingMetrics.scheduledLab < trackingMetrics.expectedLab">{{
+              trackingMetrics.scheduledLab }}</span>
+          </div>
+        </div>
+        @if (trackingMetrics.missing.length > 0) {
+        <div class="text-danger small fw-bold">
+          <i class="bi bi-exclamation-triangle-fill me-1"></i>
+          Missing: {{ trackingMetrics.missing.join(', ') }}
+        </div>
+        } @else if (trackingMetrics.expectedLec > 0 || trackingMetrics.expectedLab > 0) {
+        <div class="text-success small fw-bold">
+          <i class="bi bi-check-circle-fill me-1"></i> All subjects scheduled!
+        </div>
+        }
+      </div>
+    </div>
+    }
+
     <!-- MAIN TIMETABLE GRID -->
     <div class="card border-0 shadow-sm overflow-hidden">
       <table class="table table-bordered mb-0 text-center align-middle bg-white">
         <thead class="table-dark small">
-          <tr><th style="width: 180px;">TIME</th> @for (d of days; track d) { <th>{{d}}</th> } </tr>
+          <tr>
+            <th style="width: 180px;">TIME</th> @for (d of days; track d) { <th>{{d}}</th> }
+          </tr>
         </thead>
         <tbody>
-          @for (slot of currentTimeSlots; track slot.label) {
-            @if (slot.isRecess) {
-              <tr class="recess-row">
-                <td class="small fw-bold text-danger">{{ slot.label }}</td>
-                <td [attr.colspan]="days.length" class="py-2 small fw-bold text-center">🍱 BREAK 🍱</td>
-              </tr>
-            } @else {
-              <tr>
-                <td class="bg-light small fw-bold text-secondary">{{ slot.label }}</td>
-                @for (dayName of days; track dayName) {
-                  <td class="slot-cell p-1" (click)="openEdit(dayName, slot.label)">
-                    
-                    @for (s of (timetable$ | async); track s.id) {
-                      <!-- Class View -->
-                      @if (viewMode() === 'class' && s.day === dayName && s.time === slot.label && s.sem === selectedSem() && s.div === selectedDiv()) {
-                        <div class="lecture-card p-2 text-start shadow-sm mb-1 bg-white" [class.type-lab]="s.type === 'Lab'" [class.type-lecture]="s.type === 'Lecture'">
-                          <div class="fw-bold small">{{ s.subject }}</div>
-                          <div class="text-primary small">👨‍🏫 {{ s.staffName }}</div>
-                          <div class="room-badge"><i class="bi bi-geo-alt"></i> {{ s.roomName || 'Check Infrastructure' }}</div>
-                        </div>
-                      }
-                      
-                      <!-- Staff View -->
-                      @if (viewMode() === 'staff' && s.day === dayName && s.time === slot.label && s.staffId === selectedStaffId() && s.staffId !== '') {
-                        <div class="lecture-card p-2 text-start shadow-sm mb-1 bg-white" [class.type-lab]="s.type === 'Lab'" [class.type-lecture]="s.type === 'Lecture'">
-                          <div class="fw-bold small">{{ s.subject }}</div>
-                          <div class="text-success small">🏫 Sem {{ s.sem }} - Div {{ s.div }}</div>
-                          <div class="room-badge fw-bold">📍 {{ s.roomName }}</div>
-                        </div>
-                      }
-                    }
+          @for (slot of getTimeSlotsForSem(selectedSem()); track slot.label) {
+          @if (slot.isRecess) {
+          <tr class="recess-row">
+            <td class="small fw-bold text-danger">{{ slot.label }}</td>
+            <td [attr.colspan]="days.length" class="py-2 small fw-bold text-center">🍱 BREAK 🍱</td>
+          </tr>
+          } @else {
+          <tr>
+            <td class="bg-light small fw-bold text-secondary">{{ slot.label }}</td>
+            @for (dayName of days; track dayName) {
+            <td class="slot-cell p-1" (click)="openEdit(dayName, slot.label)">
 
-                  </td>
-                }
-              </tr>
+              @for (s of (timetable$ | async); track s.id) {
+              <!-- Class View -->
+              @if (viewMode() === 'class' && s.day === dayName && s.time === slot.label && s.sem === selectedSem() &&
+              s.div === selectedDiv()) {
+              <div class="lecture-card p-2 text-start shadow-sm mb-1 bg-white" [class.type-lab]="s.type === 'Lab'"
+                [class.type-lecture]="s.type === 'Lecture'">
+                <div class="fw-bold small">{{ s.subject }}</div>
+                <div class="text-primary small">👨‍🏫 {{ s.staffName }}</div>
+                <div class="room-badge"><i class="bi bi-geo-alt"></i> {{ s.roomName || 'Check Infrastructure' }}</div>
+              </div>
+              }
+
+              <!-- Staff View -->
+              @if (viewMode() === 'staff' && s.day === dayName && s.time === slot.label && s.staffId ===
+              selectedStaffId()
+              && s.staffId !== '') {
+              <div class="lecture-card p-2 text-start shadow-sm mb-1 bg-white" [class.type-lab]="s.type === 'Lab'"
+                [class.type-lecture]="s.type === 'Lecture'">
+                <div class="fw-bold small">{{ s.subject }}</div>
+                <div class="text-success small">🏫 Sem {{ s.sem }} - Div {{ s.div }}</div>
+                <div class="room-badge fw-bold">📍 {{ s.roomName }}</div>
+              </div>
+              }
+              }
+
+            </td>
             }
+          </tr>
+          }
           }
         </tbody>
       </table>
@@ -94,41 +157,47 @@
 
     <!-- EDIT MODAL -->
     @if (showEditModal()) {
-      <div class="modal-backdrop" (click)="showEditModal.set(false)"></div>
-      <div class="modal show d-block" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-          <div class="modal-content border-0 shadow-lg">
-            <div class="modal-header bg-primary text-white py-2"><h6 class="modal-title">Edit Slot</h6></div>
-            <div class="modal-body py-3">
-              <label class="small fw-bold">Subject</label>
-              <select [(ngModel)]="editingSlot().subject" class="form-select mb-2">
-                @for (sub of allSubjects(); track sub.id) { <option [value]="sub.name">{{ sub.name }}</option> }
-              </select>
-              <label class="small fw-bold">Professor</label>
-              <select [(ngModel)]="editingSlot().staffId" class="form-select mb-2">
-                @for (st of staffList(); track st.id) { <option [value]="st.id">{{ st.name }}</option> }
-              </select>
-              <div class="row">
-                <div class="col-6">
-                  <label class="small fw-bold">Type</label>
-                  <select [(ngModel)]="editingSlot().type" class="form-select">
-                    <option value="Lecture">Lecture</option><option value="Lab">Lab</option>
-                  </select>
-                </div>
-                <div class="col-6">
-                  <label class="small fw-bold">Room Name</label>
-                  <input type="text" [(ngModel)]="editingSlot().roomName" class="form-control" placeholder="Room No">
-                </div>
+    <div class="modal-backdrop" (click)="showEditModal.set(false)"></div>
+    <div class="modal show d-block" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+          <div class="modal-header bg-primary text-white py-2">
+            <h6 class="modal-title">Edit Slot</h6>
+          </div>
+          <div class="modal-body py-3">
+            <label class="small fw-bold">Subject</label>
+            <select [(ngModel)]="editingSlot().subject" class="form-select mb-2">
+              @for (sub of allSubjects(); track sub.id) { <option [value]="sub.name">{{ sub.name }}</option> }
+            </select>
+            <label class="small fw-bold">Professor</label>
+            <select [(ngModel)]="editingSlot().staffId" class="form-select mb-2">
+              @for (st of staffList(); track st.id) { <option [value]="st.id">{{ st.name }}</option> }
+            </select>
+            <div class="row">
+              <div class="col-6">
+                <label class="small fw-bold">Type</label>
+                <select [(ngModel)]="editingSlot().type" class="form-select">
+                  <option value="Lecture">Lecture</option>
+                  <option value="Lab">Lab</option>
+                </select>
+              </div>
+              <div class="col-6">
+                <label class="small fw-bold">Room Name</label>
+                <input type="text" [(ngModel)]="editingSlot().roomName" class="form-control" placeholder="Room No">
               </div>
             </div>
-            <div class="modal-footer">
-              @if (editingSlot()?.id) { <button class="btn btn-danger btn-sm me-auto" (click)="deleteSlot()">Delete</button> }
-              <button class="btn btn-secondary btn-sm" (click)="showEditModal.set(false)">Cancel</button>
-              <button class="btn btn-primary btn-sm px-4" (click)="saveSlot()">Update</button>
-            </div>
+          </div>
+          <div class="modal-footer">
+            @if (editingSlot()?.id) { <button class="btn btn-danger btn-sm me-auto"
+              (click)="deleteSlot()">Delete</button>
+            }
+            <button class="btn btn-secondary btn-sm" (click)="showEditModal.set(false)">Cancel</button>
+            <button class="btn btn-primary btn-sm px-4" (click)="saveSlot()">Update</button>
           </div>
         </div>
       </div>
+    </div>
     }
-  }
-</div>
+    }
+  </div>
+</app-admin-layout>

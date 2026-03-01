@@ -11,19 +11,21 @@ interface Unit {
   topics: string[];
 }
 
+import { StaffLayoutComponent } from '../staff-layout/staff-layout';
+
 @Component({
   selector: 'app-teacher-planner',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, StaffLayoutComponent],
   templateUrl: './planner.html',
   styleUrls: ['./planner.css']
 })
 export class TeacherPlanner implements OnInit {
   staffUser = signal<any>(null);
   assignedSubjects = signal<string[]>([]);
-  
+
   units = signal<Unit[]>([{ name: '', topics: [''] }]);
-  
+
   selectedSubject = signal<string>('');
   startDate = signal<string>('');
   endDate = signal<string>('');
@@ -34,7 +36,7 @@ export class TeacherPlanner implements OnInit {
   constructor(
     private firebaseService: FirebaseService,
     @Inject(PLATFORM_ID) private platformId: Object
-  ) {}
+  ) { }
 
   async ngOnInit() {
     if (isPlatformBrowser(this.platformId)) {
@@ -64,8 +66,8 @@ export class TeacherPlanner implements OnInit {
     try {
       const data = await firstValueFrom(
         this.firebaseService.getFilteredCollection<any>(
-          FirebaseCollections.personal_planner, 
-          'staffName', 
+          FirebaseCollections.personal_planner,
+          'staffName',
           user.name
         )
       );
@@ -74,7 +76,7 @@ export class TeacherPlanner implements OnInit {
       if (subjectPlan && subjectPlan.plan) {
         this.generatedPlan.set(subjectPlan.plan);
       } else {
-        this.generatedPlan.set([]); 
+        this.generatedPlan.set([]);
       }
     } catch (err) {
       console.error("Fetch Error:", err);
@@ -102,7 +104,7 @@ export class TeacherPlanner implements OnInit {
       const existing = await firstValueFrom(
         this.firebaseService.getFilteredCollection<any>(FirebaseCollections.personal_planner, 'staffName', user.name)
       );
-      
+
       const existingDoc = existing.find(doc => doc.subject === subject);
 
       if (existingDoc?.id) {
@@ -110,7 +112,7 @@ export class TeacherPlanner implements OnInit {
       } else {
         await this.firebaseService.addDocument(FirebaseCollections.personal_planner, data);
       }
-      
+
       if (!isSilent) alert('Plan Saved Successfully!');
     } catch (err) {
       console.error("Save error:", err);
@@ -133,7 +135,7 @@ export class TeacherPlanner implements OnInit {
     if (!this.selectedSubject() || !this.startDate() || !this.endDate()) return alert("Select Subject & Dates");
 
     let topicQueue: any[] = [];
-    this.units().forEach(u => u.topics.forEach(t => t.trim() && topicQueue.push({u: u.name || 'Unit', t})));
+    this.units().forEach(u => u.topics.forEach(t => t.trim() && topicQueue.push({ u: u.name || 'Unit', t })));
 
     let current = new Date(this.startDate());
     const end = new Date(this.endDate());

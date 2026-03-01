@@ -1,13 +1,14 @@
 import { Component, OnInit, signal, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { AdminLayoutComponent } from '../admin-layout/admin-layout';
 import { FirebaseService } from '../services/firebaseservice';
 import { FirebaseCollections } from '../services/firebase-enums';
 
 @Component({
   selector: 'app-subject',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, AdminLayoutComponent],
   templateUrl: './subject.html',
   styles: [`
     .badge-major { background: #e0e7ff; color: #4338ca; padding: 4px 10px; border-radius: 6px; font-weight: 600; font-size: 11px; }
@@ -86,9 +87,9 @@ export class Subject implements OnInit {
     // 🔥 STRICT RULE: Math, Communication, AEC, SEC, VAC strictly DO NOT have labs
     const restrictedTypes = ['AEC', 'SEC', 'VAC'];
     const isSpecialized = nameLower.includes('math') || nameLower.includes('comm');
-    
+
     if (restrictedTypes.includes(typeUpper) || isSpecialized) {
-      this.newSubject.labCount = 0; 
+      this.newSubject.labCount = 0;
     }
 
     const subjectData = {

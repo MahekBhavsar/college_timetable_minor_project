@@ -1,13 +1,14 @@
 import { Component, inject, signal, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { FirebaseService } from '../services/firebaseservice'; 
+import { FirebaseService } from '../services/firebaseservice';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { AdminLayoutComponent } from '../admin-layout/admin-layout';
 
 @Component({
   selector: 'app-division-allocation',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, AdminLayoutComponent],
   templateUrl: './division-allocation.html',
   styleUrl: './division-allocation.css'
 })
@@ -22,7 +23,7 @@ export class DivisionAllocationComponent {
   semesters = [1, 2, 3, 4, 5, 6];
   selectedDiv = signal('A');
   selectedSem = signal(1);
-  
+
   rooms = toSignal(this.fb.getCollection<any>('rooms' as any), { initialValue: [] });
   allocations = toSignal(this.fb.getCollection<any>('division_allocations' as any), { initialValue: [] });
 
@@ -44,9 +45,9 @@ export class DivisionAllocationComponent {
   // --- NEW: This adds the room to the list ---
   async addRoom() {
     if (!this.roomNameInput.trim()) return alert('Type a name first (e.g. CR-101)');
-    await this.fb.addDocument('rooms' as any, { 
-      name: this.roomNameInput, 
-      type: this.roomTypeInput 
+    await this.fb.addDocument('rooms' as any, {
+      name: this.roomNameInput,
+      type: this.roomTypeInput
     });
     this.roomNameInput = ''; // Clear the box logic
   }

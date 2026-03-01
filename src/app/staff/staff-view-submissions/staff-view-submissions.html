@@ -1,70 +1,70 @@
-<div class="container py-4">
-  
-  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
-    <div>
-      <h3 class="fw-bold text-dark mb-1">Assignment Submissions</h3>
-      <p class="text-muted small mb-0">Review student work and manage deadlines.</p>
-    </div>
-    
-    <button class="btn btn-warning rounded-pill px-4 shadow-sm d-flex align-items-center gap-2 fw-bold" 
-            (click)="sendManualReminders()" 
-            [disabled]="sendingReminders() || loading()">
-      @if (sendingReminders()) {
+<app-staff-layout>
+  <div class="container py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+      <div>
+        <h3 class="fw-bold text-dark mb-1">Assignment Submissions</h3>
+        <p class="text-muted small mb-0">Review student work and manage deadlines.</p>
+      </div>
+
+      <button class="btn btn-warning rounded-pill px-4 shadow-sm d-flex align-items-center gap-2 fw-bold"
+        (click)="sendManualReminders()" [disabled]="sendingReminders() || loading()">
+        @if (sendingReminders()) {
         <span class="spinner-border spinner-border-sm" role="status"></span>
         Sending...
-      } @else {
+        } @else {
         <i class="bi bi-bell-fill"></i> Send 3-Day Reminders
-      }
-    </button>
-  </div>
+        }
+      </button>
+    </div>
 
-  <div class="row g-4">
-    <div class="col-md-4">
-      <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
-        <div class="card-header bg-primary text-white py-3">
-          <h6 class="mb-0 fw-bold">My Assignments</h6>
-        </div>
-        <div class="list-group list-group-flush">
-          @if (loading()) {
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+          <div class="card-header bg-primary text-white py-3">
+            <h6 class="mb-0 fw-bold">My Assignments</h6>
+          </div>
+          <div class="list-group list-group-flush">
+            @if (loading()) {
             <div class="p-4 text-center text-muted">
               <div class="spinner-border spinner-border-sm text-primary mb-2"></div>
               <p class="small">Loading assignments...</p>
             </div>
-          }
+            }
 
-          @for (a of assignments(); track a.id) {
-            <button 
-              class="list-group-item list-group-item-action border-0 py-3 px-3"
-              [class.active]="selectedAssignment()?.id === a.id"
-              (click)="openAssignment(a)">
+            @for (a of assignments(); track a.id) {
+            <button class="list-group-item list-group-item-action border-0 py-3 px-3"
+              [class.active]="selectedAssignment()?.id === a.id" (click)="openAssignment(a)">
               <div class="fw-bold">{{a.subject}}</div>
               <div class="small opacity-75 text-truncate">{{a.title}}</div>
               <small class="d-block mt-1 text-uppercase" style="font-size: 0.65rem;">
                 Div: {{a.divisions?.join(', ') || 'N/A'}}
               </small>
             </button>
-          }
+            }
 
-          @if (!loading() && assignments().length === 0) {
+            @if (!loading() && assignments().length === 0) {
             <div class="p-5 text-center text-muted small">No assignments found.</div>
-          }
+            }
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="col-md-8">
-      @if (!selectedAssignment()) {
-        <div class="card border-0 shadow-sm rounded-4 p-5 text-center bg-white h-100 d-flex flex-column justify-content-center">
+      <div class="col-md-8">
+        @if (!selectedAssignment()) {
+        <div
+          class="card border-0 shadow-sm rounded-4 p-5 text-center bg-white h-100 d-flex flex-column justify-content-center">
           <i class="bi bi-folder2-open fs-1 text-primary opacity-25 mb-3"></i>
           <h5 class="fw-bold">Select an Assignment</h5>
           <p class="text-muted small">Choose an item from the left to view student files.</p>
         </div>
-      } @else {
+        } @else {
         <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
           <div class="card-header bg-white border-bottom py-3 px-4 d-flex justify-content-between align-items-center">
             <div>
               <h5 class="fw-bold mb-0">{{selectedAssignment().title}}</h5>
-              <span class="badge bg-primary-subtle text-primary rounded-pill px-3">{{selectedAssignment().subject}}</span>
+              <span
+                class="badge bg-primary-subtle text-primary rounded-pill px-3">{{selectedAssignment().subject}}</span>
             </div>
             <div class="text-end">
               <small class="text-muted d-block">Due Date</small>
@@ -84,35 +84,36 @@
                 </thead>
                 <tbody>
                   @for (s of submissions(); track s.id) {
-                    <tr>
-                      <td class="ps-4 py-3">
-                        <div class="fw-bold text-dark">{{s.studentName}}</div>
-                        <small class="text-muted">{{s.studentEmail || 'No email'}}</small>
-                      </td>
-                      <td>
-                        <span class="badge bg-light text-dark border-0 fw-normal rounded-pill px-3">
-                          Div {{s.division}} | Roll: {{s.rollNo}}
-                        </span>
-                      </td>
-                      <td class="text-end pe-4">
-                        <button class="btn btn-sm btn-outline-primary rounded-3" (click)="viewFile(s.fileData)">
-                          <i class="bi bi-eye me-1"></i> View File
-                        </button>
-                      </td>
-                    </tr>
+                  <tr>
+                    <td class="ps-4 py-3">
+                      <div class="fw-bold text-dark">{{s.studentName}}</div>
+                      <small class="text-muted">{{s.studentEmail || 'No email'}}</small>
+                    </td>
+                    <td>
+                      <span class="badge bg-light text-dark border-0 fw-normal rounded-pill px-3">
+                        Div {{s.division}} | Roll: {{s.rollNo}}
+                      </span>
+                    </td>
+                    <td class="text-end pe-4">
+                      <button class="btn btn-sm btn-outline-primary rounded-3" (click)="viewFile(s.fileData)">
+                        <i class="bi bi-eye me-1"></i> View File
+                      </button>
+                    </td>
+                  </tr>
                   } @empty {
-                    <tr>
-                      <td colspan="3" class="text-center py-5 text-muted small">
-                        No submissions received yet for this assignment.
-                      </td>
-                    </tr>
+                  <tr>
+                    <td colspan="3" class="text-center py-5 text-muted small">
+                      No submissions received yet for this assignment.
+                    </td>
+                  </tr>
                   }
                 </tbody>
               </table>
             </div>
           </div>
         </div>
-      }
+        }
+      </div>
     </div>
   </div>
-</div>
+</app-staff-layout>

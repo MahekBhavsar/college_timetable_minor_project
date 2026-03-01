@@ -3,11 +3,12 @@ import { isPlatformBrowser, CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { FirebaseService } from '../../services/firebaseservice';
+import { StaffLayoutComponent } from '../staff-layout/staff-layout';
 
 @Component({
   selector: 'app-student-timetable',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, StaffLayoutComponent],
   templateUrl: './student-timetable.html',
   styleUrls: ['./student-timetable.css']
 })
@@ -15,7 +16,7 @@ export class StudentTimetable implements OnInit {
   selectedSem = signal<string>('');
   selectedDiv = signal<string>('');
   timetableGrid = signal<any>({});
-  
+
   days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   // Ensure these match your Firestore "time" strings EXACTLY
   timeSlots = [
@@ -27,9 +28,9 @@ export class StudentTimetable implements OnInit {
   constructor(
     private firebaseService: FirebaseService,
     @Inject(PLATFORM_ID) private platformId: Object
-  ) {}
+  ) { }
 
-  ngOnInit(): void {}
+  ngOnInit(): void { }
 
   fetchTimetable() {
     if (!this.selectedSem() || !this.selectedDiv()) return;
@@ -40,7 +41,7 @@ export class StudentTimetable implements OnInit {
     this.firebaseService.getFilteredCollection<any>('Timetable', 'sem', semValue)
       .subscribe(data => {
         console.log("Raw Data from DB:", data); // Check if this is empty
-        
+
         const filtered = data.filter(item => item.div === this.selectedDiv());
         console.log("Filtered by Div:", filtered);
 
