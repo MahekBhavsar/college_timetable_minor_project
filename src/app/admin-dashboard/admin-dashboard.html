@@ -1,182 +1,175 @@
-<div class="min-vh-100" style="background-color: #f0f4f8;">
-  
-  <nav class="navbar navbar-expand-lg navbar-dark shadow-sm py-3" style="background: #002d72;">
-    <div class="container">
-      <a class="navbar-brand fw-bold d-flex align-items-center" href="#">
-        <div class="bg-warning rounded-circle p-1 me-2">
-          <i class="bi bi-shield-lock-fill text-dark fs-5"></i>
-        </div>
-        ACADEMIC COMMAND <span class="ms-2 badge bg-white bg-opacity-10 fw-light" style="font-size: 0.7rem;">v2.0</span>
-      </a>
-      <div class="ms-auto d-flex align-items-center">
-        <div class="text-white me-3 d-none d-md-block">
-          <small class="d-block opacity-50 text-end" style="font-size: 0.7rem;">CURRENT SESSION</small>
-          <span class="fw-bold">Feb 20, 2026</span>
-        </div>
-        <button class="btn btn-outline-light rounded-pill px-4 btn-sm fw-bold" (click)="logout()">
-          <i class="bi bi-power me-2"></i>Logout
-        </button>
-      </div>
-    </div>
-  </nav>
-
+<app-admin-layout>
   <div class="container py-4">
-    
+
     <div class="row g-3 mb-4">
       <div class="col-6 col-md-3">
         <div class="card border-0 shadow-sm rounded-4 p-3 bg-white">
           <div class="d-flex align-items-center">
-            <div class="bg-primary bg-opacity-10 text-primary p-3 rounded-3 me-3"><i class="bi bi-people-fill fs-4"></i></div>
-            <div><h4 class="mb-0 fw-bold">1,240</h4><small class="text-muted">Students</small></div>
+            <div class="bg-primary bg-opacity-10 text-primary p-3 rounded-3 me-3"><i class="bi bi-people-fill fs-4"></i>
+            </div>
+            <div>
+              <h4 class="mb-0 fw-bold">{{ totalStudents() }}</h4><small class="text-muted">Total Students</small>
+            </div>
           </div>
         </div>
       </div>
       <div class="col-6 col-md-3">
         <div class="card border-0 shadow-sm rounded-4 p-3 bg-white">
           <div class="d-flex align-items-center">
-            <div class="bg-success bg-opacity-10 text-success p-3 rounded-3 me-3"><i class="bi bi-person-check-fill fs-4"></i></div>
-            <div><h4 class="mb-0 fw-bold">84</h4><small class="text-muted">Staff</small></div>
+            <div class="bg-success bg-opacity-10 text-success p-3 rounded-3 me-3"><i
+                class="bi bi-person-check-fill fs-4"></i></div>
+            <div>
+              <h4 class="mb-0 fw-bold">{{ totalStaff() }}</h4><small class="text-muted">Active Staff</small>
+            </div>
           </div>
         </div>
       </div>
       <div class="col-6 col-md-3">
         <div class="card border-0 shadow-sm rounded-4 p-3 bg-white">
           <div class="d-flex align-items-center">
-            <div class="bg-warning bg-opacity-10 text-warning p-3 rounded-3 me-3"><i class="bi bi-calendar-event fs-4"></i></div>
-            <div><h4 class="mb-0 fw-bold">12</h4><small class="text-muted">Active Terms</small></div>
+            <div class="bg-warning bg-opacity-10 text-warning p-3 rounded-3 me-3"><i class="bi bi-book-fill fs-4"></i>
+            </div>
+            <div>
+              <h4 class="mb-0 fw-bold">{{ totalSubjects() }}</h4><small class="text-muted">Active Subjects</small>
+            </div>
           </div>
         </div>
       </div>
       <div class="col-6 col-md-3">
         <div class="card border-0 shadow-sm rounded-4 p-3 bg-white">
           <div class="d-flex align-items-center">
-            <div class="bg-danger bg-opacity-10 text-danger p-3 rounded-3 me-3"><i class="bi bi-broadcast fs-4"></i></div>
-            <div><h4 class="mb-0 fw-bold">5</h4><small class="text-muted">Alerts</small></div>
+            <div class="bg-danger bg-opacity-10 text-danger p-3 rounded-3 me-3"><i class="bi bi-broadcast fs-4"></i>
+            </div>
+            <div>
+              <h4 class="mb-0 fw-bold">Active</h4><small class="text-muted">System Status</small>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
+    <!-- Second Row -->
     <div class="row g-4 mb-5">
+
+      <!-- Academic Notices (Replaces Bar Chart) -->
       <div class="col-lg-8">
-        <div class="card border-0 shadow-sm rounded-4 h-100 overflow-hidden bg-white">
+        <div class="card border-0 shadow-sm rounded-4 h-100 bg-white">
           <div class="card-header bg-white p-4 border-0 d-flex justify-content-between align-items-center">
-            <h5 class="mb-0 fw-bold text-dark">Institutional Activity</h5>
-            <div class="dropdown">
-              <button class="btn btn-light btn-sm dropdown-toggle rounded-pill" type="button">This Week</button>
+            <h5 class="mb-0 fw-bold text-dark"><i class="bi bi-calendar2-week-fill text-danger me-2"></i>Upcoming
+              Important Dates</h5>
+            <span class="badge bg-danger-subtle text-danger rounded-pill px-3">{{ upcomingEvents().length }}
+              Events</span>
+          </div>
+          <div class="card-body px-4 pb-4 pt-0">
+            @if (upcomingEvents().length === 0) {
+            <div class="text-center py-5 text-muted">
+              <i class="bi bi-ui-checks-grid fs-1 opacity-50 mb-3 d-block"></i>
+              <p class="mb-0 fw-semibold">No upcoming events found in the Academic Planner.</p>
             </div>
-          </div>
-          <div class="card-body p-4 d-flex align-items-end justify-content-between" style="height: 250px;">
-            <div class="bg-primary rounded-top" style="width: 12%; height: 40%;"></div>
-            <div class="bg-primary rounded-top opacity-75" style="width: 12%; height: 60%;"></div>
-            <div class="bg-warning rounded-top" style="width: 12%; height: 85%;"></div>
-            <div class="bg-primary rounded-top" style="width: 12%; height: 50%;"></div>
-            <div class="bg-primary rounded-top opacity-50" style="width: 12%; height: 30%;"></div>
-            <div class="bg-success rounded-top" style="width: 12%; height: 95%;"></div>
-            <div class="bg-primary rounded-top" style="width: 12%; height: 70%;"></div>
-          </div>
-          <div class="card-footer bg-light border-0 p-3 text-center">
-            <small class="text-muted"><i class="bi bi-info-circle me-1"></i> Data syncs every 15 minutes</small>
+            } @else {
+            <div class="timeline position-relative ps-3 border-start border-2 border-danger-subtle mt-2">
+              @for (event of upcomingEvents(); track $index) {
+              <div class="position-relative mb-4">
+                <div class="position-absolute bg-danger rounded-circle"
+                  style="width: 12px; height: 12px; left: -23px; top: 5px; border: 2px solid white;"></div>
+                <div class="p-3 bg-light rounded-3 border">
+                  <div class="d-flex justify-content-between align-items-center mb-1">
+                    <h6 class="fw-bold text-dark mb-0">{{ event.title }}</h6>
+                    <span class="badge bg-white text-dark border">Sem {{ event.sem }}</span>
+                  </div>
+                  <div class="fw-bold text-danger"><i class="bi bi-clock me-1"></i>{{ event.date | date:'fullDate' }}
+                  </div>
+                </div>
+              </div>
+              }
+            </div>
+            }
           </div>
         </div>
       </div>
 
+      <!-- Student Pie Chart -->
       <div class="col-lg-4">
         <div class="card border-0 shadow-sm rounded-4 h-100 bg-white">
           <div class="card-header bg-white p-4 border-0 pb-0">
-            <h5 class="mb-0 fw-bold text-dark">Upcoming Vitals</h5>
+            <h5 class="mb-0 fw-bold text-dark"><i class="bi bi-pie-chart-fill text-primary me-2"></i>Student Enrollment
+            </h5>
           </div>
-          <div class="card-body p-4">
-            <div class="vstack gap-4">
-              <div class="d-flex align-items-center border-start border-4 border-primary ps-3">
-                <div>
-                  <small class="text-muted d-block fw-bold">INTERNAL EVALUATION</small>
-                  <span class="fw-bold">Feb 24, 2026</span>
-                </div>
-              </div>
-              <div class="d-flex align-items-center border-start border-4 border-warning ps-3">
-                <div>
-                  <small class="text-muted d-block fw-bold">PROJECT VIVA</small>
-                  <span class="fw-bold">Mar 05, 2026</span>
-                </div>
-              </div>
-              <div class="d-flex align-items-center border-start border-4 border-danger ps-3">
-                <div>
-                  <small class="text-muted d-block fw-bold">UNIVERSITY EXAMS</small>
-                  <span class="fw-bold">Mar 22, 2026</span>
-                </div>
-              </div>
-            </div>
-            <button class="btn btn-outline-primary w-100 rounded-pill mt-4 fw-bold btn-sm" [routerLink]="['/admin/academic-planner']">
-              Full Calendar
-            </button>
+          <div class="card-body p-4" style="height: 300px;">
+            <canvas #studentChart></canvas>
           </div>
         </div>
       </div>
+
     </div>
 
-    <h5 class="fw-bold mb-4 text-dark">Administrative Modules</h5>
+    <!-- Third Row: Recent Institutional Activity (Replaces redundant module squares) -->
     <div class="row g-4">
-      <div class="col-md-4 col-lg-3">
-        <div class="card border-0 shadow-sm rounded-4 text-center p-4 bg-white transition-up">
-          <div class="rounded-circle bg-primary-subtle text-primary mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
-            <i class="bi bi-people-fill fs-3"></i>
+      <div class="col-12">
+        <div class="card border-0 shadow-sm rounded-4 bg-white overflow-hidden">
+          <div class="card-header bg-white p-4 border-0 pb-2 d-flex justify-content-between align-items-center">
+            <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-activity text-success me-2"></i>Recent Institutional
+              Activity</h5>
+            <small class="text-muted"><i class="bi bi-arrow-repeat me-1"></i>Live Sync</small>
           </div>
-          <h6 class="fw-bold">Staff Portal</h6>
-          <button class="btn btn-light btn-sm w-100 rounded-pill mt-3 fw-bold" [routerLink]="['/admin/managed-staff']">Manage</button>
-        </div>
-      </div>
 
-      <div class="col-md-4 col-lg-3">
-        <div class="card border-0 shadow-sm rounded-4 text-center p-4 bg-white transition-up border-bottom border-4 border-success">
-          <div class="rounded-circle bg-success-subtle text-success mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
-            <i class="bi bi-mortarboard-fill fs-3"></i>
+          @if (recentActivity().length === 0) {
+          <div class="card-body text-center py-5 text-muted">
+            <p class="mb-0 fw-semibold">No recent staff assignments or activity detected.</p>
           </div>
-          <h6 class="fw-bold">Student Registry</h6>
-          <button class="btn btn-light btn-sm w-100 rounded-pill mt-3 fw-bold" [routerLink]="['/admin/manage-students']">Manage</button>
-        </div>
-      </div>
-
-      <div class="col-md-4 col-lg-3">
-        <div class="card border-0 shadow-sm rounded-4 text-center p-4 bg-white transition-up">
-          <div class="rounded-circle bg-warning-subtle text-warning mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
-            <i class="bi bi-calendar3 fs-3"></i>
+          } @else {
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0 border-top">
+              <thead class="table-light small text-uppercase">
+                <tr>
+                  <th class="ps-4">Staff Member</th>
+                  <th>Activity Type</th>
+                  <th>Details</th>
+                  <th>Target Group</th>
+                  <th class="pe-4 text-end">Posted</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (activity of recentActivity(); track activity.id) {
+                <tr>
+                  <td class="ps-4">
+                    <div class="d-flex align-items-center">
+                      <div
+                        class="bg-success-subtle text-success rounded-circle d-flex align-items-center justify-content-center fw-bold me-3"
+                        style="width: 35px; height: 35px; font-size: 0.9rem;">
+                        {{ (activity.staffName || 'U')[0].toUpperCase() }}
+                      </div>
+                      <div>
+                        <div class="fw-bold text-dark">{{ activity.staffName || 'Unknown Staff' }}</div>
+                        <div class="extra-small text-muted">Professor ID: {{ activity.staffId || 'N/A' | slice:0:8 }}...
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <span class="badge bg-warning-subtle text-dark border border-warning-subtle"><i
+                        class="bi bi-file-earmark-text me-1"></i>Assignment</span>
+                  </td>
+                  <td>
+                    <div class="fw-semibold text-dark">{{ activity.title || 'Untitled assignment' }}</div>
+                    <div class="small text-muted">{{ activity.subject || 'General' }}</div>
+                  </td>
+                  <td>
+                    <span class="badge bg-light text-dark border me-1">Sem {{ activity.sem }}</span>
+                    <span class="badge bg-light text-dark border">Div {{ activity.division }}</span>
+                  </td>
+                  <td class="pe-4 text-end small fw-semibold text-muted">
+                    {{ activity.createdAt | date:'short' }}
+                  </td>
+                </tr>
+                }
+              </tbody>
+            </table>
           </div>
-          <h6 class="fw-bold">Timetables</h6>
-          <button class="btn btn-light btn-sm w-100 rounded-pill mt-3 fw-bold" [routerLink]="['/timetable']">Configure</button>
-        </div>
-      </div>
-
-      <div class="col-md-4 col-lg-3">
-        <div class="card border-0 shadow-sm rounded-4 text-center p-4 bg-white transition-up">
-          <div class="rounded-circle bg-secondary-subtle text-secondary mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
-            <i class="bi bi-book-fill fs-3"></i>
-          </div>
-          <h6 class="fw-bold">Curriculum</h6>
-          <button class="btn btn-light btn-sm w-100 rounded-pill mt-3 fw-bold" [routerLink]="['/admin/subjects']">Manage</button>
-        </div>
-      </div>
-
-      <div class="col-md-4 col-lg-3">
-        <div class="card border-0 shadow-sm rounded-4 text-center p-4 bg-white transition-up">
-          <div class="rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; background: #f3e5f5; color: #6f42c1;">
-            <i class="bi bi-geo-alt-fill fs-3"></i>
-          </div>
-          <h6 class="fw-bold">Div Allocation</h6>
-          <button class="btn btn-light btn-sm w-100 rounded-pill mt-3 fw-bold" [routerLink]="['/admin/division-allocation']">Mapping</button>
-        </div>
-      </div>
-
-      <div class="col-md-4 col-lg-3">
-        <div class="card border-0 shadow-sm rounded-4 text-center p-4 bg-white transition-up">
-          <div class="rounded-circle bg-danger-subtle text-danger mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
-            <i class="bi bi-megaphone-fill fs-3"></i>
-          </div>
-          <h6 class="fw-bold">Broadcaster</h6>
-          <button class="btn btn-light btn-sm w-100 rounded-pill mt-3 fw-bold">Send Alert</button>
+          }
         </div>
       </div>
     </div>
 
   </div>
-</div>
+</app-admin-layout>

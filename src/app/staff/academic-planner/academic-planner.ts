@@ -4,12 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { firstValueFrom } from 'rxjs'; // Essential for async/await with Firebase
 import { FirebaseService } from '../../services/firebaseservice';
 import { FirebaseCollections } from '../../services/firebase-enums';
-import { SidebarComponent } from '../sidebar-component/sidebar-component';
+import { StaffLayoutComponent } from '../staff-layout/staff-layout';
 
 @Component({
   selector: 'app-academic-planner-view',
   standalone: true,
-  imports: [CommonModule, FormsModule,SidebarComponent], // Ensure FormsModule is here for ngModel
+  imports: [CommonModule, FormsModule, StaffLayoutComponent], // Ensure FormsModule is here for ngModel
   templateUrl: './academic-planner.html',
   styleUrls: ['./academic-planner.css']
 })
@@ -18,11 +18,10 @@ export class AcademicPlannerView implements OnInit {
   selectedSemester = signal<number>(1);
   planner = signal<any>(null);
   isLoading = signal(false);
-isCollapsed = signal<boolean>(false);
   constructor(
     private firebaseService: FirebaseService,
     @Inject(PLATFORM_ID) private platformId: Object
-  ) {}
+  ) { }
 
   ngOnInit() {
     if (isPlatformBrowser(this.platformId)) {
@@ -41,9 +40,6 @@ isCollapsed = signal<boolean>(false);
       this.loadPlanner(this.selectedSemester());
     }
   }
-toggleMenu() {
-    this.isCollapsed.update(val => !val);
-  }
   async loadPlanner(sem: any) {
     const semNum = Number(sem);
     if (isNaN(semNum)) return;
@@ -55,12 +51,12 @@ toggleMenu() {
       // Fetching the planner for the selected semester
       const data = await firstValueFrom(
         this.firebaseService.getFilteredCollection<any>(
-          FirebaseCollections.academic_planner, 
-          'semester', 
+          FirebaseCollections.academic_planner,
+          'semester',
           semNum
         )
       );
-      
+
       this.planner.set(data && data.length > 0 ? data[0] : null);
     } catch (err) {
       console.error("Error loading planner:", err);

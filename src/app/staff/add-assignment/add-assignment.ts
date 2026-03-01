@@ -4,11 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { FirebaseService } from '../../services/firebaseservice';
 import { FirebaseCollections } from '../../services/firebase-enums';
 import { firstValueFrom } from 'rxjs';
+import { StaffLayoutComponent } from '../staff-layout/staff-layout';
 
 @Component({
   selector: 'app-add-assignment',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, StaffLayoutComponent],
   templateUrl: './add-assignment.html',
   styleUrls: ['./add-assignment.css']
 })
@@ -20,7 +21,7 @@ export class AddAssignment implements OnInit {
   assignedSubjects = signal<string[]>([]);
   allAssignments = signal<any[]>([]);
 
-  availableDivisions = ['A','B','C'];
+  availableDivisions = ['A', 'B', 'C'];
   selectedDivisions = signal<string[]>([]);
   selectAll = signal(false);
 
@@ -40,7 +41,7 @@ export class AddAssignment implements OnInit {
   constructor(
     private firebaseService: FirebaseService,
     @Inject(PLATFORM_ID) private platformId: Object
-  ) {}
+  ) { }
 
   async ngOnInit() {
     if (!isPlatformBrowser(this.platformId)) return;

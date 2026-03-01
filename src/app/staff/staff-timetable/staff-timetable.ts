@@ -2,11 +2,12 @@ import { Component, OnInit, signal, Inject, PLATFORM_ID, computed } from '@angul
 import { isPlatformBrowser, CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FirebaseService } from '../../services/firebaseservice';
+import { StaffLayoutComponent } from '../staff-layout/staff-layout';
 
 @Component({
   selector: 'app-staff-timetable',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, StaffLayoutComponent],
   templateUrl: './staff-timetable.html',
   styleUrls: ['./staff-timetable.css']
 })
@@ -20,7 +21,7 @@ export class StaffTimetable implements OnInit {
   summary = computed(() => {
     const data = this.allAssignments();
     const dayStats: Record<string, { lectures: number; labs: number; total: number }> = {};
-    
+
     // Initialize stats for each day
     this.days.forEach(day => {
       dayStats[day] = { lectures: 0, labs: 0, total: 0 };
@@ -54,11 +55,11 @@ export class StaffTimetable implements OnInit {
   constructor(
     private firebaseService: FirebaseService,
     @Inject(PLATFORM_ID) private platformId: Object
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
-      const storedData = localStorage.getItem('portal_user'); 
+      const storedData = localStorage.getItem('portal_user');
       if (storedData) {
         const user = JSON.parse(storedData);
         this.staffUser.set(user);
@@ -84,8 +85,8 @@ export class StaffTimetable implements OnInit {
   }
 
   hasConflict(currentLec: any, dayLectures: any[]): boolean {
-    return dayLectures.some(lec => 
-      lec.id !== currentLec.id && 
+    return dayLectures.some(lec =>
+      lec.id !== currentLec.id &&
       lec.time.trim().toLowerCase() === currentLec.time.trim().toLowerCase()
     );
   }

@@ -1,62 +1,83 @@
-<div class="container py-4">
-  <div class="row mb-4 align-items-center bg-primary text-white p-3 rounded shadow-sm mx-0">
-    <div class="col-md-8">
-      <h4 class="mb-0 fw-bold">Staff Verification Hub</h4>
-      <p class="mb-0 small opacity-75">Your assigned semesters: {{ staffSemesters().join(', ') }}</p>
-    </div>
-    <div class="col-md-4">
-      <div class="input-group">
-        <span class="input-group-text bg-white border-0 text-primary fw-bold">View Semester</span>
-        <select class="form-select border-0 shadow-none" [(ngModel)]="selectedSemester">
-          @for (sem of availableSemesters; track sem) {
+<app-staff-layout>
+  <div class="container py-4">
+    <div class="row mb-4 align-items-center bg-primary text-white p-3 rounded shadow-sm mx-0">
+      <div class="col-md-8">
+        <h4 class="mb-0 fw-bold">Staff Verification Hub</h4>
+        <p class="mb-0 small opacity-75">Your assigned semesters: {{ staffSemesters().join(', ') }}</p>
+      </div>
+      <div class="col-md-4">
+        <div class="input-group">
+          <span class="input-group-text bg-white border-0 text-primary fw-bold">View Semester</span>
+          <select class="form-select border-0 shadow-none" [(ngModel)]="selectedSemester">
+            @for (sem of availableSemesters; track sem) {
             <option [value]="sem">{{ sem }}</option>
-          }
-        </select>
+            }
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="mb-5">
+      <h6 class="text-danger fw-bold mb-3"><i class="bi bi-clock me-2"></i>PENDING (SEM {{ selectedSemester() }})</h6>
+      <div class="card border-0 shadow-sm overflow-hidden">
+        <table class="table align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th class="ps-3">STUDENT</th>
+              <th class="text-center">DOC</th>
+              <th class="text-end pe-3">ACTION</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (s of pendingStudents(); track s.id) {
+            <tr>
+              <td class="ps-3"><strong>{{ s.name }}</strong><br><small class="text-muted">{{ s.email }}</small></td>
+              <td class="text-center"><button class="btn btn-sm btn-outline-primary"
+                  (click)="viewDocument(s)">View</button></td>
+              <td class="text-end pe-3"><button class="btn btn-sm btn-success px-3" (click)="verify(s)">Approve</button>
+              </td>
+            </tr>
+            } @empty {
+            <tr>
+              <td colspan="3" class="text-center py-5 text-muted fst-italic">No pending applications for Semester {{
+                selectedSemester() }}</td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div>
+      <h6 class="text-success fw-bold mb-3"><i class="bi bi-check-circle me-2"></i>APPROVED (SEM {{ selectedSemester()
+        }})</h6>
+      <div class="card border-0 shadow-sm overflow-hidden">
+        <table class="table align-middle mb-0">
+          <thead class="table-success text-success">
+            <tr>
+              <th class="ps-3">STUDENT</th>
+              <th class="text-center">DOC</th>
+              <th class="text-end pe-3">STATUS</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (s of approvedRecords(); track s.id) {
+            <tr>
+              <td class="ps-3"><strong>{{ s.name }}</strong><br><small class="text-muted">{{ s.email }}</small></td>
+              <td class="text-center"><button class="btn btn-sm btn-outline-secondary"
+                  (click)="viewDocument(s)">View</button></td>
+              <td class="text-end pe-3"><span
+                  class="badge bg-success-subtle text-success border border-success px-3">Verified</span></td>
+            </tr>
+            } @empty {
+            <tr>
+              <td colspan="3" class="text-center py-5 text-muted fst-italic">No approved records for Semester {{
+                selectedSemester() }}</td>
+            </tr>
+            }
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
-
-  <div class="mb-5">
-    <h6 class="text-danger fw-bold mb-3"><i class="bi bi-clock me-2"></i>PENDING (SEM {{ selectedSemester() }})</h6>
-    <div class="card border-0 shadow-sm overflow-hidden">
-      <table class="table align-middle mb-0">
-        <thead class="table-light">
-          <tr><th class="ps-3">STUDENT</th><th class="text-center">DOC</th><th class="text-end pe-3">ACTION</th></tr>
-        </thead>
-        <tbody>
-          @for (s of pendingStudents(); track s.id) {
-            <tr>
-              <td class="ps-3"><strong>{{ s.name }}</strong><br><small class="text-muted">{{ s.email }}</small></td>
-              <td class="text-center"><button class="btn btn-sm btn-outline-primary" (click)="viewDocument(s)">View</button></td>
-              <td class="text-end pe-3"><button class="btn btn-sm btn-success px-3" (click)="verify(s)">Approve</button></td>
-            </tr>
-          } @empty {
-            <tr><td colspan="3" class="text-center py-5 text-muted fst-italic">No pending applications for Semester {{ selectedSemester() }}</td></tr>
-          }
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  <div>
-    <h6 class="text-success fw-bold mb-3"><i class="bi bi-check-circle me-2"></i>APPROVED (SEM {{ selectedSemester() }})</h6>
-    <div class="card border-0 shadow-sm overflow-hidden">
-      <table class="table align-middle mb-0">
-        <thead class="table-success text-success">
-          <tr><th class="ps-3">STUDENT</th><th class="text-center">DOC</th><th class="text-end pe-3">STATUS</th></tr>
-        </thead>
-        <tbody>
-          @for (s of approvedRecords(); track s.id) {
-            <tr>
-              <td class="ps-3"><strong>{{ s.name }}</strong><br><small class="text-muted">{{ s.email }}</small></td>
-              <td class="text-center"><button class="btn btn-sm btn-outline-secondary" (click)="viewDocument(s)">View</button></td>
-              <td class="text-end pe-3"><span class="badge bg-success-subtle text-success border border-success px-3">Verified</span></td>
-            </tr>
-          } @empty {
-            <tr><td colspan="3" class="text-center py-5 text-muted fst-italic">No approved records for Semester {{ selectedSemester() }}</td></tr>
-          }
-        </tbody>
-      </table>
-    </div>
-  </div>
-</div>
+</app-staff-layout>

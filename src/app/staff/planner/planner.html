@@ -1,90 +1,87 @@
-<div class="container-fluid py-4 bg-light min-vh-100">
-  <div class="d-flex justify-content-between align-items-center mb-4 px-3">
-    <h2 class="fw-bold text-primary">Unit-Topic Lesson Planner</h2>
-    <button routerLink="/staff/staff-dashboard" class="btn btn-outline-secondary rounded-pill">Back</button>
-  </div>
+<app-staff-layout>
+  <div class="container-fluid py-4 bg-light min-vh-100">
+    <div class="d-flex justify-content-between align-items-center mb-4 px-3">
+      <h2 class="fw-bold text-primary">Unit-Topic Lesson Planner</h2>
+      <button routerLink="/staff/staff-dashboard" class="btn btn-outline-secondary rounded-pill">Back</button>
+    </div>
 
-  <div class="row g-4 px-3">
-    <div class="col-lg-5">
-      <div class="card border-0 shadow-sm p-4 rounded-4 bg-white mb-4">
-        <h5 class="fw-bold mb-3">1. Basic Info</h5>
-       <!-- ... Rest of the top section remains the same ... -->
-<div class="mb-3">
-  <label class="small fw-bold">Subject</label>
-  <select class="form-select" 
-          [ngModel]="selectedSubject()" 
-          (ngModelChange)="selectedSubject.set($event); onSubjectSelect()">
-    <option value="">-- Select Subject --</option>
-    @for (sub of assignedSubjects(); track sub) { <option [value]="sub">{{ sub }}</option> }
-  </select>
-</div>
-<!-- ... Rest of the file remains the same ... -->
-        <div class="row g-2">
-          <div class="col-6">
-            <label class="small fw-bold">Start Date</label>
-            <input type="date" class="form-control" [ngModel]="startDate()" (ngModelChange)="startDate.set($event)">
+    <div class="row g-4 px-3">
+      <div class="col-lg-5">
+        <div class="card border-0 shadow-sm p-4 rounded-4 bg-white mb-4">
+          <h5 class="fw-bold mb-3">1. Basic Info</h5>
+          <!-- ... Rest of the top section remains the same ... -->
+          <div class="mb-3">
+            <label class="small fw-bold">Subject</label>
+            <select class="form-select" [ngModel]="selectedSubject()"
+              (ngModelChange)="selectedSubject.set($event); onSubjectSelect()">
+              <option value="">-- Select Subject --</option>
+              @for (sub of assignedSubjects(); track sub) { <option [value]="sub">{{ sub }}</option> }
+            </select>
           </div>
-          <div class="col-6">
-            <label class="small fw-bold">End Date</label>
-            <input type="date" class="form-control" [ngModel]="endDate()" (ngModelChange)="endDate.set($event)">
+          <!-- ... Rest of the file remains the same ... -->
+          <div class="row g-2">
+            <div class="col-6">
+              <label class="small fw-bold">Start Date</label>
+              <input type="date" class="form-control" [ngModel]="startDate()" (ngModelChange)="startDate.set($event)">
+            </div>
+            <div class="col-6">
+              <label class="small fw-bold">End Date</label>
+              <input type="date" class="form-control" [ngModel]="endDate()" (ngModelChange)="endDate.set($event)">
+            </div>
           </div>
         </div>
-      </div>
 
-      <div class="card border-0 shadow-sm p-4 rounded-4 bg-white">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-          <h5 class="fw-bold mb-0">2. Syllabus Structure</h5>
-          <button (click)="addUnit()" class="btn btn-sm btn-primary">+ Add Unit</button>
-        </div>
+        <div class="card border-0 shadow-sm p-4 rounded-4 bg-white">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="fw-bold mb-0">2. Syllabus Structure</h5>
+            <button (click)="addUnit()" class="btn btn-sm btn-primary">+ Add Unit</button>
+          </div>
 
-        @for (unit of units(); track $index; let uIdx = $index) {
+          @for (unit of units(); track $index; let uIdx = $index) {
           <div class="border rounded p-3 mb-3 bg-light">
             <div class="d-flex mb-2">
-              <input type="text" class="form-control form-control-sm fw-bold me-2" 
-                     placeholder="Unit Name (e.g. Unit 1)" 
-                     [ngModel]="unit.name" 
-                     (ngModelChange)="unit.name = $event; refreshUnits()">
+              <input type="text" class="form-control form-control-sm fw-bold me-2" placeholder="Unit Name (e.g. Unit 1)"
+                [ngModel]="unit.name" (ngModelChange)="unit.name = $event; refreshUnits()">
               <button (click)="removeUnit(uIdx)" class="btn btn-sm btn-outline-danger">✕</button>
             </div>
-            
+
             <div class="ms-4">
               @for (topic of unit.topics; track $index; let tIdx = $index) {
-                <div class="d-flex mb-1">
-                  <input type="text" class="form-control form-control-sm me-2" 
-                         placeholder="Enter Sub-Topic" 
-                         [ngModel]="unit.topics[tIdx]" 
-                         (ngModelChange)="unit.topics[tIdx] = $event; refreshUnits()">
-                  <button (click)="removeTopic(uIdx, tIdx)" class="btn btn-sm text-danger">✕</button>
-                </div>
+              <div class="d-flex mb-1">
+                <input type="text" class="form-control form-control-sm me-2" placeholder="Enter Sub-Topic"
+                  [ngModel]="unit.topics[tIdx]" (ngModelChange)="unit.topics[tIdx] = $event; refreshUnits()">
+                <button (click)="removeTopic(uIdx, tIdx)" class="btn btn-sm text-danger">✕</button>
+              </div>
               }
               <button (click)="addTopic(uIdx)" class="btn btn-sm text-primary mt-1">+ Add Topic</button>
             </div>
           </div>
-        }
+          }
 
-        <button (click)="generateStepByStepPlan()" class="btn btn-warning text-white w-100 rounded-pill mt-3 fw-bold">
-          Generate Full Planner
-        </button>
-      </div>
-    </div>
-
-    <div class="col-lg-7">
-      <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
-        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
-          <h5 class="mb-0">Schedule Preview</h5>
-          <button (click)="saveToCloud()" [disabled]="generatedPlan().length === 0" class="btn btn-sm btn-success">Save to Cloud</button>
+          <button (click)="generateStepByStepPlan()" class="btn btn-warning text-white w-100 rounded-pill mt-3 fw-bold">
+            Generate Full Planner
+          </button>
         </div>
-        <div class="table-responsive" style="max-height: 700px;">
-          <table class="table table-hover align-middle mb-0">
-            <thead class="table-light sticky-top">
-              <tr>
-                <th>Date</th>
-                <th>Unit & Topic</th>
-                <th>Completion Date</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (item of generatedPlan(); track $index) {
+      </div>
+
+      <div class="col-lg-7">
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+          <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Schedule Preview</h5>
+            <button (click)="saveToCloud()" [disabled]="generatedPlan().length === 0"
+              class="btn btn-sm btn-success">Save to Cloud</button>
+          </div>
+          <div class="table-responsive" style="max-height: 700px;">
+            <table class="table table-hover align-middle mb-0">
+              <thead class="table-light sticky-top">
+                <tr>
+                  <th>Date</th>
+                  <th>Unit & Topic</th>
+                  <th>Completion Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (item of generatedPlan(); track $index) {
                 <tr [class.table-success]="item.isDone">
                   <td class="small">
                     <div class="fw-bold">{{ item.plannedDate }}</div>
@@ -95,18 +92,20 @@
                     <div class="fw-bold">{{ item.topic }}</div>
                   </td>
                   <td>
-                    <input type="date" class="form-control form-control-sm" 
-                           [ngModel]="item.actualDate" 
-                           (ngModelChange)="updateProgress($index, $event)">
+                    <input type="date" class="form-control form-control-sm" [ngModel]="item.actualDate"
+                      (ngModelChange)="updateProgress($index, $event)">
                   </td>
                 </tr>
-              } @empty {
-                <tr><td colspan="3" class="text-center py-5 text-muted">Setup units and topics to generate plan.</td></tr>
-              }
-            </tbody>
-          </table>
+                } @empty {
+                <tr>
+                  <td colspan="3" class="text-center py-5 text-muted">Setup units and topics to generate plan.</td>
+                </tr>
+                }
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
   </div>
-</div>
+</app-staff-layout>

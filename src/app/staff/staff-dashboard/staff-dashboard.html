@@ -1,41 +1,159 @@
-<div class="d-flex vw-100 vh-100 overflow-hidden bg-light">
-  <app-sidebar [isCollapsed]="isCollapsed()" class="flex-shrink-0"></app-sidebar>
+<app-staff-layout>
+  <div class="container-fluid py-4 min-vh-100">
 
-  <div class="flex-grow-1 d-flex flex-column min-vw-0">
-    <nav class="navbar navbar-expand-lg bg-white border-bottom shadow-sm px-4 flex-shrink-0" style="height: 75px;">
-      <div class="container-fluid px-0">
-        <div class="d-flex align-items-center gap-3">
-          <button class="btn btn-light rounded-circle shadow-sm border-0 d-flex align-items-center justify-content-center" 
-                  style="width: 40px; height: 40px;" (click)="toggleMenu()">
-            <i class="bi fs-5" [class.bi-list]="isCollapsed()" [class.bi-text-indent-left]="!isCollapsed()"></i>
-          </button>
-          <h5 class="mb-0 fw-bold text-dark d-none d-md-block">University Management System</h5>
-        </div>
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+      <div>
+        <h3 class="fw-bold mb-1 text-dark">Welcome back, {{ staffUser()?.name }} 👋</h3>
+        <p class="text-muted small mb-0">{{ todayName }}, {{ formattedDate }}</p>
+      </div>
+    </div>
 
-        <div class="d-flex align-items-center gap-3">
-          <div class="text-end d-none d-sm-block">
-            <h6 class="mb-0 fw-bold text-dark small">{{ staffUser()?.name }}</h6>
-            <span class="badge bg-primary-subtle text-primary border border-primary border-opacity-10" style="font-size: 0.65rem;">
-               Semester {{ staffUser()?.semester }} Faculty
-            </span>
-          </div>
-          <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center shadow-sm fw-bold" 
-               style="width: 42px; height: 42px;">
-            {{ staffUser()?.name?.charAt(0) }}
+    <!-- Metrics Row -->
+    <div class="row g-4 mb-4">
+      <div class="col-md-4">
+        <div class="card border-0 shadow-sm rounded-4 p-4 hover-card h-100 position-relative overflow-hidden bg-white">
+          <div class="d-flex align-items-center">
+            <div class="icon-box bg-primary-subtle text-primary me-3 flex-shrink-0">
+              <i class="bi bi-calendar-event fs-3"></i>
+            </div>
+            <div>
+              <h3 class="fw-bold mb-0 text-dark">{{ timetableCount() }}</h3>
+              <p class="text-muted small mb-0 fw-semibold text-uppercase">Total Classes</p>
+            </div>
           </div>
         </div>
       </div>
-    </nav>
 
-    <main class="flex-grow-1 overflow-auto p-4 p-md-5">
-      <div class="card border-0 shadow-sm p-4 bg-white rounded-4 mb-5 border-start border-5 border-primary">
-        <div class="d-flex align-items-center justify-content-between">
-          <div>
-            <h2 class="fw-bold text-dark mb-1">Welcome back, {{ staffUser()?.name }} 👋</h2>
-            <p class="text-muted mb-0">Overview: <strong class="text-primary">{{ timetableCount() }}</strong> lectures | <strong class="text-primary">{{ assignmentCount() }}</strong> active tasks</p>
+      <div class="col-md-4">
+        <div class="card border-0 shadow-sm rounded-4 p-4 hover-card h-100 position-relative overflow-hidden bg-white">
+          <div class="d-flex align-items-center">
+            <div class="icon-box bg-warning-subtle text-warning me-3 flex-shrink-0">
+              <i class="bi bi-file-earmark-text fs-3"></i>
+            </div>
+            <div>
+              <h3 class="fw-bold mb-0 text-dark">{{ assignmentCount() }}</h3>
+              <p class="text-muted small mb-0 fw-semibold text-uppercase">Active Assignments</p>
+            </div>
           </div>
         </div>
       </div>
-      </main>
+
+      <div class="col-md-4">
+        <div class="card border-0 shadow-sm rounded-4 p-4 hover-card h-100 position-relative overflow-hidden bg-white">
+          <div class="d-flex align-items-center">
+            <div class="icon-box bg-success-subtle text-success me-3 flex-shrink-0">
+              <i class="bi bi-journal-check fs-3"></i>
+            </div>
+            <div>
+              <h3 class="fw-bold mb-0 text-dark">{{ personalNotes() }}</h3>
+              <p class="text-muted small mb-0 fw-semibold text-uppercase">Planner Notes</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="row g-4">
+
+      <!-- Workload Chart -->
+      <div class="col-xl-8">
+        <div class="card border-0 shadow-sm rounded-4 p-4 bg-white h-100">
+          <h5 class="fw-bold mb-4 text-dark"><i class="bi bi-bar-chart-fill text-primary me-2"></i>Weekly Workload</h5>
+          <div style="height: 300px; width: 100%;">
+            <canvas #workloadChart></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Today's Schedule -->
+      <div class="col-xl-4">
+        <div class="card border-0 shadow-sm rounded-4 p-4 bg-white h-100">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-clock-history text-warning me-2"></i>Today's Schedule
+            </h5>
+            <span class="badge bg-primary-subtle text-primary rounded-pill px-3">{{ todaysClasses().length }}
+              Classes</span>
+          </div>
+
+          @if (todaysClasses().length === 0) {
+          <div class="text-center py-5 text-muted">
+            <div class="icon-box-sm bg-light text-secondary mx-auto mb-3"><i class="bi bi-cup-hot fs-4"></i></div>
+            <p class="fw-semibold mb-0">No classes scheduled for today.</p>
+            <small>Enjoy your free time!</small>
+          </div>
+          } @else {
+          <div class="timeline position-relative ps-3 border-start border-2 border-primary-subtle">
+            @for (cls of todaysClasses(); track cls.id) {
+            <div class="timeline-item position-relative mb-4">
+              <!-- Timeline dot -->
+              <div class="position-absolute bg-primary rounded-circle"
+                style="width: 12px; height: 12px; left: -23px; top: 5px; border: 2px solid white;"></div>
+
+              <div class="p-3 bg-light rounded-3 border">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                  <h6 class="fw-bold text-dark mb-0">{{ cls.subject }}</h6>
+                  <span class="badge bg-white text-dark border extra-small">{{ cls.type }}</span>
+                </div>
+                <div class="small fw-semibold text-primary mb-1"><i class="bi bi-clock me-1"></i>{{ cls.time }}</div>
+                <div class="d-flex gap-2">
+                  <span class="badge bg-secondary-subtle text-secondary border extra-small"><i
+                      class="bi bi-people-fill me-1"></i>Sem {{ cls.sem }} Div {{ cls.div }}</span>
+                  <span class="badge bg-info-subtle text-info border border-info-subtle extra-small"><i
+                      class="bi bi-door-open-fill me-1"></i>{{ cls.roomName }}</span>
+                </div>
+              </div>
+            </div>
+            }
+          </div>
+          }
+        </div>
+      </div>
+
+      <!-- Recent Assignments -->
+      <div class="col-12 mt-4">
+        <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-file-earmark-text text-success me-2"></i>Recent
+              Assignments Posted</h5>
+          </div>
+
+          @if (recentAssignments().length === 0) {
+          <p class="text-muted text-center py-3 mb-0 small fw-semibold">No recent assignments found.</p>
+          } @else {
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+              <thead class="table-light small text-uppercase">
+                <tr>
+                  <th>Title</th>
+                  <th>Semester/Div</th>
+                  <th>Subject</th>
+                  <th>Due Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (asn of recentAssignments(); track asn.id) {
+                <tr>
+                  <td class="fw-bold text-dark">{{ asn.title }}</td>
+                  <td>
+                    <span class="badge bg-light text-dark border me-1">Sem {{ asn.sem }}</span>
+                    <span class="badge bg-light text-dark border">Div {{ asn.division }}</span>
+                  </td>
+                  <td class="small fw-semibold text-muted">{{ asn.subject }}</td>
+                  <td>
+                    <span class="badge bg-danger-subtle text-danger"><i class="bi bi-calendar-x me-1"></i>{{ asn.dueDate
+                      | date:'mediumDate' }}</span>
+                  </td>
+                </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+          }
+        </div>
+      </div>
+
+    </div>
   </div>
-</div>
+</app-staff-layout>

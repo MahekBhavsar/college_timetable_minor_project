@@ -1,175 +1,151 @@
-<div class="d-flex vw-100 vh-100 overflow-hidden bg-light">
-  
-  <app-sidebar 
-    [isCollapsed]="isCollapsed()" 
-    (toggleSidebar)="toggleMenu()"
-    class="flex-shrink-0 shadow-sm">
-  </app-sidebar>
+<app-staff-layout>
 
-  <div class="flex-grow-1 d-flex flex-column min-vw-0">
-    
-    <nav class="navbar navbar-expand-lg bg-white border-bottom shadow-sm px-4 flex-shrink-0" style="height: 75px;">
-      <div class="container-fluid px-0">
-        <div class="d-flex align-items-center gap-3">
-          <button class="btn btn-light rounded-circle shadow-sm border-0 d-flex align-items-center justify-content-center" 
-                  style="width: 40px; height: 40px;" (click)="toggleMenu()">
-            <i class="bi fs-5" [class.bi-list]="isCollapsed()" [class.bi-text-indent-left]="!isCollapsed()"></i>
-          </button>
-          <h5 class="mb-0 fw-bold text-dark d-none d-md-block">University Management System</h5>
-        </div>
-
-        <div class="d-flex align-items-center gap-3">
-          <div class="text-end d-none d-sm-block">
-            </div>
-        </div>
-      </div>
-    </nav>
-
-    <main class="flex-grow-1 overflow-auto p-4 p-md-5">
-      
-      <div class="mb-4">
-        <h1 class="h3 fw-bold text-dark">Academic Planner</h1>
-        <p class="text-muted small">Manage your academic journey and stay ahead of deadlines.</p>
-      </div>
-
-      <div class="card border-0 shadow-sm rounded-4 mb-5 overflow-hidden">
-        <div class="bg-primary p-4 p-lg-5 text-white">
-          <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-4">
-            <div>
-              <h2 class="fw-bold mb-1 d-flex align-items-center">
-                <i class="bi bi-calendar-check me-3 fs-1"></i> Academic Milestone Tracker
-              </h2>
-              <p class="mb-0 opacity-75">Official schedule and examination windows for the current session.</p>
-            </div>
-            
-            <div class="bg-white bg-opacity-25 p-2 rounded-3 backdrop-blur d-flex align-items-center">
-              <span class="px-3 fw-bold small text-uppercase">Semester</span>
-              <select class="form-select border-0 bg-white rounded-2 fw-bold text-primary shadow-sm" style="width: 100px;"
-                      [ngModel]="selectedSemester()" (ngModelChange)="loadPlanner($event)">
-                @for (s of allSemesters; track s) { <option [value]="s">{{s}}</option> }
-              </select>
-            </div>
-          </div>
-        </div>
-        
-        <div class="card-body bg-white py-3 px-4 border-bottom">
-          <div class="d-flex align-items-center text-primary">
-            <div class="pulse-status me-2"></div>
-            <span class="small fw-semibold">College Session Commenced: 
-              <span class="text-dark">{{planner()?.collegeStart | date:'fullDate'}}</span>
-            </span>
-          </div>
-        </div>
-      </div>
-
-      @if (isLoading()) {
-        <div class="d-flex flex-column align-items-center justify-content-center py-5">
-          <div class="spinner-border text-primary mb-3" role="status"></div>
-          <p class="text-muted">Synchronizing Schedule...</p>
-        </div>
-      } @else if (planner()) {
-        
-        <div class="row g-4">
-          <div class="col-lg-6">
-            <h6 class="fw-bold mb-3 d-flex align-items-center text-uppercase tracking-widest small text-muted">
-              <span class="bg-primary p-1 rounded-2 me-2 text-white d-flex"><i class="bi bi-pen small"></i></span>
-              Continuous Evaluation
-            </h6>
-            
-            <div class="card border-0 shadow-sm rounded-4 mb-4">
-              <div class="card-body p-0">
-                <ul class="list-group list-group-flush">
-                  <li class="list-group-item p-4 border-0">
-                    <div class="d-flex justify-content-between align-items-start mb-3">
-                      <span class="badge rounded-pill bg-primary-subtle text-primary px-3 py-2">Assignments</span>
-                      <i class="bi bi-house-door text-muted"></i>
-                    </div>
-                    <h6 class="fw-bold mb-1">Home Assignment Submission</h6>
-                    <p class="text-muted small mb-3">Upload your documents before the portal closes.</p>
-                    <div class="d-flex justify-content-between p-3 bg-light rounded-4 shadow-sm border">
-                      <div class="text-center flex-fill border-end">
-                        <small class="d-block text-muted text-uppercase fw-bold" style="font-size: 0.65rem;">From</small>
-                        <strong class="small">{{planner().homeAssignmentStart | date:'mediumDate'}}</strong>
-                      </div>
-                      <div class="text-center flex-fill">
-                        <small class="d-block text-muted text-uppercase fw-bold" style="font-size: 0.65rem;">Until</small>
-                        <strong class="text-danger small">{{planner().homeAssignmentEnd | date:'mediumDate'}}</strong>
-                      </div>
-                    </div>
-                  </li>
-                  
-                  <li class="list-group-item p-4 border-0 bg-light-subtle">
-                    <div class="d-flex justify-content-between align-items-start mb-3">
-                      <span class="badge rounded-pill bg-success-subtle text-success px-3 py-2">Class Work</span>
-                      <i class="bi bi-building text-muted"></i>
-                    </div>
-                    <h6 class="fw-bold mb-1">Class Assignment Window</h6>
-                    <div class="d-flex justify-content-between p-3 bg-white shadow-sm rounded-4 border mt-3">
-                      <div class="text-center flex-fill border-end">
-                        <small class="d-block text-muted text-uppercase fw-bold" style="font-size: 0.65rem;">Start</small>
-                        <strong class="small">{{planner().classAssignmentStart | date:'mediumDate'}}</strong>
-                      </div>
-                      <div class="text-center flex-fill">
-                        <small class="d-block text-muted text-uppercase fw-bold" style="font-size: 0.65rem;">Deadline</small>
-                        <strong class="text-danger small">{{planner().classAssignmentEnd | date:'mediumDate'}}</strong>
-                      </div>
-                    </div>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-
-          <div class="col-lg-6">
-            <h6 class="fw-bold mb-3 d-flex align-items-center text-uppercase tracking-widest small text-muted">
-              <span class="bg-success p-1 rounded-2 me-2 text-white d-flex"><i class="bi bi-cpu small"></i></span>
-              Practical & Viva Schedule
-            </h6>
-
-            <div class="card border-0 shadow-sm rounded-4 h-100 overflow-hidden">
-              <div class="card-body p-4 p-lg-5">
-                <div class="p-4 rounded-4 border-start border-5 border-success bg-success-subtle mb-4 shadow-sm">
-                  <div class="d-flex justify-content-between">
-                    <h6 class="fw-bold text-success-emphasis mb-0"><i class="bi bi-flask me-2"></i>Internal Practical</h6>
-                    <span class="badge bg-success text-white px-3">Active</span>
-                  </div>
-                  <div class="mt-4 d-flex align-items-center justify-content-between">
-                    <div><small class="text-muted d-block small text-uppercase fw-bold">Starts</small><strong class="h6 mb-0">{{planner().internalPracticalStart | date:'longDate'}}</strong></div>
-                    <div class="text-end"><small class="text-muted d-block small text-uppercase fw-bold">Ends</small><strong class="h6 mb-0 text-danger">{{planner().internalPracticalEnd | date:'longDate'}}</strong></div>
-                  </div>
-                </div>
-
-                <div class="card border shadow-sm rounded-4 p-4 mb-4 bg-white" [class.opacity-50]="!planner().hasProject">
-                  <div class="d-flex align-items-center justify-content-between">
-                    <div class="d-flex align-items-center">
-                      <div class="p-3 rounded-circle bg-primary-subtle text-primary me-3 shadow-sm"><i class="bi bi-chat-left-dots fs-5"></i></div>
-                      <div>
-                        <h6 class="fw-bold mb-0">Project Viva (Internal)</h6>
-                        <small class="text-muted">{{ planner().hasProject ? 'Mandatory Submission' : 'Not Required' }}</small>
-                      </div>
-                    </div>
-                    <div class="text-end">
-                      <h6 class="fw-bold mb-0 text-primary">{{ planner().hasProject ? (planner().intProjectVivaStart | date:'mediumDate') : '—' }}</h6>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="card border-0 bg-dark text-white rounded-4 p-4 shadow-lg">
-                  <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                      <h6 class="text-warning fw-bold mb-1"><i class="bi bi-shield-check me-2"></i>External Practical</h6>
-                      <small class="opacity-75 small">University Theory Examination Window</small>
-                    </div>
-                    <div class="text-end">
-                      <div class="h6 fw-bold mb-0 text-nowrap">{{planner().externalPracticalStart | date:'MMM d'}} - {{planner().externalPracticalEnd | date:'MMM d'}}</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      }
-    </main>
+  <div class="mb-4">
+    <h1 class="h3 fw-bold text-dark">Academic Planner</h1>
+    <p class="text-muted small">Manage your academic journey and stay ahead of deadlines.</p>
   </div>
-</div>
+
+  <div class="card border-0 shadow-sm rounded-4 mb-5 overflow-hidden">
+    <div class="bg-primary p-4 p-lg-5 text-white">
+      <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-4">
+        <div>
+          <h2 class="fw-bold mb-1 d-flex align-items-center">
+            <i class="bi bi-calendar-check me-3 fs-1"></i> Academic Milestone Tracker
+          </h2>
+          <p class="mb-0 opacity-75">Official schedule and examination windows for the current session.</p>
+        </div>
+
+        <div class="bg-white bg-opacity-25 p-2 rounded-3 backdrop-blur d-flex align-items-center">
+          <span class="px-3 fw-bold small text-uppercase">Semester</span>
+          <select class="form-select border-0 bg-white rounded-2 fw-bold text-primary shadow-sm" style="width: 100px;"
+            [ngModel]="selectedSemester()" (ngModelChange)="loadPlanner($event)">
+            @for (s of allSemesters; track s) { <option [value]="s">{{s}}</option> }
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-body bg-white py-3 px-4 border-bottom">
+      <div class="d-flex align-items-center text-primary">
+        <div class="pulse-status me-2"></div>
+        <span class="small fw-semibold">College Session Commenced:
+          <span class="text-dark">{{planner()?.collegeStart | date:'fullDate'}}</span>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  @if (isLoading()) {
+  <div class="d-flex flex-column align-items-center justify-content-center py-5">
+    <div class="spinner-border text-primary mb-3" role="status"></div>
+    <p class="text-muted">Synchronizing Schedule...</p>
+  </div>
+  } @else if (planner()) {
+
+  <div class="row g-4">
+    <div class="col-lg-6">
+      <h6 class="fw-bold mb-3 d-flex align-items-center text-uppercase tracking-widest small text-muted">
+        <span class="bg-primary p-1 rounded-2 me-2 text-white d-flex"><i class="bi bi-pen small"></i></span>
+        Continuous Evaluation
+      </h6>
+
+      <div class="card border-0 shadow-sm rounded-4 mb-4">
+        <div class="card-body p-0">
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item p-4 border-0">
+              <div class="d-flex justify-content-between align-items-start mb-3">
+                <span class="badge rounded-pill bg-primary-subtle text-primary px-3 py-2">Assignments</span>
+                <i class="bi bi-house-door text-muted"></i>
+              </div>
+              <h6 class="fw-bold mb-1">Home Assignment Submission</h6>
+              <p class="text-muted small mb-3">Upload your documents before the portal closes.</p>
+              <div class="d-flex justify-content-between p-3 bg-light rounded-4 shadow-sm border">
+                <div class="text-center flex-fill border-end">
+                  <small class="d-block text-muted text-uppercase fw-bold" style="font-size: 0.65rem;">From</small>
+                  <strong class="small">{{planner().homeAssignmentStart | date:'mediumDate'}}</strong>
+                </div>
+                <div class="text-center flex-fill">
+                  <small class="d-block text-muted text-uppercase fw-bold" style="font-size: 0.65rem;">Until</small>
+                  <strong class="text-danger small">{{planner().homeAssignmentEnd | date:'mediumDate'}}</strong>
+                </div>
+              </div>
+            </li>
+
+            <li class="list-group-item p-4 border-0 bg-light-subtle">
+              <div class="d-flex justify-content-between align-items-start mb-3">
+                <span class="badge rounded-pill bg-success-subtle text-success px-3 py-2">Class Work</span>
+                <i class="bi bi-building text-muted"></i>
+              </div>
+              <h6 class="fw-bold mb-1">Class Assignment Window</h6>
+              <div class="d-flex justify-content-between p-3 bg-white shadow-sm rounded-4 border mt-3">
+                <div class="text-center flex-fill border-end">
+                  <small class="d-block text-muted text-uppercase fw-bold" style="font-size: 0.65rem;">Start</small>
+                  <strong class="small">{{planner().classAssignmentStart | date:'mediumDate'}}</strong>
+                </div>
+                <div class="text-center flex-fill">
+                  <small class="d-block text-muted text-uppercase fw-bold" style="font-size: 0.65rem;">Deadline</small>
+                  <strong class="text-danger small">{{planner().classAssignmentEnd | date:'mediumDate'}}</strong>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <h6 class="fw-bold mb-3 d-flex align-items-center text-uppercase tracking-widest small text-muted">
+        <span class="bg-success p-1 rounded-2 me-2 text-white d-flex"><i class="bi bi-cpu small"></i></span>
+        Practical & Viva Schedule
+      </h6>
+
+      <div class="card border-0 shadow-sm rounded-4 h-100 overflow-hidden">
+        <div class="card-body p-4 p-lg-5">
+          <div class="p-4 rounded-4 border-start border-5 border-success bg-success-subtle mb-4 shadow-sm">
+            <div class="d-flex justify-content-between">
+              <h6 class="fw-bold text-success-emphasis mb-0"><i class="bi bi-flask me-2"></i>Internal Practical</h6>
+              <span class="badge bg-success text-white px-3">Active</span>
+            </div>
+            <div class="mt-4 d-flex align-items-center justify-content-between">
+              <div><small class="text-muted d-block small text-uppercase fw-bold">Starts</small><strong
+                  class="h6 mb-0">{{planner().internalPracticalStart | date:'longDate'}}</strong></div>
+              <div class="text-end"><small class="text-muted d-block small text-uppercase fw-bold">Ends</small><strong
+                  class="h6 mb-0 text-danger">{{planner().internalPracticalEnd | date:'longDate'}}</strong></div>
+            </div>
+          </div>
+
+          <div class="card border shadow-sm rounded-4 p-4 mb-4 bg-white" [class.opacity-50]="!planner().hasProject">
+            <div class="d-flex align-items-center justify-content-between">
+              <div class="d-flex align-items-center">
+                <div class="p-3 rounded-circle bg-primary-subtle text-primary me-3 shadow-sm"><i
+                    class="bi bi-chat-left-dots fs-5"></i></div>
+                <div>
+                  <h6 class="fw-bold mb-0">Project Viva (Internal)</h6>
+                  <small class="text-muted">{{ planner().hasProject ? 'Mandatory Submission' : 'Not Required' }}</small>
+                </div>
+              </div>
+              <div class="text-end">
+                <h6 class="fw-bold mb-0 text-primary">{{ planner().hasProject ? (planner().intProjectVivaStart |
+                  date:'mediumDate') : '—' }}</h6>
+              </div>
+            </div>
+          </div>
+
+          <div class="card border-0 bg-dark text-white rounded-4 p-4 shadow-lg">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <h6 class="text-warning fw-bold mb-1"><i class="bi bi-shield-check me-2"></i>External Practical</h6>
+                <small class="opacity-75 small">University Theory Examination Window</small>
+              </div>
+              <div class="text-end">
+                <div class="h6 fw-bold mb-0 text-nowrap">{{planner().externalPracticalStart | date:'MMM d'}} -
+                  {{planner().externalPracticalEnd | date:'MMM d'}}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  }
+</app-staff-layout>

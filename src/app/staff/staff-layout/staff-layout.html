@@ -1,0 +1,121 @@
+<div class="d-flex vw-100 vh-100 overflow-hidden bg-light">
+    <!-- Sidebar -->
+    <aside class="sidebar bg-white border-end shadow-sm d-flex flex-column flex-shrink-0"
+        [class.collapsed]="isCollapsed()">
+
+        <div class="p-4 d-flex align-items-center justify-content-center border-bottom bg-primary text-white shadow-sm flex-shrink-0"
+            style="height: 75px;">
+            <i class="bi bi-mortarboard-fill fs-3"></i>
+            @if (!isCollapsed()) {
+            <span class="ms-2 fw-bold fs-5 text-nowrap animate-fade">Staff Portal</span>
+            }
+        </div>
+
+        <ul class="nav nav-pills flex-column mb-auto gap-2 p-3 overflow-y-auto">
+            <li>
+                <a routerLink="/staff/staff-dashboard" routerLinkActive="active"
+                    class="nav-link py-3 text-nowrap rounded-3" title="Dashboard">
+                    <i class="bi bi-speedometer2" [class.me-3]="!isCollapsed()"></i>
+                    @if (!isCollapsed()) { <span>Dashboard</span> }
+                </a>
+            </li>
+            <li>
+                <a routerLink="/staff/timetable" routerLinkActive="active" class="nav-link py-3 text-nowrap rounded-3"
+                    title="My Timetable">
+                    <i class="bi bi-calendar3" [class.me-3]="!isCollapsed()"></i>
+                    @if (!isCollapsed()) { <span>My Timetable</span> }
+                </a>
+            </li>
+            <li>
+                <a routerLink="/staff/student-timetable" routerLinkActive="active"
+                    class="nav-link py-3 text-nowrap rounded-3" title="Student Timetable">
+                    <i class="bi bi-calendar-check" [class.me-3]="!isCollapsed()"></i>
+                    @if (!isCollapsed()) { <span>Student Timetable</span> }
+                </a>
+            </li>
+            <li>
+                <a routerLink="/staff/planner" routerLinkActive="active" class="nav-link py-3 text-nowrap rounded-3"
+                    title="Planner">
+                    <i class="bi bi-journal-text" [class.me-3]="!isCollapsed()"></i>
+                    @if (!isCollapsed()) { <span>Planner</span> }
+                </a>
+            </li>
+            <li>
+                <a routerLink="/staff/academic-planner" routerLinkActive="active"
+                    class="nav-link py-3 text-nowrap rounded-3" title="Academic Planner">
+                    <i class="bi bi-journal-bookmark" [class.me-3]="!isCollapsed()"></i>
+                    @if (!isCollapsed()) { <span>Academic Planner</span> }
+                </a>
+            </li>
+            <li>
+                <a routerLink="/staff/assignment" routerLinkActive="active" class="nav-link py-3 text-nowrap rounded-3"
+                    title="Add Assignment">
+                    <i class="bi bi-file-earmark-plus" [class.me-3]="!isCollapsed()"></i>
+                    @if (!isCollapsed()) { <span>Add Assignment</span> }
+                </a>
+            </li>
+            <li>
+                <a routerLink="/staff/view-submissions" routerLinkActive="active"
+                    class="nav-link py-3 text-nowrap rounded-3" title="View Submissions">
+                    <i class="bi bi-folder2-open" [class.me-3]="!isCollapsed()"></i>
+                    @if (!isCollapsed()) { <span>View Submissions</span> }
+                </a>
+            </li>
+            <li>
+                <a routerLink="/staff/manage-students" routerLinkActive="active"
+                    class="nav-link py-3 text-nowrap rounded-3" title="Manage Students">
+                    <i class="bi bi-people-fill" [class.me-3]="!isCollapsed()"></i>
+                    @if (!isCollapsed()) { <span>Manage Students</span> }
+                </a>
+            </li>
+        </ul>
+
+        <div class="p-3 border-top mt-auto bg-white flex-shrink-0">
+            <button (click)="logout()"
+                class="btn btn-outline-danger w-100 rounded-pill border-0 py-2 d-flex align-items-center justify-content-center shadow-none"
+                title="Logout">
+                <i class="bi bi-box-arrow-right" [class.me-2]="!isCollapsed()"></i>
+                @if (!isCollapsed()) { <span class="fw-bold animate-fade">Logout</span> }
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content Wrapper -->
+    <div class="flex-grow-1 d-flex flex-column min-vw-0">
+
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg bg-white border-bottom shadow-sm px-4 flex-shrink-0" style="height: 75px;">
+            <div class="container-fluid px-0">
+                <div class="d-flex align-items-center gap-3">
+                    <button
+                        class="btn btn-light rounded-circle shadow-sm border-0 d-flex align-items-center justify-content-center"
+                        style="width: 40px; height: 40px;" (click)="toggleMenu()">
+                        <i class="bi fs-5" [class.bi-list]="isCollapsed()"
+                            [class.bi-text-indent-left]="!isCollapsed()"></i>
+                    </button>
+                    <h5 class="mb-0 fw-bold text-dark d-none d-md-block">University Management System</h5>
+                </div>
+
+                <div class="d-flex align-items-center gap-3">
+                    <div class="text-end d-none d-sm-block">
+                        <h6 class="mb-0 fw-bold text-dark small">{{ staffUser()?.name }}</h6>
+                        <span class="badge bg-primary-subtle text-primary border border-primary border-opacity-10"
+                            style="font-size: 0.65rem;">
+                            {{ staffUser()?.role || 'Staff' | titlecase }} Portal
+                        </span>
+                    </div>
+                    <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center shadow-sm fw-bold"
+                        style="width: 42px; height: 42px;">
+                        {{ staffUser()?.name?.charAt(0) || 'U' }}
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Page Content -->
+        <main class="flex-grow-1 overflow-auto p-4 p-md-5">
+            <ng-content></ng-content>
+        </main>
+
+    </div>
+</div>

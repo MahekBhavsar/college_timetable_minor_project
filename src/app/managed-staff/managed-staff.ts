@@ -1,5 +1,6 @@
 import { Component, signal, OnInit, inject, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { AdminLayoutComponent } from '../admin-layout/admin-layout';
 import { FormsModule } from '@angular/forms';
 import { FirebaseService } from '../services/firebaseservice';
 import { FirebaseCollections } from '../services/firebase-enums';
@@ -8,7 +9,7 @@ import { Subscription } from 'rxjs';
 @Component({
   selector: 'app-manage-staff',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, AdminLayoutComponent],
   templateUrl: './managed-staff.html'
 })
 export class ManageStaff implements OnInit, OnDestroy {
@@ -17,13 +18,13 @@ export class ManageStaff implements OnInit, OnDestroy {
 
   // --- SIGNALS ---
   staffList = signal<any[]>([]);
-  selectedSemesters = signal<number[]>([]); 
+  selectedSemesters = signal<number[]>([]);
   editingId = signal<string | null>(null);
 
   newStaff = signal({
     name: '',
     email: '',
-    password: '', 
+    password: '',
   });
 
   ngOnInit() {
@@ -55,7 +56,7 @@ export class ManageStaff implements OnInit, OnDestroy {
     const payload = {
       ...staff,
       role: 'staff',
-      semesters: this.selectedSemesters(), 
+      semesters: this.selectedSemesters(),
       updatedAt: new Date()
     };
 
@@ -78,7 +79,7 @@ export class ManageStaff implements OnInit, OnDestroy {
     // Handle migration from single semester to multiple
     const sems = staff.semesters ? [...staff.semesters] : (staff.semester ? [staff.semester] : []);
     this.selectedSemesters.set(sems);
-    
+
     this.newStaff.set({
       name: staff.name,
       email: staff.email,
@@ -95,7 +96,7 @@ export class ManageStaff implements OnInit, OnDestroy {
 
   cancelAction() {
     this.editingId.set(null);
-    this.selectedSemesters.set([]); 
+    this.selectedSemesters.set([]);
     this.newStaff.set({ name: '', email: '', password: '' });
   }
 
