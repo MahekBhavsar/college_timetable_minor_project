@@ -24,17 +24,7 @@ interface TimetableSlot {
   standalone: true,
   imports: [FormsModule, CommonModule, AdminLayoutComponent],
   templateUrl: './timetable-component.html',
-  styles: [`
-      .modal-backdrop { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); z-index: 1040; }
-      .modal.show { display: block; z-index: 1050; }
-      .slot-cell { min-height: 110px; cursor: pointer; vertical-align: top; border: 1px solid #dee2e6 !important; transition: background 0.2s; }
-      .slot-cell:hover { background: #f8f9fa !important; }
-      .recess-row { background-color: #fff4e6 !important; border: 2px solid #ffd8a8 !important; }
-      .lecture-card { border-radius: 6px; border-left: 5px solid; transition: transform 0.1s; cursor: pointer; }
-      .type-lab { border-left-color: #ffc107 !important; background: #fffdf5; }
-      .type-lecture { border-left-color: #0d6efd !important; background: #f0f7ff; }
-      .room-badge { font-size: 0.65rem; background: #e9ecef; color: #495057; padding: 2px 5px; border-radius: 4px; display: inline-block; margin-top: 4px; }
-    `]
+  styleUrls: ['./timetable-component.css']
 })
 export class TimetableComponent implements OnInit, OnDestroy {
   public fb = inject(FirebaseService);

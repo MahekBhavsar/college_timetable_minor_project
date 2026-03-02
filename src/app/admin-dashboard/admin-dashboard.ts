@@ -21,6 +21,9 @@ interface AcademicEvent {
   styleUrl: './admin-dashboard.css'
 })
 export class AdminDashboard implements OnInit, AfterViewInit, OnDestroy {
+  // Current date for header
+  today = new Date();
+
   // Metrics
   totalStudents = signal<number>(0);
   totalStaff = signal<number>(0);

@@ -53,7 +53,6 @@
                 <button (click)="removeTopic(uIdx, tIdx)" class="btn btn-sm text-danger">✕</button>
               </div>
               }
-              <button (click)="addTopic(uIdx)" class="btn btn-sm text-primary mt-1">+ Add Topic</button>
             </div>
           </div>
           }
@@ -83,18 +82,29 @@
               <tbody>
                 @for (item of generatedPlan(); track $index) {
                 <tr [class.table-success]="item.isDone">
+
                   <td class="small">
-                    <div class="fw-bold">{{ item.plannedDate }}</div>
-                    <div class="text-muted">{{ item.day }}</div>
+                    <div class="fw-semibold text-primary">
+                      {{ item.plannedDate }}
+                    </div>
+                    <div class="text-muted">
+                      {{ item.day }}
+                    </div>
                   </td>
+
                   <td>
-                    <span class="badge bg-info-subtle text-info mb-1">{{ item.unit }}</span>
-                    <div class="fw-bold">{{ item.topic }}</div>
+                    <span class="badge bg-primary-subtle text-primary mb-1">
+                      {{ item.unit }}
+                    </span>
+                    <div class="fw-semibold">
+                      {{ item.topic }}
+                    </div>
                   </td>
                   <td>
                     <input type="date" class="form-control form-control-sm" [ngModel]="item.actualDate"
                       (ngModelChange)="updateProgress($index, $event)">
                   </td>
+
                 </tr>
                 } @empty {
                 <tr>
@@ -105,7 +115,9 @@
             </table>
           </div>
         </div>
+
       </div>
+
     </div>
   </div>
 </app-staff-layout>

@@ -1,65 +1,107 @@
-<div class="min-vh-100 d-flex align-items-center justify-content-center bg-dark">
+<div class="min-vh-100 d-flex align-items-center justify-content-center"
+  style="background: linear-gradient(135deg, #0f2847 0%, #1a3a6c 50%, #1e1b4b 100%);">
 
-  <div class="card shadow-lg border-0" style="width: 420px; border-radius: 20px;">
+  <div class="card border-0 shadow-lg overflow-hidden" style="width:440px; border-radius:20px;">
 
-    <div class="card-body p-5">
+    <!-- ── Header ─────────────────────────────── -->
+    <div class="text-center text-white p-4 pb-3" style="background: linear-gradient(135deg, #0f2847, #1e1b4b);">
 
-      <!-- Logo / Title -->
-      <div class="text-center mb-4">
-        <h3 class="fw-bold text-dark">Portal Access</h3>
-        <p class="text-muted small">Admin • Staff • Student</p>
+      <!-- Role icons -->
+      <div class="d-flex justify-content-center gap-3 mb-3">
+        <div class="d-flex flex-column align-items-center">
+          <div class="rounded-3 d-flex align-items-center justify-content-center mb-1"
+            style="width:44px;height:44px;background:rgba(59,130,246,0.25);border:1px solid rgba(59,130,246,0.3);">
+            <i class="bi bi-shield-lock-fill" style="color:#93c5fd;font-size:1.15rem;"></i>
+          </div>
+          <span
+            style="font-size:.58rem;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.5px;">Admin</span>
+        </div>
+        <div class="d-flex flex-column align-items-center">
+          <div class="rounded-3 d-flex align-items-center justify-content-center mb-1"
+            style="width:44px;height:44px;background:rgba(20,184,166,0.25);border:1px solid rgba(20,184,166,0.3);">
+            <i class="bi bi-person-workspace" style="color:#5eead4;font-size:1.15rem;"></i>
+          </div>
+          <span
+            style="font-size:.58rem;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.5px;">Staff</span>
+        </div>
+        <div class="d-flex flex-column align-items-center">
+          <div class="rounded-3 d-flex align-items-center justify-content-center mb-1"
+            style="width:44px;height:44px;background:rgba(129,140,248,0.25);border:1px solid rgba(129,140,248,0.3);">
+            <i class="bi bi-mortarboard-fill" style="color:#c7d2fe;font-size:1.15rem;"></i>
+          </div>
+          <span
+            style="font-size:.58rem;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.5px;">Student</span>
+        </div>
       </div>
 
-      <!-- Error -->
+      <h5 class="fw-bold text-white mb-1">College Management Portal</h5>
+      <p class="mb-0" style="font-size:.8rem;color:rgba(255,255,255,.55);">
+        Enter your credentials — we'll detect your role automatically
+      </p>
+    </div>
+
+    <!-- ── Form Body ───────────────────────────── -->
+    <div class="card-body px-4 py-4 bg-white">
+
       @if(errorMessage()) {
-        <div class="alert alert-danger text-center py-2">
-          {{ errorMessage() }}
-        </div>
+      <div class="rounded-3 py-2 px-3 mb-3 small fw-semibold d-flex align-items-center gap-2"
+        style="background:#fee2e2;color:#b91c1c;border:1px solid #fecaca;">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        {{ errorMessage() }}
+      </div>
       }
 
       <!-- Email -->
       <div class="mb-3">
-        <label class="form-label fw-semibold">Email Address</label>
-        <input type="email"
-               class="form-control form-control-lg"
-               placeholder="Enter your email"
-               [ngModel]="email()"
-               (ngModelChange)="email.set($event)">
+        <label class="form-label small fw-semibold text-muted">Email Address</label>
+        <div class="input-group rounded-3 overflow-hidden" style="border:1.5px solid #e2e8f0;">
+          <span class="input-group-text border-0 bg-light px-3">
+            <i class="bi bi-envelope text-muted"></i>
+          </span>
+          <input type="email" class="form-control border-0 bg-light" placeholder="Enter your email" [ngModel]="email()"
+            (ngModelChange)="email.set($event)">
+        </div>
       </div>
 
       <!-- Password -->
       <div class="mb-4">
-        <label class="form-label fw-semibold">Password</label>
-        <input type="password"
-               class="form-control form-control-lg"
-               placeholder="Enter your password"
-               [ngModel]="password()"
-               (ngModelChange)="password.set($event)">
+        <label class="form-label small fw-semibold text-muted">Password</label>
+        <div class="input-group rounded-3 overflow-hidden" style="border:1.5px solid #e2e8f0;">
+          <span class="input-group-text border-0 bg-light px-3">
+            <i class="bi bi-lock-fill text-muted"></i>
+          </span>
+          <input type="password" class="form-control border-0 bg-light" placeholder="Enter your password"
+            [ngModel]="password()" (ngModelChange)="password.set($event)">
+        </div>
       </div>
 
-      <!-- Login Button -->
-      <button class="btn btn-dark w-100 btn-lg rounded-pill"
-              (click)="onLogin()"
-              [disabled]="isLoading()">
-
+      <!-- Sign-in button -->
+      <button class="btn w-100 fw-bold text-white py-2 rounded-3 mb-3"
+        style="background:linear-gradient(135deg,#1a3a6c,#4338ca);border:none;box-shadow:0 4px 16px rgba(26,58,108,0.4);font-size:.95rem;"
+        (click)="onLogin()" [disabled]="isLoading()">
         @if(isLoading()) {
-          <span class="spinner-border spinner-border-sm me-2"></span>
-          Signing In...
+        <span class="spinner-border spinner-border-sm me-2"></span>Verifying...
         } @else {
-          Sign In
+        <i class="bi bi-box-arrow-in-right me-2"></i>Sign In to Portal
         }
-
       </button>
+
+      <!-- Role hint -->
+      <div class="text-center rounded-3 py-2 px-3" style="background:#f8fafc;border:1px solid #e2e8f0;">
+        <small class="text-muted" style="font-size:.72rem;">
+          <i class="bi bi-info-circle me-1 text-primary"></i>
+          Your account role is detected automatically — no need to select
+        </small>
+      </div>
 
     </div>
 
     <!-- Footer -->
-    <div class="card-footer bg-white text-center border-0 pb-4">
-      <small class="text-muted">
-        Secure Institution Portal
+    <div class="bg-light text-center py-2 border-top">
+      <small class="text-muted" style="font-size:.7rem;">
+        <i class="bi bi-shield-check me-1 text-success"></i>Secure Institution Portal
       </small>
     </div>
 
   </div>
-
 </div>

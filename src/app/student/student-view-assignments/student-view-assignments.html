@@ -1,114 +1,121 @@
 <app-student-navbar>
-  <div class="container-fluid py-2">
+  <div class="container-fluid px-0">
 
-    <div class="d-flex align-items-center justify-content-between mb-4">
+    <!-- Header -->
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-4">
       <div>
-        <h4 class="fw-bold text-dark mb-1">📚 My Assignments</h4>
-        <p class="text-muted small">Manage and submit your coursework</p>
+        <h4 class="fw-bold mb-1" style="color:#4338ca;">
+          <i class="bi bi-journal-check me-2"></i>My Assignments
+        </h4>
+        <p class="text-muted mb-0 small">Manage and submit your coursework</p>
       </div>
-      <span class="badge bg-primary-subtle text-primary px-3 py-2 rounded-pill">
-        {{ assignments().length }} Total Tasks
+      <span class="badge rounded-2 px-3 py-2" style="background:#e0e7ff;color:#4338ca;font-size:0.8rem;">
+        <i class="bi bi-list-check me-1"></i>{{ assignments().length }} Total Tasks
       </span>
     </div>
 
     @if (loading()) {
-    <div class="d-flex justify-content-center align-items-center py-5">
-      <div class="spinner-border text-primary me-2" role="status"></div>
-      <span class="text-muted">Loading assignments...</span>
+    <div class="d-flex align-items-center justify-content-center py-5">
+      <div class="spinner-border me-2" style="color:#4338ca;" role="status"></div>
+      <span class="text-muted small fw-semibold">Loading assignments...</span>
     </div>
     }
 
     @else {
-
     @if (assignments().length === 0) {
     <div class="card border-0 shadow-sm rounded-4 text-center p-5">
-      <i class="bi bi-journal-x fs-1 text-muted opacity-50 mb-3"></i>
-      <h5 class="text-dark">No assignments available</h5>
-      <p class="text-muted small">Your instructors haven't posted any tasks for your class yet.</p>
+      <i class="bi bi-journal-x fs-1 d-block mb-3 opacity-25" style="color:#4338ca;"></i>
+      <h5 class="fw-bold text-dark">No assignments yet</h5>
+      <p class="text-muted small mb-0">Your instructors haven't posted any tasks yet.</p>
     </div>
     }
 
-    <div class="row g-4">
+    <div class="row g-3">
       @for (a of assignments(); track a.id) {
       <div class="col-md-6 col-xl-4">
-        <div class="card shadow-sm border-0 rounded-4 h-100 bg-white">
+        <div class="card border-0 shadow-sm rounded-4 h-100 bg-white overflow-hidden">
+
+          <!-- Card top stripe (color indicator) -->
+          <div class="w-100" style="height:4px;background:linear-gradient(90deg, #4338ca, #818cf8);"></div>
+
           <div class="card-body p-4">
-
-            <div class="d-flex justify-content-between align-items-center mb-3">
-              <span class="badge bg-primary-subtle text-primary rounded-pill px-3">
-                {{a.subject}}
+            <!-- Subject + Type row -->
+            <div class="d-flex justify-content-between align-items-start mb-3">
+              <span class="badge rounded-2 fw-semibold px-2 py-1"
+                style="background:#e0e7ff;color:#3730a3;font-size:0.72rem;">
+                <i class="bi bi-book me-1"></i>{{ a.subject }}
               </span>
-
-              <span class="badge rounded-pill px-3" 
-                    [ngClass]="a.type === 'HOME' ? 'bg-success-subtle text-success' : 'bg-warning-subtle text-warning'">
-                <i class="bi" [ngClass]="a.type === 'HOME' ? 'bi-house-door-fill' : 'bi-building-fill'"></i>
-                {{a.type}}
+              <span class="badge rounded-2 fw-semibold px-2 py-1" style="font-size:0.72rem;"
+                [style.background]="a.type === 'HOME' ? '#dcfce7' : '#fef9c3'"
+                [style.color]="a.type === 'HOME' ? '#15803d' : '#854d0e'">
+                <i class="bi me-1" [class.bi-house-door-fill]="a.type === 'HOME'"
+                  [class.bi-building-fill]="a.type !== 'HOME'"></i>
+                {{ a.type === 'HOME' ? 'Home' : 'Class' }}
               </span>
             </div>
 
-            <h5 class="fw-bold text-dark mb-2">{{a.title}}</h5>
-
-            <p class="text-secondary small mb-3">
-              {{a.description || 'No specific instructions provided.'}}
+            <h6 class="fw-bold text-dark mb-2">{{ a.title }}</h6>
+            <p class="text-muted small mb-3" style="line-height:1.5;">
+              {{ a.description || 'No specific instructions provided.' }}
             </p>
 
-            <div class="d-flex align-items-center small text-danger fw-medium mb-4">
-              <i class="bi bi-calendar-event me-2"></i>
-              Due: {{a.date | date:'dd MMM yyyy'}}
+            <div class="d-flex align-items-center gap-1 mb-3"
+              style="color:#b91c1c; font-size:0.78rem; font-weight:600;">
+              <i class="bi bi-calendar-event"></i>
+              Due: {{ a.date | date:'dd MMM yyyy' }}
             </div>
 
-            <hr class="opacity-10 mb-4">
+            <hr class="opacity-10 mb-3">
 
             @if (a.type === 'HOME' && a.fileData) {
-            <button class="btn btn-outline-primary btn-sm w-100 rounded-3 mb-3 d-flex align-items-center justify-content-center gap-2" 
-                    (click)="viewFile(a.fileData, a.fileName)">
-              <i class="bi bi-file-earmark-arrow-down fs-6"></i>
-              Download Material
+            <button
+              class="btn btn-sm w-100 rounded-3 fw-semibold mb-2 d-flex align-items-center justify-content-center gap-2"
+              style="background:#e0e7ff;color:#4338ca;border:none;" (click)="viewFile(a.fileData, a.fileName)">
+              <i class="bi bi-file-earmark-arrow-down"></i>Download Material
             </button>
             }
 
             @if (a.type === 'HOME') {
-
-              @if (submittedMap()[a.id]) {
-                <div class="bg-light rounded-4 p-3 border border-success border-opacity-25">
-                  <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span class="badge bg-success rounded-pill px-3">
-                      <i class="bi bi-check-circle-fill me-1"></i> {{ submittedMap()[a.id].status }}
-                    </span>
-                    <small class="text-muted">{{ submittedMap()[a.id].submittedAt | date:'dd MMM' }}</small>
-                  </div>
-                  
-                  <button class="btn btn-sm btn-white border w-100 text-dark small rounded-3" 
-                          (click)="viewFile(submittedMap()[a.id].fileData, submittedMap()[a.id].fileName)">
-                    <i class="bi bi-file-earmark-text text-primary me-1"></i>
-                    {{ submittedMap()[a.id].fileName }}
-                  </button>
-                </div>
-              }
-
-              @else {
-                <div class="mt-2">
-                  <label class="small text-muted mb-2 d-block">Upload your response (PDF/Doc)</label>
-                  <div class="input-group input-group-sm mb-3">
-                    <input type="file" class="form-control rounded-start-3" id="inputGroupFile{{a.id}}" (change)="selectResponseFile($event, a.id)">
-                  </div>
-
-                  <button class="btn btn-success w-100 rounded-3 shadow-sm d-flex align-items-center justify-content-center gap-2" 
-                          (click)="submitResponse(a)" 
-                          [disabled]="uploadingId() === a.id">
-                    @if (uploadingId() === a.id) {
-                      <span class="spinner-border spinner-border-sm"></span>
-                      Submitting...
-                    } @else {
-                      <i class="bi bi-cloud-arrow-up"></i>
-                      Submit Assignment
-                    }
-                  </button>
-                </div>
-              }
+            @if (submittedMap()[a.id]) {
+            <div class="rounded-3 p-3" style="background:#f0fdf4; border:1px solid #bbf7d0;">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="badge rounded-2 px-2 py-1 fw-semibold"
+                  style="background:#dcfce7;color:#15803d;font-size:0.7rem;">
+                  <i class="bi bi-check-circle-fill me-1"></i>{{ submittedMap()[a.id].status }}
+                </span>
+                <small class="text-muted">{{ submittedMap()[a.id].submittedAt | date:'dd MMM' }}</small>
+              </div>
+              <button class="btn btn-sm w-100 rounded-3 text-dark"
+                style="background:#f8fafc;border:1px solid #e2e8f0;font-size:0.75rem;"
+                (click)="viewFile(submittedMap()[a.id].fileData, submittedMap()[a.id].fileName)">
+                <i class="bi bi-file-earmark-text me-1" style="color:#4338ca;"></i>
+                {{ submittedMap()[a.id].fileName }}
+              </button>
+            </div>
+            } @else {
+            <div>
+              <label class="small text-muted mb-1 d-block">Upload response (PDF / Doc)</label>
+              <input type="file" class="form-control form-control-sm rounded-3 border-0 bg-light mb-2"
+                id="inputGroupFile{{a.id}}" (change)="selectResponseFile($event, a.id)">
+              <button
+                class="btn btn-sm w-100 rounded-3 fw-bold text-white d-flex align-items-center justify-content-center gap-2"
+                style="background:linear-gradient(135deg,#4338ca,#6366f1);border:none;box-shadow:0 3px 10px rgba(67,56,202,0.3);"
+                (click)="submitResponse(a)" [disabled]="uploadingId() === a.id">
+                @if (uploadingId() === a.id) {
+                <span class="spinner-border spinner-border-sm"></span>Submitting...
+                } @else {
+                <i class="bi bi-cloud-arrow-up"></i>Submit Assignment
+                }
+              </button>
+            </div>
             }
+            }
+          </div>
+        </div>
+      </div>
+      }
+    </div>
+    }
 
-          </div> </div> </div> }
-    </div> }
   </div>
 </app-student-navbar>

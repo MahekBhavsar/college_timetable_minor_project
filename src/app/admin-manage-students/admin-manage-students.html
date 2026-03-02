@@ -1,123 +1,107 @@
 <app-admin-layout>
-  <div class="container-fluid py-4 bg-light min-vh-100">
+  <div class="container-fluid px-0">
 
-    <!-- HEADER -->
-    <div class="card shadow-sm border-0 rounded-4 mb-4 p-4 bg-dark text-white">
-      <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
-
-        <div>
-          <h4 class="fw-bold mb-1">Academic Registry</h4>
-          <small class="opacity-75">
-            Managing Semester <span class="badge bg-warning text-dark"> {{selectedSemester()}} </span>
-          </small>
-        </div>
-
-        <div class="d-flex gap-2">
-          <button class="btn btn-warning rounded-pill px-4 fw-semibold shadow-sm"
-            (click)="generateMasterRoll(selectedSemester())" [disabled]="isProcessing()">
-
-            @if(isProcessing()){
-            <span class="spinner-border spinner-border-sm me-2"></span>
-            }
-
-            Generate Roll List
-          </button>
-
-          <button class="btn btn-success rounded-pill px-4 fw-semibold shadow-sm"
-            (click)="promoteStudents(selectedSemester())">
-            Promote Students
-          </button>
-        </div>
-
+    <!-- ── Page Header ────────────────────────────────────── -->
+    <div class="rounded-4 p-4 mb-4 text-white d-flex justify-content-between align-items-center flex-wrap gap-3"
+      style="background: linear-gradient(135deg,#1a3a6c,#2563eb);">
+      <div>
+        <h5 class="fw-bold mb-1">
+          <i class="bi bi-mortarboard-fill me-2"></i>Academic Registry
+        </h5>
+        <p class="mb-0 text-white-50 small">
+          Managing Semester
+          <span class="badge bg-warning text-dark rounded-pill ms-1">{{ selectedSemester() }}</span>
+        </p>
       </div>
-    </div>
-
-    <!-- SEMESTER SELECTOR -->
-    <div class="card border-0 shadow-sm rounded-4 mb-4 p-2">
-      <div class="d-flex flex-wrap gap-2 justify-content-center">
-
-        @for (sem of [1,2,3,4,5,6]; track sem) {
-        <button class="btn rounded-pill px-4 fw-semibold"
-          [ngClass]="selectedSemester() === sem ? 'btn-primary shadow-sm' : 'btn-outline-primary'"
-          (click)="setSemester(sem)">
-          Semester {{sem}}
+      <div class="d-flex gap-2 flex-wrap">
+        <button class="btn btn-warning fw-semibold rounded-pill px-4 shadow-sm"
+          (click)="generateMasterRoll(selectedSemester())" [disabled]="isProcessing()">
+          @if (isProcessing()) { <span class="spinner-border spinner-border-sm me-2"></span> }
+          <i class="bi bi-file-earmark-text me-1"></i>Generate Roll List
         </button>
-        }
-
+        <button class="btn btn-success fw-semibold rounded-pill px-4 shadow-sm"
+          (click)="promoteStudents(selectedSemester())">
+          <i class="bi bi-arrow-up-circle me-1"></i>Promote Students
+        </button>
       </div>
     </div>
 
-    <!-- STUDENT TABLE -->
+    <!-- ── Semester Selector ───────────────────────────────── -->
+    <div class="card border-0 shadow-sm rounded-4 mb-4">
+      <div class="card-body py-3 px-4">
+        <p class="small fw-semibold text-muted mb-2">Select Semester</p>
+        <div class="d-flex flex-wrap gap-2">
+          @for (sem of [1,2,3,4,5,6]; track sem) {
+          <button class="btn fw-semibold rounded-pill px-4"
+            [style.background]="selectedSemester() === sem ? '#1a3a6c' : 'transparent'"
+            [style.color]="selectedSemester() === sem ? '#fff' : '#1a3a6c'" [style.border]="'1px solid #1a3a6c'"
+            (click)="setSemester(sem)">
+            Semester {{ sem }}
+          </button>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Student Table ───────────────────────────────────── -->
     <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
-
+      <div class="card-header bg-white border-0 py-3 px-4 d-flex align-items-center justify-content-between">
+        <h6 class="fw-bold mb-0 text-dark">Students — Semester {{ selectedSemester() }}</h6>
+        <span class="badge rounded-pill" style="background:#eff6ff;color:#1d4ed8;font-size:0.75rem;">
+          {{ filteredStudents().length }} Records
+        </span>
+      </div>
       <div class="table-responsive">
-
-        <table class="table align-middle table-hover mb-0">
-
-          <thead class="table-light text-uppercase small">
-            <tr>
-              <th class="ps-4">Student</th>
-              <th class="text-center">Division</th>
-              <th class="text-center">Roll No</th>
-              <th class="text-center">Action</th>
+        <table class="table table-hover align-middle mb-0">
+          <thead style="background:#f8fafc;">
+            <tr
+              style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:#94a3b8;">
+              <th class="ps-4 py-3 border-0">Student</th>
+              <th class="py-3 border-0 text-center">Division</th>
+              <th class="py-3 border-0 text-center">Roll No.</th>
+              <th class="py-3 border-0 text-center">Action</th>
             </tr>
           </thead>
-
           <tbody>
-
             @for (s of filteredStudents(); track s.id) {
-            <tr>
-
-              <!-- NAME -->
-              <td class="ps-4">
-                <div class="fw-semibold">{{s.name}}</div>
-                <small class="text-muted">{{s.email}}</small>
+            <tr style="border-bottom:1px solid #f1f5f9;">
+              <td class="ps-4 py-3">
+                <div class="d-flex align-items-center gap-3">
+                  <div class="stu-avatar-circle">{{ (s.name||'?')[0].toUpperCase() }}</div>
+                  <div>
+                    <div class="fw-semibold text-dark small">{{ s.name }}</div>
+                    <div class="text-muted" style="font-size:0.73rem;">{{ s.email }}</div>
+                  </div>
+                </div>
               </td>
-
-              <!-- DIVISION -->
               <td class="text-center">
-                <span class="badge px-3 py-2" [ngClass]="{
-                    'bg-primary': s.division === 'A',
-                    'bg-success': s.division === 'B',
-                    'bg-info text-dark': s.division === 'C',
-                    'bg-secondary': !s.division || s.division === 'TBA'
-                  }">
-                  {{s.division || 'TBA'}}
+                <span class="badge rounded-2 px-3 py-1 fw-semibold"
+                  [style.background]="s.division === 'A' ? '#dbeafe' : s.division === 'B' ? '#dcfce7' : s.division === 'C' ? '#fef9c3' : '#f1f5f9'"
+                  [style.color]="s.division === 'A' ? '#1d4ed8' : s.division === 'B' ? '#15803d' : s.division === 'C' ? '#854d0e' : '#475569'">
+                  {{ s.division || 'TBA' }}
                 </span>
               </td>
-
-              <!-- ROLL -->
-              <td class="text-center fw-bold fs-6">
-                {{s.rollNo ? ('#' + s.rollNo) : '--'}}
+              <td class="text-center fw-bold text-dark">
+                {{ s.rollNo ? ('#' + s.rollNo) : '—' }}
               </td>
-
-              <!-- DELETE -->
               <td class="text-center">
-                <button class="btn btn-outline-danger btn-sm rounded-circle" (click)="deleteStudent(s.id)">
-                  <i class="bi bi-trash"></i>
+                <button class="btn btn-sm rounded-3" style="background:#fee2e2;color:#b91c1c;border:none;"
+                  (click)="deleteStudent(s.id)">
+                  <i class="bi bi-trash-fill"></i>
                 </button>
               </td>
-
             </tr>
             }
-
-            <!-- EMPTY STATE -->
             @empty {
             <tr>
               <td colspan="4" class="text-center py-5 text-muted">
-
-                <div class="d-flex flex-column align-items-center gap-2">
-                  <i class="bi bi-database-x fs-1 opacity-50"></i>
-                  <div class="fw-semibold">No students found</div>
-                  <small>Semester {{selectedSemester()}} has no records</small>
-                </div>
-
+                <i class="bi bi-database-x fs-1 opacity-50 d-block mb-2"></i>
+                <div class="fw-semibold">No students found</div>
+                <small>Semester {{ selectedSemester() }} has no records</small>
               </td>
             </tr>
             }
-
           </tbody>
-
         </table>
       </div>
     </div>
