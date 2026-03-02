@@ -9,12 +9,12 @@ import jsPDF from 'jspdf';
 @Component({
   selector: 'app-student-dashboard',
   standalone: true,
-  imports: [CommonModule,StudentNavbar],
+  imports: [CommonModule, StudentNavbar],
   templateUrl: './view-timetable.html'
 })
 export class ViewTimetable implements OnInit {
-async exportToPDF() {
-    const data = document.getElementById('timetable-content');
+  async exportToPDF() {
+    const data = document.getElementById('timetable-pdf-area');
     if (!data) return;
 
     // Optional: Show loading state
@@ -28,7 +28,7 @@ async exportToPDF() {
       const imgWidth = 210; // A4 Width in mm
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
       const contentDataURL = canvas.toDataURL('image/png');
-      
+
       const pdf = new jsPDF('p', 'mm', 'a4');
       const position = 10; // Margin top
 
@@ -45,17 +45,17 @@ async exportToPDF() {
 
   timetableGrid = signal<any>({});
   timeSlots = signal<string[]>([]);
-  days = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
   constructor(
     private firebaseService: FirebaseService,
     @Inject(PLATFORM_ID) private platformId: Object
-  ) {}
+  ) { }
 
   async ngOnInit() {
     if (isPlatformBrowser(this.platformId)) {
 
-      const stored = localStorage.getItem('student_user');
+      const stored = localStorage.getItem('portal_user');
       if (!stored) {
         this.isLoading.set(false);
         return;
@@ -93,12 +93,19 @@ async exportToPDF() {
 
     try {
 
+      const isTBA = !divValue || divValue === 'TBA' || divValue === 'tba';
+
       const [tt, asg, plan] = await Promise.all([
         firstValueFrom(
-          this.firebaseService.getMultipleFilteredCollection(
-            FirebaseCollections.Timetable,
-            [{ field: 'sem', value: semValue }, { field: 'div', value: divValue }]
-          )
+          isTBA
+            ? this.firebaseService.getFilteredCollection(
+              FirebaseCollections.Timetable,
+              'sem', semValue
+            )
+            : this.firebaseService.getMultipleFilteredCollection(
+              FirebaseCollections.Timetable,
+              [{ field: 'sem', value: semValue }, { field: 'div', value: divValue }]
+            )
         ),
         firstValueFrom(
           this.firebaseService.getMultipleFilteredCollection(

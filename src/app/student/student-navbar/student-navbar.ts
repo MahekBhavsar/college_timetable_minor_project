@@ -16,7 +16,8 @@ interface Notification {
   selector: 'app-student-navbar',
   standalone: true,
   imports: [RouterLink, RouterLinkActive],
-  templateUrl: './student-navbar.html'
+  templateUrl: './student-navbar.html',
+  styleUrls: ['./student-navbar.css']
 })
 export class StudentNavbar {
   private firebaseService = inject(FirebaseService);

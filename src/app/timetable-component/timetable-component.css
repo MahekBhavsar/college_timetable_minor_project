@@ -1,11 +1,177 @@
-.slot-cell { cursor: pointer; min-height: 100px; height: 100px; transition: 0.2s; vertical-align: top; padding: 5px; }
-.slot-cell:hover { background: #f8f9fa; }
-.time-col { background: #f8f9fa; font-size: 0.8rem; }
-.recess-row { background: #fff3cd !important; }
-.lecture-card { 
-  font-size: 0.75rem; padding: 8px; border-radius: 4px; 
-  text-align: left; border-left: 4px solid #0d6efd; background: #eef6ff;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+/* ═══════════════════════════════════════════════
+   TIMETABLE — Education Navy Theme
+   ═══════════════════════════════════════════════ */
+
+/* ── Table Base ─────────────────────────────── */
+.tt-table {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+  font-size: 0.8rem;
 }
-.lecture-card.Lab { border-left-color: #ffc107; background: #fffdf0; }
-.extra-small { font-size: 0.7rem; font-weight: bold; }
+
+/* ── Header Row ──────────────────────────────── */
+.tt-head th {
+  background: #1a3a6c;
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  padding: 0.75rem 0.5rem;
+  text-align: center;
+  border: none !important;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.tt-time-col {
+  min-width: 120px;
+  width: 130px;
+  background: #0f2847 !important;
+}
+
+.tt-day-col {
+  min-width: 130px;
+}
+
+/* ── Time Label Column ───────────────────────── */
+.tt-time-label {
+  background: #f8fafc;
+  color: #1a3a6c;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-align: center;
+  padding: 0.5rem;
+  border-right: 2px solid #e2e8f0 !important;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+/* ── Slot Cell ───────────────────────────────── */
+.tt-slot {
+  cursor: pointer;
+  min-height: 90px;
+  height: 90px;
+  vertical-align: top;
+  padding: 4px !important;
+  transition: background 0.15s ease;
+  border-color: #e2e8f0 !important;
+}
+
+.tt-slot:hover {
+  background: #eff6ff !important;
+}
+
+/* ── Recess Row ──────────────────────────────── */
+.tt-recess td {
+  background: linear-gradient(90deg, #fef9c3, #fefce8) !important;
+  border-color: #fde68a !important;
+}
+
+/* ── Lecture Card ────────────────────────────── */
+.tt-card {
+  border-radius: 8px;
+  padding: 6px 8px;
+  font-size: 0.72rem;
+  text-align: left;
+  position: relative;
+  border-left: 3px solid #2563eb;
+  background: linear-gradient(135deg, #eff6ff, #dbeafe);
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.12);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  margin-bottom: 2px;
+  overflow: hidden;
+}
+
+.tt-card:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+/* Lab variant */
+.tt-card.tt-lab {
+  border-left-color: #d97706;
+  background: linear-gradient(135deg, #fffbeb, #fef3c7);
+  box-shadow: 0 2px 6px rgba(217, 119, 6, 0.12);
+}
+
+/* Staff view variant */
+.tt-card.tt-staff-card {
+  border-left-color: #059669;
+  background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+  box-shadow: 0 2px 6px rgba(5, 150, 105, 0.12);
+}
+
+.tt-card-subject {
+  font-weight: 700;
+  color: #1e293b;
+  font-size: 0.73rem;
+  line-height: 1.2;
+  margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tt-card-staff {
+  color: #2563eb;
+  font-size: 0.67rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tt-lab .tt-card-staff {
+  color: #b45309;
+}
+
+.tt-staff-card .tt-card-staff {
+  color: #059669;
+}
+
+.tt-card-room {
+  color: #64748b;
+  font-size: 0.65rem;
+  font-weight: 500;
+  margin-top: 2px;
+}
+
+/* Type badge */
+.tt-type-badge {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  font-size: 0.55rem;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  padding: 1px 5px;
+  border-radius: 50px;
+  background: rgba(37, 99, 235, 0.12);
+  color: #1d4ed8;
+}
+
+.tt-lab .tt-type-badge {
+  background: rgba(217, 119, 6, 0.12);
+  color: #b45309;
+}
+
+/* ── Responsive: horizontal scroll on small screens ── */
+@media (max-width: 768px) {
+  .tt-time-col {
+    min-width: 80px;
+    width: 80px;
+  }
+
+  .tt-day-col {
+    min-width: 110px;
+  }
+
+  .tt-slot {
+    height: 80px;
+    min-height: 80px;
+  }
+}

@@ -1,1 +1,66 @@
 /* You can add global styles to this file, and also import other style files */
+
+/* ── Global Admin Sidebar fix (bypass Angular encapsulation) ── */
+.sidebar {
+    background: linear-gradient(180deg, #0f2847 0%, #1a3a6c 100%) !important;
+}
+
+.sidebar-nav .nav-link.active {
+    background: linear-gradient(90deg, rgba(59, 130, 246, 0.3), rgba(59, 130, 246, 0.1)) !important;
+    color: #93c5fd !important;
+    border-left: 3px solid #3b82f6 !important;
+}
+
+.sidebar-nav .nav-link:hover {
+    background: rgba(255, 255, 255, 0.08) !important;
+    color: #fff !important;
+}
+
+/* ── Timetable – modal backdrop (bypass encapsulation) ── */
+.modal-backdrop.fade.show {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1040;
+}
+
+/* ── Staff Sidebar — Teal (bypass Angular encapsulation) ── */
+.st-sidebar {
+    background: linear-gradient(180deg, #064e3b 0%, #0f766e 100%) !important;
+}
+
+.st-nav .nav-link.active {
+    background: linear-gradient(90deg, rgba(20, 184, 166, 0.3), rgba(20, 184, 166, 0.1)) !important;
+    color: #5eead4 !important;
+    border-left: 3px solid #14b8a6 !important;
+}
+
+.st-nav .nav-link:hover {
+    background: rgba(255, 255, 255, 0.1) !important;
+    color: #fff !important;
+}
+
+/* ── Student Sidebar — Indigo (bypass Angular encapsulation) ── */
+.stu-sidebar {
+    background: linear-gradient(180deg, #1e1b4b 0%, #312e81 55%, #4338ca 100%) !important;
+}
+
+.stu-nav a.active {
+    background: linear-gradient(90deg, rgba(129, 140, 248, 0.3), rgba(129, 140, 248, 0.1)) !important;
+    color: #c7d2fe !important;
+    border-left: 3px solid #818cf8 !important;
+}
+
+.stu-nav a:hover {
+    background: rgba(255, 255, 255, 0.1) !important;
+    color: #fff !important;
+}
+
+.stu-bar {
+    background: #fff;
+    border-bottom: 1px solid #e2e8f0;
+    box-shadow: 0 1px 8px rgba(0, 0, 0, .06);
+}

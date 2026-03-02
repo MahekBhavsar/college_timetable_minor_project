@@ -118,25 +118,6 @@
                   </td>
 
                 </tr>
-                </thead>
-              <tbody>
-                @for (s of submissions(); track s.id) {
-                <tr>
-                  <td class="ps-4 py-3">
-                    <div class="fw-bold text-dark">{{s.studentName}}</div>
-                    <small class="text-muted">{{s.studentEmail || 'No email'}}</small>
-                  </td>
-                  <td>
-                    <span class="badge bg-light text-dark border-0 fw-normal rounded-pill px-3">
-                      Div {{s.division}} | Roll: {{s.rollNo}}
-                    </span>
-                  </td>
-                  <td class="text-end pe-4">
-                    <button class="btn btn-sm btn-outline-primary rounded-3" (click)="viewFile(s.fileData)">
-                      <i class="bi bi-eye me-1"></i> View File
-                    </button>
-                  </td>
-                </tr>
                 } @empty {
                 <tr>
                   <td colspan="3" class="text-center py-5 text-muted small">
@@ -149,9 +130,8 @@
           </div>
         </div>
 
+        }
       </div>
-      }
     </div>
-  </div>
   </div>
 </app-staff-layout>

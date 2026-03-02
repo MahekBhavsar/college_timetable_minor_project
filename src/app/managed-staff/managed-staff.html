@@ -1,103 +1,155 @@
 <app-admin-layout>
-  <div class="container-fluid p-4 bg-light min-vh-100">
+  <div class="container-fluid px-0">
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <!-- ── Page Header ───────────────────────────────── -->
+    <div class="rounded-4 p-4 mb-4 text-white d-flex justify-content-between align-items-center flex-wrap gap-3"
+      style="background: linear-gradient(135deg,#1a3a6c,#2563eb);">
       <div>
-        <h2 class="fw-bold mb-1">Faculty Registry</h2>
-        <p class="text-muted small mb-0">Portal Access & Semester Management</p>
+        <h5 class="fw-bold mb-1">
+          <i class="bi bi-people-fill me-2"></i>Faculty Registry
+        </h5>
+        <p class="mb-0 text-white-50 small">Portal Access &amp; Semester Management</p>
       </div>
-      <div class="badge bg-primary px-3 py-2 rounded-pill shadow-sm">
-        Total Faculty: {{ staffList().length }}
-      </div>
+      <span class="badge bg-white rounded-pill px-3 py-2" style="color:#1a3a6c; font-size:0.8rem;">
+        <i class="bi bi-person-badge me-1"></i>Total Faculty: {{ staffList().length }}
+      </span>
     </div>
 
     <div class="row g-4">
 
-      <div class="col-xl-4">
-        <div class="card shadow-sm border-0 rounded-4 sticky-top" style="top:20px">
-          <div class="card-header bg-white border-0 py-3">
-            <h5 class="fw-bold text-primary mb-0">
-              {{ editingId() ? 'Edit Profile' : 'Create Staff Account' }}
-            </h5>
+      <!-- ── Left: Form Panel ────────────────────────── -->
+      <div class="col-lg-4">
+        <div class="card border-0 shadow-sm rounded-4">
+          <div class="card-header bg-white border-0 pt-4 px-4 pb-0 rounded-top-4">
+            <h6 class="fw-bold mb-0" style="color:#1a3a6c;">
+              <i class="bi me-2" [class.bi-pencil-square]="editingId()" [class.bi-person-plus-fill]="!editingId()"></i>
+              {{ editingId() ? 'Edit Faculty Profile' : 'Create Staff Account' }}
+            </h6>
+            <p class="text-muted small mt-1 mb-0">{{ editingId() ? 'Update the staff information below' : 'Fill in the
+              details to create a new account' }}</p>
           </div>
+          <div class="card-body px-4 pb-4 pt-3">
 
-          <div class="card-body">
-            <label class="small fw-bold text-muted">Full Name</label>
-            <input type="text" class="form-control bg-light border-0 mb-3 py-2" placeholder="Name"
-              [ngModel]="newStaff().name" (ngModelChange)="updateStaffField('name', $event)">
-
-            <label class="small fw-bold text-muted">Portal Login Email</label>
-            <input type="email" class="form-control bg-light border-0 mb-3 py-2" placeholder="email@college.com"
-              [ngModel]="newStaff().email" (ngModelChange)="updateStaffField('email', $event)">
-
-            <label class="small fw-bold text-muted">Set Access Password</label>
-            <div class="input-group mb-3">
-              <span class="input-group-text bg-light border-0"><i class="bi bi-lock-fill"></i></span>
-              <input type="password" class="form-control bg-light border-0 py-2" placeholder="Password"
-                [ngModel]="newStaff().password" (ngModelChange)="updateStaffField('password', $event)">
+            <div class="mb-3">
+              <label class="form-label small fw-semibold text-muted">Full Name</label>
+              <div class="input-group">
+                <span class="input-group-text bg-light border-0"><i class="bi bi-person text-muted"></i></span>
+                <input type="text" class="form-control bg-light border-0" placeholder="Prof. Jane Doe"
+                  [ngModel]="newStaff().name" (ngModelChange)="updateStaffField('name', $event)">
+              </div>
             </div>
 
-            <label class="small fw-bold text-muted d-block mb-2">Assign to Semesters</label>
-            <div class="d-flex flex-wrap gap-2 mb-4">
-              @for (s of [1,2,3,4,5,6]; track s) {
-              <button type="button" class="btn btn-sm rounded-pill px-3 transition-all"
-                [class.btn-primary]="selectedSemesters().includes(s)"
-                [class.btn-outline-secondary]="!selectedSemesters().includes(s)" (click)="toggleSemester(s)">
-                Sem {{ s }}
-              </button>
-              }
+            <div class="mb-3">
+              <label class="form-label small fw-semibold text-muted">Portal Login Email</label>
+              <div class="input-group">
+                <span class="input-group-text bg-light border-0"><i class="bi bi-envelope text-muted"></i></span>
+                <input type="email" class="form-control bg-light border-0" placeholder="email@university.edu"
+                  [ngModel]="newStaff().email" (ngModelChange)="updateStaffField('email', $event)">
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label small fw-semibold text-muted">Set Access Password</label>
+              <div class="input-group">
+                <span class="input-group-text bg-light border-0"><i class="bi bi-lock-fill text-muted"></i></span>
+                <input type="password" class="form-control bg-light border-0" placeholder="••••••••"
+                  [ngModel]="newStaff().password" (ngModelChange)="updateStaffField('password', $event)">
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <label class="form-label small fw-semibold text-muted d-block mb-2">Assign to Semesters</label>
+              <div class="d-flex flex-wrap gap-2">
+                @for (s of [1,2,3,4,5,6]; track s) {
+                <button type="button" class="btn btn-sm rounded-pill px-3 fw-semibold"
+                  [style.background]="selectedSemesters().includes(s) ? '#1a3a6c' : '#f1f5f9'"
+                  [style.color]="selectedSemesters().includes(s) ? '#fff' : '#64748b'"
+                  [style.border]="selectedSemesters().includes(s) ? '1px solid #1a3a6c' : '1px solid #e2e8f0'"
+                  (click)="toggleSemester(s)">
+                  Sem {{ s }}
+                </button>
+                }
+              </div>
             </div>
 
             <div class="d-grid gap-2">
-              <button class="btn btn-primary fw-bold py-3 rounded-3" (click)="saveStaff()">
+              <button class="btn fw-bold py-2 rounded-3 text-white" style="background:#1a3a6c;" (click)="saveStaff()">
+                <i class="bi me-2" [class.bi-check-lg]="editingId()" [class.bi-plus-lg]="!editingId()"></i>
                 {{ editingId() ? 'Update Faculty' : 'Create Account' }}
               </button>
               @if (editingId()) {
-              <button class="btn btn-link text-decoration-none text-muted" (click)="cancelAction()">Cancel Edit</button>
+              <button class="btn btn-link text-muted text-decoration-none small" (click)="cancelAction()">
+                Cancel Edit
+              </button>
               }
             </div>
           </div>
         </div>
       </div>
 
-      <div class="col-xl-8">
-        <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
-          <table class="table align-middle mb-0">
-            <thead class="bg-dark text-white">
-              <tr class="small text-uppercase">
-                <th class="px-4 py-3">Faculty Details</th>
-                <th>Assigned Semesters</th>
-                <th class="text-end px-4">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (s of staffList(); track s.id) {
-              <tr class="bg-white">
-                <td class="px-4">
-                  <div class="fw-bold fs-6">{{ s.name }}</div>
-                  <div class="text-primary small fw-semibold">{{ s.email }}</div>
-                </td>
-                <td>
-                  <div class="d-flex flex-wrap gap-1">
-                    @for (sem of (s.semesters || [s.semester]); track sem) {
-                    <span class="badge bg-info-subtle text-info border-0 px-2 py-1" style="font-size: 0.75rem;">
-                      Sem {{ sem }}
-                    </span>
-                    }
-                  </div>
-                </td>
-                <td class="text-end px-4">
-                  <button class="btn btn-light btn-sm me-2 border rounded-circle" (click)="editStaff(s)">
-                    <i class="bi bi-pencil-fill text-primary"></i>
-                  </button>
-                  <button class="btn btn-light btn-sm border rounded-circle" (click)="deleteStaff(s.id)">
-                    <i class="bi bi-trash-fill text-danger"></i>
-                  </button>
-                </td>
-              </tr>
-              }
-            </tbody>
-          </table>
+      <!-- ── Right: Staff Table ──────────────────────── -->
+      <div class="col-lg-8">
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+          <div class="card-header bg-white border-0 py-3 px-4 d-flex align-items-center justify-content-between">
+            <h6 class="fw-bold mb-0 text-dark">All Faculty Members</h6>
+            <span class="badge rounded-pill" style="background:#eff6ff;color:#1d4ed8; font-size:0.75rem;">{{
+              staffList().length }} members</span>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+              <thead style="background:#f8fafc;">
+                <tr
+                  style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:#94a3b8;">
+                  <th class="ps-4 py-3 border-0">Faculty Details</th>
+                  <th class="py-3 border-0">Assigned Semesters</th>
+                  <th class="py-3 border-0 text-end pe-4">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (s of staffList(); track s.id) {
+                <tr style="border-bottom:1px solid #f1f5f9;">
+                  <td class="ps-4 py-3">
+                    <div class="d-flex align-items-center gap-3">
+                      <div class="staff-initials-avatar">{{ (s.name||'?')[0].toUpperCase() }}</div>
+                      <div>
+                        <div class="fw-bold text-dark small">{{ s.name }}</div>
+                        <div style="font-size:0.75rem; color:#2563eb; font-weight:600;">{{ s.email }}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="d-flex flex-wrap gap-1">
+                      @for (sem of (s.semesters || [s.semester]); track sem) {
+                      <span class="badge rounded-2 px-2 py-1"
+                        style="background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;font-size:0.7rem;">
+                        Sem {{ sem }}
+                      </span>
+                      }
+                    </div>
+                  </td>
+                  <td class="text-end pe-4">
+                    <button class="btn btn-sm me-1 rounded-3" style="background:#eff6ff;color:#1d4ed8; border:none;"
+                      (click)="editStaff(s)">
+                      <i class="bi bi-pencil-fill"></i>
+                    </button>
+                    <button class="btn btn-sm rounded-3" style="background:#fee2e2;color:#b91c1c; border:none;"
+                      (click)="deleteStaff(s.id)">
+                      <i class="bi bi-trash-fill"></i>
+                    </button>
+                  </td>
+                </tr>
+                }
+                @empty {
+                <tr>
+                  <td colspan="3" class="text-center py-5 text-muted">
+                    <i class="bi bi-people fs-1 opacity-50 d-block mb-2"></i>
+                    <p class="mb-0 small fw-semibold">No faculty members found</p>
+                  </td>
+                </tr>
+                }
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
