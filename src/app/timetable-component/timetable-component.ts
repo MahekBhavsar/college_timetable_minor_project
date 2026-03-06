@@ -66,6 +66,13 @@ export class TimetableComponent implements OnInit, OnDestroy {
 
   days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
+  isMinorSubject(subjectName: string): boolean {
+    const sub = this.allSubjects().find(s => s.name === subjectName);
+    if (!sub) return false;
+    const type = (sub.type || '').toUpperCase();
+    return ['AEC', 'SEC', 'VAC', 'MINOR'].includes(type);
+  }
+
   get trackingMetrics() {
     const sem = this.selectedSem();
     const div = this.selectedDiv();
