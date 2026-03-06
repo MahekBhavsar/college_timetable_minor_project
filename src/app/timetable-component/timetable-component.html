@@ -48,7 +48,7 @@
               (click)="generateFullTimetable()" [disabled]="isGenerating()">
               <i class="bi bi-lightning-charge-fill me-1"></i>Generate Single Div
             </button>
-            <button class="btn btn-sm fw-semibold rounded-3 px-3"
+            <!-- <button class="btn btn-sm fw-semibold rounded-3 px-3"
               style="background:#f59e0b; color:#1c1917; border:none;" (click)="generateMassTimetable('odd')"
               [disabled]="isGenerating()">
               <i class="bi bi-lightning-fill me-1"></i>Odd Sems
@@ -57,7 +57,7 @@
               style="background:#f59e0b; color:#1c1917; border:none;" (click)="generateMassTimetable('even')"
               [disabled]="isGenerating()">
               <i class="bi bi-lightning-fill me-1"></i>Even Sems
-            </button>
+            </button> -->
             <button class="btn btn-sm fw-semibold rounded-3 px-3"
               style="background:#fee2e2; color:#b91c1c; border:1px solid #fecaca;" (click)="clearFullTimetable()"
               [disabled]="isGenerating()">
@@ -204,27 +204,76 @@
                 <!-- Class View -->
                 @if (viewMode() === 'class' && s.day === dayName && s.time === slot.label && s.sem === selectedSem() &&
                 s.div === selectedDiv()) {
-                <div class="tt-card" [class.tt-lab]="s.type === 'Lab'" [class.tt-lecture]="s.type === 'Lecture'">
-                  <div class="tt-card-subject">{{ s.subject }}</div>
-                  <div class="tt-card-staff">
-                    <i class="bi bi-person-fill me-1"></i>{{ s.staffName }}
+                <div
+                  class="tt-card w-100 h-100 p-2 rounded-3 shadow-sm d-flex flex-column justify-content-between text-start"
+                  style="border:1px solid rgba(0,0,0,0.05); min-height: 100px; transition: all 0.2s ease-in-out; cursor: pointer;"
+                  [style.background]="s.type === 'Lab' ? '#fffbeb' : (isMinorSubject(s.subject) ? '#faf5ff' : '#f0fdf4')"
+                  [style.border-left]="'4px solid ' + (s.type === 'Lab' ? '#d97706' : (isMinorSubject(s.subject) ? '#9333ea' : '#0f766e'))"
+                  onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 16px rgba(0,0,0,0.08)';"
+                  onmouseout="this.style.transform='none'; this.style.boxShadow='0 2px 4px rgba(0,0,0,0.05)';">
+                  <div>
+                    <div class="fw-bold text-dark lh-sm mb-1" style="font-size:0.8rem; letter-spacing:-0.2px;">{{
+                      s.subject }}</div>
+                    <div class="d-flex align-items-center gap-1 mb-1 text-truncate"
+                      style="font-size:0.7rem; color:#475569;">
+                      <i class="bi bi-person-circle text-muted"></i><span class="fw-semibold">{{ s.staffName || 'TBD'
+                        }}</span>
+                    </div>
                   </div>
-                  <div class="tt-card-room">
-                    <i class="bi bi-geo-alt-fill me-1"></i>{{ s.roomName || 'TBD' }}
+                  <div class="d-flex align-items-center justify-content-between mt-auto pt-2"
+                    style="border-top: 1px solid rgba(0,0,0,0.04);">
+                    <div class="d-flex align-items-center gap-1"
+                      style="font-size:0.65rem; color:#dc2626; font-weight:600;">
+                      <i class="bi bi-geo-alt-fill"></i>{{ s.roomName || 'TBD' }}
+                    </div>
+                    @if (s.type === 'Lab') {
+                    <span class="badge"
+                      style="background:#fde68a; color:#92400e; font-size:0.55rem; padding: 0.35em 0.5em; letter-spacing:0.5px; text-transform:uppercase;">Lab</span>
+                    } @else if (isMinorSubject(s.subject)) {
+                    <span class="badge"
+                      style="background:#e9d5ff; color:#7e22ce; font-size:0.55rem; padding: 0.35em 0.5em; letter-spacing:0.5px; text-transform:uppercase;">Minor</span>
+                    } @else {
+                    <span class="badge"
+                      style="background:#dcfce7; color:#166534; font-size:0.55rem; padding: 0.35em 0.5em; letter-spacing:0.5px; text-transform:uppercase;">Major</span>
+                    }
                   </div>
-                  <span class="tt-type-badge">{{ s.type }}</span>
                 </div>
                 }
                 <!-- Staff View -->
                 @if (viewMode() === 'staff' && s.day === dayName && s.time === slot.label && s.staffId ===
                 selectedStaffId() && s.staffId !== '') {
-                <div class="tt-card tt-staff-card">
-                  <div class="tt-card-subject">{{ s.subject }}</div>
-                  <div class="tt-card-staff">
-                    <i class="bi bi-bookmark-fill me-1"></i>Sem {{ s.sem }} – Div {{ s.div }}
+                <div
+                  class="tt-card w-100 h-100 p-2 rounded-3 shadow-sm d-flex flex-column justify-content-between text-start"
+                  style="border:1px solid rgba(0,0,0,0.05); min-height: 100px; transition: all 0.2s ease-in-out; cursor: pointer;"
+                  [style.background]="s.type === 'Lab' ? '#fffbeb' : (isMinorSubject(s.subject) ? '#faf5ff' : '#f0f8ff')"
+                  [style.border-left]="'4px solid ' + (s.type === 'Lab' ? '#d97706' : (isMinorSubject(s.subject) ? '#9333ea' : '#0284c7'))"
+                  onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 16px rgba(0,0,0,0.08)';"
+                  onmouseout="this.style.transform='none'; this.style.boxShadow='0 2px 4px rgba(0,0,0,0.05)';">
+                  <div>
+                    <div class="fw-bold text-dark lh-sm mb-1" style="font-size:0.8rem; letter-spacing:-0.2px;">{{
+                      s.subject }}</div>
+                    <div class="d-flex align-items-center gap-1 mb-1 text-truncate"
+                      style="font-size:0.7rem; color:#475569;">
+                      <i class="bi bi-bookmark-fill" style="color:#0284c7;"></i><span class="fw-semibold">Sem {{ s.sem
+                        }} - Div {{ s.div }}</span>
+                    </div>
                   </div>
-                  <div class="tt-card-room">
-                    <i class="bi bi-geo-alt-fill me-1"></i>{{ s.roomName }}
+                  <div class="d-flex align-items-center justify-content-between mt-auto pt-2"
+                    style="border-top: 1px solid rgba(0,0,0,0.04);">
+                    <div class="d-flex align-items-center gap-1"
+                      style="font-size:0.65rem; color:#dc2626; font-weight:600;">
+                      <i class="bi bi-geo-alt-fill"></i>{{ s.roomName || 'TBD' }}
+                    </div>
+                    @if (s.type === 'Lab') {
+                    <span class="badge"
+                      style="background:#fde68a; color:#92400e; font-size:0.55rem; padding: 0.35em 0.5em; letter-spacing:0.5px; text-transform:uppercase;">Lab</span>
+                    } @else if (isMinorSubject(s.subject)) {
+                    <span class="badge"
+                      style="background:#e9d5ff; color:#7e22ce; font-size:0.55rem; padding: 0.35em 0.5em; letter-spacing:0.5px; text-transform:uppercase;">Minor</span>
+                    } @else {
+                    <span class="badge"
+                      style="background:#bae6fd; color:#0369a1; font-size:0.55rem; padding: 0.35em 0.5em; letter-spacing:0.5px; text-transform:uppercase;">Theory</span>
+                    }
                   </div>
                 </div>
                 }

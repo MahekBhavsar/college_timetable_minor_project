@@ -6,10 +6,9 @@
     </div>
 
     <div class="row g-4 px-3">
-      <div class="col-lg-5">
+      <div class="col-xl-4 col-lg-5">
         <div class="card border-0 shadow-sm p-4 rounded-4 bg-white mb-4">
-          <h5 class="fw-bold mb-3">1. Basic Info</h5>
-          <!-- ... Rest of the top section remains the same ... -->
+          <h5 class="fw-bold mb-3"><i class="bi bi-info-circle me-2"></i>1. Basic Info</h5>
           <div class="mb-3">
             <label class="small fw-bold">Subject</label>
             <select class="form-select" [ngModel]="selectedSubject()"
@@ -18,7 +17,6 @@
               @for (sub of assignedSubjects(); track sub) { <option [value]="sub">{{ sub }}</option> }
             </select>
           </div>
-          <!-- ... Rest of the file remains the same ... -->
           <div class="row g-2">
             <div class="col-6">
               <label class="small fw-bold">Start Date</label>
@@ -40,15 +38,16 @@
           @for (unit of units(); track $index; let uIdx = $index) {
           <div class="border rounded p-3 mb-3 bg-light">
             <div class="d-flex mb-2">
-              <input type="text" class="form-control form-control-sm fw-bold me-2" placeholder="Unit Name (e.g. Unit 1)"
+              <input type="text" class="form-control form-control-sm fw-bold me-2" placeholder="Unit Name"
                 [ngModel]="unit.name" (ngModelChange)="unit.name = $event; refreshUnits()">
+              <button (click)="addTopic(uIdx)" class="btn btn-sm btn-outline-primary me-1">+ Topic</button>
               <button (click)="removeUnit(uIdx)" class="btn btn-sm btn-outline-danger">✕</button>
             </div>
 
             <div class="ms-4">
               @for (topic of unit.topics; track $index; let tIdx = $index) {
               <div class="d-flex mb-1">
-                <input type="text" class="form-control form-control-sm me-2" placeholder="Enter Sub-Topic"
+                <input type="text" class="form-control form-control-sm me-2" placeholder="Sub-Topic"
                   [ngModel]="unit.topics[tIdx]" (ngModelChange)="unit.topics[tIdx] = $event; refreshUnits()">
                 <button (click)="removeTopic(uIdx, tIdx)" class="btn btn-sm text-danger">✕</button>
               </div>
@@ -63,61 +62,71 @@
         </div>
       </div>
 
-      <div class="col-lg-7">
+      <div class="col-xl-8 col-lg-7">
         <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
-          <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">Schedule Preview</h5>
-            <button (click)="saveToCloud()" [disabled]="generatedPlan().length === 0"
-              class="btn btn-sm btn-success">Save to Cloud</button>
+          <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center py-3 px-4">
+            <h5 class="mb-0">Schedule Preview & Tracking</h5>
+            <div class="d-flex gap-2">
+              <button (click)="addCustomRow()" [disabled]="generatedPlan().length === 0"
+                class="btn btn-sm btn-outline-light px-3">+ Add Row</button>
+              <button (click)="saveToCloud()" [disabled]="generatedPlan().length === 0"
+                class="btn btn-sm btn-success px-4">Save to Cloud</button>
+            </div>
           </div>
-          <div class="table-responsive" style="max-height: 700px;">
+
+          <div class="table-responsive" style="max-height: 750px;">
             <table class="table table-hover align-middle mb-0">
               <thead class="table-light sticky-top">
                 <tr>
-                  <th>Date</th>
-                  <th>Unit & Topic</th>
-                  <th>Completion Date</th>
+                  <th style="width: 15%;">Planned Date</th>
+                  <th style="width: 25%;">Unit & Topic</th>
+                  <th style="width: 18%;">Completion Date</th>
+                  <th style="width: 32%;">Remarks</th>
+                  <th style="width: 10%;" class="text-center">Action</th>
                 </tr>
               </thead>
               <tbody>
                 @for (item of generatedPlan(); track $index) {
                 <tr [class.table-success]="item.isDone">
-
                   <td class="small">
-                    <div class="fw-semibold text-primary">
-                      {{ item.plannedDate }}
-                    </div>
-                    <div class="text-muted">
-                      {{ item.day }}
-                    </div>
+                    <div class="fw-bold text-primary">{{ item.plannedDate }}</div>
+                    <div class="text-muted" style="font-size: 0.75rem;">{{ item.day }}</div>
                   </td>
-
                   <td>
-                    <span class="badge bg-primary-subtle text-primary mb-1">
-                      {{ item.unit }}
-                    </span>
-                    <div class="fw-semibold">
-                      {{ item.topic }}
+                    <div class="d-flex flex-column">
+                      <input type="text" class="form-control form-control-sm fw-bold border-0 bg-transparent p-0 mb-1"
+                        style="color: var(--bs-primary);" [ngModel]="item.unit"
+                        (ngModelChange)="updateField($index, 'unit', $event)">
+                      <input type="text" class="form-control form-control-sm border-0 bg-transparent p-0"
+                        [ngModel]="item.topic" (ngModelChange)="updateField($index, 'topic', $event)">
                     </div>
                   </td>
                   <td>
                     <input type="date" class="form-control form-control-sm" [ngModel]="item.actualDate"
-                      (ngModelChange)="updateProgress($index, $event)">
+                      (ngModelChange)="updateField($index, 'actualDate', $event)">
                   </td>
-
+                  <td>
+                    <textarea class="form-control form-control-sm" rows="1" placeholder="Add notes..."
+                      [ngModel]="item.remark" (ngModelChange)="updateField($index, 'remark', $event)"></textarea>
+                  </td>
+                  <td class="text-center">
+                    <button (click)="deleteRow($index)" class="btn btn-sm btn-link text-danger p-0">
+                      <i class="bi bi-trash"></i> Delete
+                    </button>
+                  </td>
                 </tr>
                 } @empty {
                 <tr>
-                  <td colspan="3" class="text-center py-5 text-muted">Setup units and topics to generate plan.</td>
+                  <td colspan="5" class="text-center py-5 text-muted">
+                    No plan generated. Select subject and dates to start.
+                  </td>
                 </tr>
                 }
               </tbody>
             </table>
           </div>
         </div>
-
       </div>
-
     </div>
   </div>
 </app-staff-layout>

@@ -42,21 +42,32 @@
             </tr>
           </thead>
           <tbody>
-            @for (slot of timeSlots; track slot) {
+            @for (slot of timeSlots(); track slot) {
             <tr>
               <td class="text-center align-middle small fw-bold bg-light">{{ slot }}</td>
               @for (day of days; track day) {
               <td class="p-1" style="height: 110px; width: 15%;">
-                @if (slot === '01:30 PM - 02:00 PM') {
+                @if (slot === '01:30 PM - 02:00 PM' || slot.toLowerCase().includes('break')) {
                 <div
                   class="h-100 d-flex align-items-center justify-content-center bg-warning-subtle text-warning fw-bold small">
                   🍱 BREAK
                 </div>
                 } @else if (timetableGrid()[slot] && timetableGrid()[slot][day]) {
-                <div class="lecture-box">
-                  <div class="subject">{{ timetableGrid()[slot][day].subject }}</div>
-                  <div class="prof text-success">👤 {{ timetableGrid()[slot][day].staffName }}</div>
-                  <div class="room text-muted">📍 {{ timetableGrid()[slot][day].roomName }}</div>
+                <div class="lecture-box w-100 h-100 p-2 rounded-2"
+                  [style.background]="timetableGrid()[slot][day].type === 'Lab' ? '#fffbeb' : '#f0fdf4'"
+                  [style.border-left]="'3px solid ' + (timetableGrid()[slot][day].type === 'Lab' ? '#d97706' : '#0f766e')">
+                  <div class="subject fw-bold" style="font-size:0.75rem;">{{ timetableGrid()[slot][day].subject }}</div>
+                  <div class="prof text-success" style="font-size:0.7rem;">👤 {{ timetableGrid()[slot][day].staffName }}
+                  </div>
+                  <div class="room text-muted" style="font-size:0.7rem;">📍 {{ timetableGrid()[slot][day].roomName }}
+                  </div>
+                  @if (timetableGrid()[slot][day].type === 'Lab') {
+                  <div class="badge mt-1" style="background:#fde68a; color:#92400e; font-size:0.6rem;">Lab</div>
+                  }
+                </div>
+                } @else {
+                <div class="h-100 d-flex align-items-center justify-content-center bg-light text-muted small rounded-2">
+                  -
                 </div>
                 }
               </td>
