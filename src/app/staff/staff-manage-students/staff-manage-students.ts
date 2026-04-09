@@ -84,7 +84,7 @@ export class StaffManageStudent implements OnInit {
       await this.firebaseService.addDocument('students' as any, studentData);
       await this.firebaseService.sendApprovalEmail(student.email, student.name);
 
-      alert("Verified!");
+      alert("Student Approved & Confirmation Email Sent!");
       this.loadAllData(); // Refresh list to reflect changes
     } catch (error) {
       alert("Error processing approval.");

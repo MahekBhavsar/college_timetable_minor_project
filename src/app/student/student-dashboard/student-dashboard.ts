@@ -45,7 +45,22 @@ export class StudentDashboard implements OnInit, AfterViewInit, OnDestroy {
     if (isPlatformBrowser(this.platformId)) {
       const stored = localStorage.getItem('portal_user');
       if (stored) {
-        const user = JSON.parse(stored);
+        let user = JSON.parse(stored);
+        
+        // 🔍 NEW: Fetch fresh data to replace "TBA" and avoid stale cache
+        try {
+          const fresh = await firstValueFrom(
+            this.firebaseService.getFilteredCollection<any>('students', 'email', user.email.trim().toLowerCase())
+          );
+          if (fresh.length > 0) {
+            user = { ...user, ...fresh[0] };
+            // Update local storage so next load is faster but still accurate
+            localStorage.setItem('portal_user', JSON.stringify(user));
+          }
+        } catch (error) {
+          console.error("Dashboard profile refresh failed", error);
+        }
+
         this.student.set(user);
         await this.loadDashboardData(user);
       } else {
@@ -91,12 +106,22 @@ export class StudentDashboard implements OnInit, AfterViewInit, OnDestroy {
         const submission = userSubmissions.find(sub => sub.assignmentId === asg.id);
         const isSubmitted = !!submission;
         
+        // Use a consistent comparison date
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const dueDate = asg.date ? new Date(asg.date) : null;
+        const isPast = dueDate && dueDate < today;
+
         let statusStr = isSubmitted ? 'Submitted' : 'Pending';
-        if (!isSubmitted && asg.date && new Date(asg.date) < new Date(now.setHours(0,0,0,0))) {
-           statusStr = 'Overdue';
+        
+        // Auto-mark Class assignments as "Submitted" if date passed
+        if (!isSubmitted && asg.type === 'CLASS' && isPast) {
+          statusStr = 'Submitted';
+        } else if (!isSubmitted && isPast) {
+          statusStr = 'Overdue';
         }
 
-        if (isSubmitted) {
+        if (statusStr === 'Submitted') {
           completed++;
         } else {
           pending++;

@@ -52,7 +52,8 @@ export class FirebaseService {
     const collections = [
       { name: 'admin', role: 'admin' },
       { name: 'staff', role: 'staff' },
-      { name: 'Application', role: 'student' }
+      { name: 'students', role: 'student' }, // 🔍 Priority 1: Check official approved students
+      { name: 'Application', role: 'student' } // 🔍 Priority 2: Check student applications
     ];
 
     for (const col of collections) {
@@ -60,15 +61,19 @@ export class FirebaseService {
       const snap = await getDocs(q);
 
       if (!snap.empty) {
-        const userData = snap.docs[0].data();
-        if (userData['password']?.toString() !== password) continue; 
-
-        if (col.role === 'student') {
-          const status = (userData['status'] || '').toString().toLowerCase();
-          if (!status.includes('approved')) throw new Error("Your account is not approved yet.");
+        // 🔍 Support for shared emails: Check every record for this email
+        for (const docItem of snap.docs) {
+          const userData = docItem.data();
+          
+          if (userData['password']?.toString() === password) {
+            // 🔍 Only enforce status validation for users still in the Application stage
+            if (col.name === 'Application') {
+              const status = (userData['status'] || '').toString().toLowerCase();
+              if (!status.includes('approved')) throw new Error("Your account is not approved yet.");
+            }
+            return { id: docItem.id, ...userData, role: col.role };
+          }
         }
-
-        return { id: snap.docs[0].id, ...userData, role: col.role };
       }
     }
     return null; 
@@ -235,16 +240,29 @@ export class FirebaseService {
   }
 
   private async triggerEmail(email: string, title: string, name: string) {
-  const url = 'http://localhost:3000/send-email';
-  const payload = { 
-    to: email.trim(), 
-    subject: `Reminder: ${title}`, 
-    studentName: name, 
-    assignmentTitle: title,
-    type: 'reminder' // 👈 Tells backend to use the Reminder look
-  };
-  return await firstValueFrom(this.http.post(url, payload));
-}
+    const url = 'http://localhost:3000/send-email';
+    const payload = { 
+      to: email.trim(), 
+      subject: `Reminder: ${title}`, 
+      studentName: name, 
+      assignmentTitle: title,
+      type: 'reminder' // 👈 Tells backend to use the Reminder look
+    };
+    return await firstValueFrom(this.http.post(url, payload));
+  }
+
+  /** 🔍 Helper: Checks if an email is already registered in the system */
+  async checkEmailExists(email: string): Promise<boolean> {
+    const cleanEmail = email.trim().toLowerCase();
+    const collectionsToCheck = ['students', 'Application'];
+    
+    for (const col of collectionsToCheck) {
+      const q = query(collection(this.firestore, col), where('email', '==', cleanEmail));
+      const snap = await getDocs(q);
+      if (!snap.empty) return true;
+    }
+    return false;
+  }
   /* Inside src/app/services/firebaseservice.ts */
 
 /** * 📄 Helper: Uploads a document and saves the application 
@@ -283,15 +301,20 @@ async sendApprovalEmail(targetEmail: string, studentName: string) {
 /** * 📧 Helper: Sends a Rejection Email via Nodemailer
  * Call this when a staff member clicks "Reject"
  */
-async sendRejectionEmail(targetEmail: string, studentName: string) {
-  const url = 'http://localhost:3000/send-email';
-  const payload = {
-    to: targetEmail.trim(),
-    subject: 'Update: Application Status - Rejected',
-    studentName: studentName,
-    assignmentTitle: 'N/A',
-    type: 'rejection' // 👈 Tells backend to use the Rejection look
-  };
-  return await firstValueFrom(this.http.post(url, payload));
-}
+  async sendRejectionEmail(targetEmail: string, studentName: string) {
+    const url = 'http://localhost:3000/send-email';
+    const payload = {
+      to: targetEmail.trim(),
+      subject: 'Update: Application Status - Rejected',
+      studentName: studentName,
+      assignmentTitle: 'N/A',
+      type: 'rejection' // 👈 Tells backend to use the Rejection look
+    };
+    return await firstValueFrom(this.http.post(url, payload));
+  }
+
+  async sendEmail(payload: any) {
+    const url = 'http://localhost:3000/send-email';
+    return await firstValueFrom(this.http.post(url, payload));
+  }
 }

@@ -27,14 +27,22 @@ export class StudentLogin {
 
   /* Inside login.component.ts */
 
-async onLogin() {
-  const emailInput = this.email().toLowerCase().trim();
-  const passwordInput = this.password().trim();
+  async onLogin() {
+    const emailInput = this.email().toLowerCase().trim();
+    const passwordInput = this.password().trim();
 
-  if (!emailInput || !passwordInput) {
-    this.errorMessage.set("Please enter email and password.");
-    return;
-  }
+    // 1. Basic empty check
+    if (!emailInput || !passwordInput) {
+      this.errorMessage.set("Please enter both email and password.");
+      return;
+    }
+
+    // 2. Email format check (Regex)
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(emailInput)) {
+      this.errorMessage.set("Please enter a valid email format (e.g., name@college.com).");
+      return;
+    }
 
   this.isLoading.set(true);
   this.errorMessage.set('');

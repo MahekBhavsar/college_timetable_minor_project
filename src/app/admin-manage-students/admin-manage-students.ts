@@ -65,8 +65,9 @@ export class AdminManageStudent implements OnInit {
         this.firebaseService.getCollection<any>(FirebaseCollections.Application)
       );
 
+      // 🔍 Updated filter: Include ALL students in the semester
       let approved = all.filter(
-        a => Number(a.semester) === sem && a.status === 'Application approved by staff'
+        a => Number(a.semester) === sem
       );
 
       if (approved.length === 0) {
@@ -119,17 +120,39 @@ export class AdminManageStudent implements OnInit {
         });
       }
 
-      // ================= SAVE =================
-      for (let s of approved) {
-        await this.firebaseService.updateDocument(
-          FirebaseCollections.Application,
-          s.id,
-          {
-            division: s.division,
-            rollNo: s.rollNo
+      // ================= DATA SYNC PREP =================
+      // 🔍 Fetch official student list once for faster matching
+      const officialStudentsList = await firstValueFrom(this.firebaseService.getCollection<any>('students'));
+
+      // ================= BATCH SAVE (PARALLEL) =================
+      const updateTasks = approved.map(async (s) => {
+        try {
+          // 1. Update Registry
+          await this.firebaseService.updateDocument(
+            FirebaseCollections.Application,
+            s.id,
+            { division: s.division, rollNo: s.rollNo }
+          );
+
+          // 2. Sync to official 'students' collection
+          const officialDoc = officialStudentsList.find(os => 
+            os.email?.trim().toLowerCase() === s.email?.trim().toLowerCase()
+          );
+
+          if (officialDoc) {
+            await this.firebaseService.updateDocument(
+              'students' as any,
+              officialDoc.id,
+              { division: s.division, rollNo: s.rollNo }
+            );
           }
-        );
-      }
+        } catch (studentErr) {
+          console.error(`❌ Failed to process student ${s.name}:`, studentErr);
+        }
+      });
+
+      // Execute all updates simultaneously
+      await Promise.all(updateTasks);
 
       alert("Division generated based on 75 seat capacity!");
 
@@ -140,33 +163,100 @@ export class AdminManageStudent implements OnInit {
   }
 
 
-  // ================= PROMOTE =================
+  // ================= PROMOTE (ALL) =================
   async promoteStudents(currentSem: number) {
+    const nextSem = currentSem + 1;
+    if (nextSem > 6) {
+      alert("These students are already in the final semester.");
+      return;
+    }
 
-    if (!confirm(`Promote Semester ${currentSem} students?`)) return;
+    if (!confirm(`Promote ALL Semester ${currentSem} students to Semester ${nextSem}?`)) return;
 
     this.isProcessing.set(true);
-
     try {
       const list = this.students().filter(s => Number(s.semester) === currentSem);
-
       for (let s of list) {
+        const updateData = {
+          semester: nextSem,
+          division: 'TBA',
+          rollNo: 0
+        };
+
+        // Update Registry
         await this.firebaseService.updateDocument(
           FirebaseCollections.Application,
           s.id,
-          {
-            semester: currentSem + 1,
-            division: 'TBA',
-            rollNo: 0
-          }
+          updateData
         );
+
+        // 🔍 Sync to official 'students' collection (hardened matching)
+        const students = await firstValueFrom(
+          this.firebaseService.getFilteredCollection<any>('students', 'email', s.email.trim().toLowerCase())
+        );
+        if (students.length > 0) {
+          await this.firebaseService.updateDocument(
+            'students' as any,
+            students[0].id,
+            updateData
+          );
+        }
       }
-
-      alert("Students promoted!");
-
+      this.loadAll();
+      alert(`All Semester ${currentSem} students promoted!`);
+    } catch (e) {
+      console.error(e);
+      alert("Promotion failed");
     } finally {
       this.isProcessing.set(false);
+    }
+  }
+
+
+  // ================= INDIVIDUAL PROMOTE =================
+  async promoteIndividual(s: any) {
+    const nextSem = Number(s.semester) + 1;
+    if (nextSem > 6) {
+      alert("Student is already in the final semester.");
+      return;
+    }
+
+    if (!confirm(`Promote ${s.name} to Semester ${nextSem}?`)) return;
+
+    this.isProcessing.set(true);
+    try {
+      const updateData = {
+        semester: nextSem,
+        division: 'TBA',
+        rollNo: 0
+      };
+
+      // Update Registry
+      await this.firebaseService.updateDocument(
+        FirebaseCollections.Application,
+        s.id,
+        updateData
+      );
+
+      // 🔍 Sync to official 'students' collection (hardened matching)
+      const students = await firstValueFrom(
+        this.firebaseService.getFilteredCollection<any>('students', 'email', s.email.trim().toLowerCase())
+      );
+      if (students.length > 0) {
+        await this.firebaseService.updateDocument(
+          'students' as any,
+          students[0].id,
+          updateData
+        );
+      }
+      
       this.loadAll();
+      alert(`${s.name} promoted to Semester ${nextSem}!`);
+    } catch (e) {
+      console.error(e);
+      alert("Promotion failed");
+    } finally {
+      this.isProcessing.set(false);
     }
   }
 }

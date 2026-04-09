@@ -18,11 +18,20 @@ export class StudentReg {
   semester = signal<number>(1);
   isSubmitting = signal(false);
 
+  // Validation tracking
+  fieldErrors = signal<{[key:string]:string}>({});
+
   // New signals for file handling
   selectedFileBase64 = signal<string>('');
   fileName = signal<string>('');
 
   constructor(private firebaseService: FirebaseService, private router: Router) {}
+
+  // Helper: Basic email regex
+  private isValidEmail(email: string): boolean {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email.trim());
+  }
 
   // Convert selected file to Base64 string
 // Add this signal to your class
@@ -54,15 +63,49 @@ onFileSelected(event: any) {
 }
 
 async register() {
-  if (!this.name() || !this.email() || !this.password() || !this.selectedFileBase64()) {
-    alert("Please fill all fields and upload a verification document.");
+  // 1. Reset Errors
+  this.fieldErrors.set({});
+  let errors: any = {};
+  let hasError = false;
+
+  // 2. Client-side checks
+  if (!this.name().trim() || this.name().trim().length < 3) {
+    errors.name = "Full name is required (min 3 chars).";
+    hasError = true;
+  }
+
+  if (!this.isValidEmail(this.email())) {
+    errors.email = "Please enter a valid email address.";
+    hasError = true;
+  }
+
+  if (this.password().length < 6) {
+    errors.password = "Password must be at least 6 characters.";
+    hasError = true;
+  }
+
+  if (!this.selectedFileBase64()) {
+    errors.file = "Verification document is required.";
+    hasError = true;
+  }
+
+  if (hasError) {
+    this.fieldErrors.set(errors);
     return;
   }
 
   this.isSubmitting.set(true);
   try {
+    // 3. One Login Validation (Unique Check)
+    const exists = await this.firebaseService.checkEmailExists(this.email());
+    if (exists) {
+      this.fieldErrors.set({ email: "This email is already registered. Please login or use a different email." });
+      this.isSubmitting.set(false);
+      return;
+    }
+
     const studentPayload = {
-      name: this.name(),
+      name: this.name().trim(),
       email: this.email().toLowerCase().trim(),
       password: this.password(),
       semester: Number(this.semester()),
@@ -77,7 +120,7 @@ async register() {
     this.router.navigate(['/login']);
   } catch (err) {
     console.error("Registration failed:", err);
-    alert("Error: Registration failed.");
+    alert("An unexpected error occurred. Please try again later.");
   } finally {
     this.isSubmitting.set(false);
   }
