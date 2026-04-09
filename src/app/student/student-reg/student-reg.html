@@ -16,16 +16,24 @@
         <label class="form-label small fw-bold text-muted">FULL NAME</label>
         <div class="input-group">
           <span class="input-group-text border-0 bg-light"><i class="bi bi-person text-primary"></i></span>
-          <input type="text" class="form-control border-0 bg-light py-2" [(ngModel)]="name" placeholder="Enter full name">
+          <input type="text" class="form-control border-0 bg-light py-2" [(ngModel)]="name" placeholder="Enter full name"
+                 [class.is-invalid]="fieldErrors()['name']">
         </div>
+        @if (fieldErrors()['name']) {
+          <div class="small text-danger mt-1 ms-2"><i class="bi bi-exclamation-circle me-1"></i> {{ fieldErrors()['name'] }}</div>
+        }
       </div>
 
       <div class="mb-3">
         <label class="form-label small fw-bold text-muted">EMAIL ADDRESS</label>
         <div class="input-group">
           <span class="input-group-text border-0 bg-light"><i class="bi bi-envelope text-primary"></i></span>
-          <input type="email" class="form-control border-0 bg-light py-2" [(ngModel)]="email" placeholder="college@example.com">
+          <input type="email" class="form-control border-0 bg-light py-2" [(ngModel)]="email" placeholder="college@example.com"
+                 [class.is-invalid]="fieldErrors()['email']">
         </div>
+        @if (fieldErrors()['email']) {
+          <div class="small text-danger mt-1 ms-2"><i class="bi bi-exclamation-circle me-1"></i> {{ fieldErrors()['email'] }}</div>
+        }
       </div>
 
       <div class="mb-3">
@@ -44,8 +52,12 @@
         <label class="form-label small fw-bold text-muted">PASSWORD</label>
         <div class="input-group">
           <span class="input-group-text border-0 bg-light"><i class="bi bi-lock text-primary"></i></span>
-          <input type="password" class="form-control border-0 bg-light py-2" [(ngModel)]="password" placeholder="••••••••">
+          <input type="password" class="form-control border-0 bg-light py-2" [(ngModel)]="password" placeholder="••••••••"
+                 [class.is-invalid]="fieldErrors()['password']">
         </div>
+        @if (fieldErrors()['password']) {
+          <div class="small text-danger mt-1 ms-2"><i class="bi bi-exclamation-circle me-1"></i> {{ fieldErrors()['password'] }}</div>
+        }
       </div>
 
       <div class="mb-4 p-3 rounded-3 border-dashed border-2 text-center" 
@@ -60,9 +72,9 @@
         <input type="file" class="form-control form-control-sm shadow-sm" 
                (change)="onFileSelected($event)" accept="image/*,application/pdf">
         
-        @if (fileError()) {
+        @if (fileError() || fieldErrors()['file']) {
           <div class="mt-2 small text-danger fw-bold animate__animated animate__shakeX">
-            <i class="bi bi-exclamation-triangle-fill me-1"></i> {{ fileError() }}
+            <i class="bi bi-exclamation-triangle-fill me-1"></i> {{ fileError() || fieldErrors()['file'] }}
           </div>
         } @else if (fileName()) {
           <div class="mt-2 small text-success fw-bold animate__animated animate__fadeIn">

@@ -1,4 +1,5 @@
 <app-staff-layout>
+  <!-- Force Refresh Diagnostic Comment v2 -->
   <div class="container py-4">
 
     <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
@@ -111,10 +112,35 @@
                   </td>
 
                   <td class="text-end pe-4">
-                    <button class="btn btn-sm btn-outline-primary rounded-pill px-3" (click)="viewFile(s.fileData)">
-                      <i class="bi bi-eye me-1"></i>
-                      View
-                    </button>
+                    <div class="d-flex align-items-center justify-content-end gap-2">
+                      <!-- Status Badge -->
+                      <span class="badge rounded-pill px-3 py-2 me-auto me-md-2" 
+                        [style.background]="s.status === 'Approved' ? '#dcfce7' : (s.status === 'Rejected' ? '#fee2e2' : '#f1f5f9')"
+                        [style.color]="s.status === 'Approved' ? '#15803d' : (s.status === 'Rejected' ? '#b91c1c' : '#475569')"
+                        style="font-size: 0.7rem; border: 1px solid rgba(0,0,0,0.05);">
+                        {{ s.status || 'Pending' }}
+                      </span>
+
+                      <!-- Preview Button -->
+                      <button class="btn btn-sm btn-outline-primary rounded-pill px-3 d-flex align-items-center gap-1"
+                        style="font-size: 0.75rem;" (click)="viewFile(s.fileData, s.fileName)">
+                        <i class="bi bi-eye-fill"></i> Preview
+                      </button>
+
+                      <!-- Action Buttons -->
+                      <div class="btn-group shadow-sm rounded-pill overflow-hidden">
+                        <button class="btn btn-sm btn-success px-2 py-1" 
+                          [disabled]="s.status === 'Approved'"
+                          (click)="updateStatus(s, 'Approved')" title="Approve Submission">
+                          <i class="bi bi-check2"></i>
+                        </button>
+                        <button class="btn btn-sm btn-danger px-2 py-1" 
+                          [disabled]="s.status === 'Rejected'"
+                          (click)="updateStatus(s, 'Rejected')" title="Reject Submission">
+                          <i class="bi bi-x-lg"></i>
+                        </button>
+                      </div>
+                    </div>
                   </td>
 
                 </tr>
@@ -134,4 +160,82 @@
       </div>
     </div>
   </div>
+
+  <!-- ── Submission Preview Modal ─────────────────── -->
+  @if (showPreview()) {
+  <div class="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center p-3 p-md-4"
+    style="background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(8px); z-index: 9999;">
+    
+    <div class="card border-0 shadow-lg rounded-4 w-100 h-100 overflow-hidden bg-white animation-fade-in" style="max-width: 1000px;">
+      
+      <!-- Modal Header -->
+      <div class="card-header bg-white border-bottom py-3 px-4 d-flex justify-content-between align-items-center">
+        <div class="d-flex align-items-center gap-3">
+          <div class="rounded-3 d-flex align-items-center justify-content-center shadow-sm" 
+            [style.background]="previewType() === 'docx' ? '#fee2e2' : '#e0e7ff'"
+            style="width:40px; height:40px;">
+            <i class="bi" 
+              [class.bi-file-earmark-pdf-fill]="previewType() === 'pdf'"
+              [class.bi-file-earmark-image-fill]="previewType() === 'image'"
+              [class.bi-file-earmark-word-fill]="previewType() === 'docx'"
+              [style.color]="previewType() === 'docx' ? '#dc2626' : '#4338ca'"></i>
+          </div>
+          <div>
+            <h6 class="fw-bold mb-0 text-dark">Document Review</h6>
+            <p class="text-muted mb-0" style="font-size: 0.65rem;">Reviewing student submission</p>
+          </div>
+        </div>
+        <button class="btn btn-sm btn-light rounded-circle shadow-sm d-flex align-items-center justify-content-center" 
+          (click)="closePreview()" style="width:34px; height:34px; transition: all 0.2s;"
+          onmouseover="this.style.background='#fee2e2'; this.style.color='#dc2626'"
+          onmouseout="this.style.background='#f8fafc'; this.style.color='inherit'">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="card-body p-0 bg-light position-relative overflow-hidden">
+        @if (previewType() === 'pdf' && previewUrl()) {
+          <iframe [src]="previewUrl()" class="w-100 h-100 border-0" style="background: white;"></iframe>
+        } @else if (previewType() === 'image' && previewUrl()) {
+          <div class="w-100 h-100 d-flex align-items-center justify-content-center p-3 overflow-auto">
+            <img [src]="previewUrl()" class="shadow-lg rounded-2" style="max-width: 95%; max-height: 95%; object-fit: contain;">
+          </div>
+        } @else if (previewType() === 'docx') {
+          <div class="w-100 h-100 d-flex flex-column align-items-center justify-content-center p-5 text-center">
+            <div class="rounded-circle p-4 mb-4 shadow-sm" style="background: #fff1f2;">
+              <i class="bi bi-file-earmark-word-fill text-danger fs-1"></i>
+            </div>
+            <h5 class="fw-bold text-dark">Preview Not Available</h5>
+            <p class="text-muted mx-auto mb-4" style="max-width: 400px; font-size: 0.85rem;">
+              Word (.docx) files cannot be rendered directly in the secure browser preview for security reasons. 
+              Please download the file to review it in your local application.
+            </p>
+            <button class="btn btn-primary rounded-pill px-4 py-2 fw-bold shadow-sm" (click)="downloadCurrentFile()">
+              <i class="bi bi-download me-2"></i> Download Submission
+            </button>
+          </div>
+        }
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="card-footer bg-white border-top py-3 px-4 d-flex justify-content-between align-items-center">
+        <p class="text-muted small mb-0"><i class="bi bi-shield-check me-1"></i>Secure Viewer</p>
+        <div class="d-flex gap-2">
+          @if (previewType() !== 'docx') {
+            <button class="btn btn-primary btn-sm rounded-pill px-4 fw-bold shadow-sm" style="font-size: 0.75rem;" (click)="downloadCurrentFile()">
+              <i class="bi bi-download me-1"></i> Download
+            </button>
+          }
+          <button class="btn btn-light btn-sm rounded-pill px-4 fw-bold" style="font-size: 0.75rem;" (click)="closePreview()">Close Review</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  }
+
+  <style>
+    .animation-fade-in { animation: fadeIn 0.3s ease-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+  </style>
 </app-staff-layout>

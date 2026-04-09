@@ -77,38 +77,77 @@
 
             @if (a.type === 'HOME') {
             @if (submittedMap()[a.id]) {
-            <div class="rounded-3 p-3" style="background:#f0fdf4; border:1px solid #bbf7d0;">
-              <div class="d-flex justify-content-between align-items-center mb-2">
-                <span class="badge rounded-2 px-2 py-1 fw-semibold"
-                  style="background:#dcfce7;color:#15803d;font-size:0.7rem;">
-                  <i class="bi bi-check-circle-fill me-1"></i>{{ submittedMap()[a.id].status }}
-                </span>
-                <small class="text-muted">{{ submittedMap()[a.id].submittedAt | date:'dd MMM' }}</small>
+              <!-- Submitted State with Premium Look -->
+              <div class="rounded-4 p-3 shadow-sm border-0 position-relative overflow-hidden" 
+                style="background: linear-gradient(145deg, #f0fdf4 0%, #dcfce7 100%);">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <span class="badge rounded-pill px-3 py-2 fw-bold d-flex align-items-center gap-1"
+                    style="background:#15803d; color:white; font-size:0.7rem;">
+                    <i class="bi bi-check-circle-fill"></i>{{ submittedMap()[a.id].status }}
+                  </span>
+                  <div class="text-end">
+                    <small class="text-muted d-block" style="font-size: 0.65rem;">Submitted On</small>
+                    <small class="fw-bold text-dark" style="font-size: 0.75rem;">{{ submittedMap()[a.id].submittedAt | date:'dd MMM, hh:mm a' }}</small>
+                  </div>
+                </div>
+                <button class="btn btn-sm w-100 rounded-pill bg-white text-dark shadow-sm border-0 py-2 d-flex align-items-center justify-content-center gap-2"
+                  style="font-size:0.75rem;" (click)="viewFile(submittedMap()[a.id].fileData, submittedMap()[a.id].fileName)">
+                  <i class="bi bi-file-earmark-text-fill text-primary"></i>
+                  <span class="text-truncate" style="max-width: 150px;">{{ submittedMap()[a.id].fileName }}</span>
+                </button>
               </div>
-              <button class="btn btn-sm w-100 rounded-3 text-dark"
-                style="background:#f8fafc;border:1px solid #e2e8f0;font-size:0.75rem;"
-                (click)="viewFile(submittedMap()[a.id].fileData, submittedMap()[a.id].fileName)">
-                <i class="bi bi-file-earmark-text me-1" style="color:#4338ca;"></i>
-                {{ submittedMap()[a.id].fileName }}
-              </button>
-            </div>
             } @else {
-            <div>
-              <label class="small text-muted mb-1 d-block">Upload response (PDF / Doc)</label>
-              <input type="file" class="form-control form-control-sm rounded-3 border-0 bg-light mb-2"
-                id="inputGroupFile{{a.id}}" (change)="selectResponseFile($event, a.id)">
-              <button
-                class="btn btn-sm w-100 rounded-3 fw-bold text-white d-flex align-items-center justify-content-center gap-2"
-                style="background:linear-gradient(135deg,#4338ca,#6366f1);border:none;box-shadow:0 3px 10px rgba(67,56,202,0.3);"
-                (click)="submitResponse(a)" [disabled]="uploadingId() === a.id">
-                @if (uploadingId() === a.id) {
-                <span class="spinner-border spinner-border-sm"></span>Submitting...
-                } @else {
-                <i class="bi bi-cloud-arrow-up"></i>Submit Assignment
-                }
-              </button>
-            </div>
+              <!-- Upload State with Premium Look -->
+              <div class="rounded-4 p-3" style="background:#f8fafc; border: 2px dashed #cbd5e1;">
+                <label class="small fw-bold text-dark mb-2 d-flex align-items-center gap-2">
+                  <i class="bi bi-cloud-arrow-up-fill text-primary"></i> Upload Submission
+                </label>
+                
+                <div class="position-relative mb-2">
+                  <input type="file" class="form-control form-control-sm rounded-pill border-0 shadow-sm px-3"
+                    style="background: white; font-size: 0.75rem;"
+                    accept=".pdf, image/*"
+                    id="inputGroupFile{{a.id}}" (change)="selectResponseFile($event, a.id)">
+                </div>
+
+                <p class="text-muted mb-3" style="font-size: 0.65rem;">
+                  <i class="bi bi-info-circle me-1"></i> PDF or Image files preferred for preview.
+                </p>
+
+                <button
+                  class="btn btn-sm w-100 rounded-pill fw-bold text-white py-2 d-flex align-items-center justify-content-center gap-2"
+                  style="background: linear-gradient(135deg, #4338ca 0%, #6366f1 100%); border:none; box-shadow: 0 4px 15px rgba(67, 56, 202, 0.2);"
+                  (click)="submitResponse(a)" [disabled]="uploadingId() === a.id">
+                  @if (uploadingId() === a.id) {
+                    <span class="spinner-border spinner-border-sm" role="status"></span>
+                    <span class="ms-1">Uploading...</span>
+                  } @else {
+                    <i class="bi bi-send-fill" style="transform: rotate(45deg); margin-top: -2px;"></i>
+                    <span>Submit Work</span>
+                  }
+                </button>
+              </div>
             }
+            }
+
+            @if (a.type === 'CLASS') {
+              @if (isPastDate(a.date)) {
+                <div class="rounded-3 p-3 text-center" style="background:#f0fdf4; border:1px solid #bbf7d0;">
+                  <span class="badge rounded-pill px-3 py-2 fw-bold"
+                    style="background:#dcfce7;color:#15803d;font-size:0.8rem;">
+                    <i class="bi bi-patch-check-fill me-1"></i>Done
+                  </span>
+                  <p class="text-muted small mb-0 mt-2">Class task completed</p>
+                </div>
+              } @else {
+                <div class="rounded-3 p-3 text-center bg-light border">
+                  <span class="badge rounded-pill px-3 py-2 fw-bold"
+                    style="background:#fef3c7;color:#92400e;font-size:0.8rem;">
+                    <i class="bi bi-clock-history me-1"></i>Scheduled
+                  </span>
+                  <p class="text-muted small mb-0 mt-2">Activity will be held in class</p>
+                </div>
+              }
             }
           </div>
         </div>

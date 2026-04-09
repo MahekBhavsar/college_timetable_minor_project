@@ -36,7 +36,20 @@ export class StudentViewAssignments implements OnInit {
     if (!stored) return;
 
     const user = JSON.parse(stored);
-    this.student.set(user);
+    
+    // 🔍 NEW: Fetch fresh data to avoid stale division/semester
+    try {
+      const fresh = await firstValueFrom(
+        this.firebaseService.getFilteredCollection<any>('students', 'email', user.email)
+      );
+      if (fresh.length > 0) {
+        this.student.set(fresh[0]);
+      } else {
+        this.student.set(user);
+      }
+    } catch (e) {
+      this.student.set(user);
+    }
 
     await this.loadAssignments();
   }
@@ -128,6 +141,8 @@ export class StudentViewAssignments implements OnInit {
       assignmentId: a.id,
       studentId: this.student().id,
       studentName: this.student().name,
+      studentEmail: this.student().email,
+      rollNo: this.student().rollNo,
       subject: a.subject,
       semester: this.student().semester,
       division: this.student().division,
@@ -150,5 +165,13 @@ export class StudentViewAssignments implements OnInit {
     alert("Assignment submitted successfully 🎉");
 
     this.uploadingId.set(null);
+  }
+
+  isPastDate(dateStr: string): boolean {
+    if (!dateStr) return false;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const dueDate = new Date(dateStr);
+    return dueDate < today;
   }
 }

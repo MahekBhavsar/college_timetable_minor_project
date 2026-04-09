@@ -131,8 +131,10 @@ export class AddAssignment implements OnInit {
     reader.readAsDataURL(selected);
   }
 
-  validateDate(): boolean {
-    if (!this.plannerData) return false;
+  validateDate(): { valid: boolean; error?: string } {
+    if (!this.plannerData) {
+      return { valid: false, error: "Academic planner for this semester has not been set by Admin yet." };
+    }
 
     const chosen = this.selectedDate();
     const start = this.type() === 'HOME'
@@ -143,7 +145,20 @@ export class AddAssignment implements OnInit {
       ? this.plannerData.homeAssignmentEnd
       : this.plannerData.classAssignmentEnd;
 
-    return !!(chosen && start && end && chosen >= start && chosen <= end);
+    if (!chosen) return { valid: false, error: "Please select a date." };
+    if (!start || !end) return { valid: false, error: `Academic planner range for ${this.type()} assignments is not defined.` };
+
+    // Standard string comparison works for YYYY-MM-DD
+    const isValid = chosen >= start && chosen <= end;
+    
+    if (!isValid) {
+      return { 
+        valid: false, 
+        error: `Date ${chosen} is outside the allowed range (${start} to ${end}) for ${this.type()} assignments.` 
+      };
+    }
+
+    return { valid: true };
   }
 
   async submit() {
@@ -153,8 +168,9 @@ export class AddAssignment implements OnInit {
       return;
     }
 
-    if (!this.validateDate()) {
-      alert("Date outside academic planner");
+    const dateValidation = this.validateDate();
+    if (!dateValidation.valid) {
+      alert(dateValidation.error);
       return;
     }
 
