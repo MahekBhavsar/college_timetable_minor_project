@@ -92,16 +92,16 @@ export class StaffManageStudent implements OnInit {
   }
 
   async reject(student: any) {
-    if (!confirm(`Reject ${student.name}'s application? This will permanently delete the application.`)) return;
+    if (!confirm(`Reject ${student.name}'s application?`)) return;
     try {
-      // Send rejection email first before deleting data
+      await this.firebaseService.updateDocument(FirebaseCollections.Application, student.id, {
+        status: 'Application rejected'
+      });
+
       await this.firebaseService.sendRejectionEmail(student.email, student.name);
-      
-      // Delete the application document
-      await this.firebaseService.deleteDocument(FirebaseCollections.Application, student.id);
-      
-      alert("Application Rejected & Email Sent to Student.");
-      this.loadAllData();
+
+      alert("Application Rejected!");
+      this.loadAllData(); // Refresh list to reflect changes
     } catch (error) {
       alert("Error processing rejection.");
     }
