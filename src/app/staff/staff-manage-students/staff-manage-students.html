@@ -66,11 +66,16 @@
                   <i class="bi bi-eye-fill me-1"></i>View
                 </button>
               </td>
-              <td class="text-end pe-4">
+              <td class="text-end pe-4 d-flex justify-content-end gap-2">
                 <button class="btn btn-sm rounded-3 fw-bold text-white px-3"
                   style="background:#059669;border:none;box-shadow:0 2px 8px rgba(5,150,105,0.3);font-size:0.75rem;"
                   (click)="verify(s)">
                   <i class="bi bi-check-lg me-1"></i>Approve
+                </button>
+                <button class="btn btn-sm rounded-3 fw-bold text-white px-3"
+                  style="background:#dc3545;border:none;box-shadow:0 2px 8px rgba(220,53,69,0.3);font-size:0.75rem;"
+                  (click)="reject(s)">
+                  <i class="bi bi-x-lg me-1"></i>Reject
                 </button>
               </td>
             </tr>

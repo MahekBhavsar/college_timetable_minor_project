@@ -268,15 +268,28 @@ async registerWithDocument(studentData: any, base64File: string) {
 /** * 📧 Helper: Sends an Approval Email via Nodemailer
  * Call this when a staff member clicks "Verify/Approve"
  */
-async sendApprovalEmail(targetEmail: string, studentName: string) {
-  const url = 'http://localhost:3000/send-email';
-  const payload = {
-    to: targetEmail.trim(),
-    subject: 'Welcome! Your Application is Approved',
-    studentName: studentName,
-    assignmentTitle: 'N/A',
-    type: 'approval' // 👈 Tells backend to use the Approval look
-  };
-  return await firstValueFrom(this.http.post(url, payload));
-}
+  async sendApprovalEmail(targetEmail: string, studentName: string) {
+    const url = 'http://localhost:3000/send-email';
+    const payload = {
+      to: targetEmail.trim(),
+      subject: 'Welcome! Your Application is Approved',
+      studentName: studentName,
+      assignmentTitle: 'N/A',
+      type: 'approval' // 👈 Tells backend to use the Approval look
+    };
+    return await firstValueFrom(this.http.post(url, payload));
+  }
+
+  /* Inside src/app/services/firebaseservice.ts */
+  async sendRejectionEmail(targetEmail: string, studentName: string) {
+    const url = 'http://localhost:3000/send-email';
+    const payload = {
+      to: targetEmail.trim(),
+      subject: 'Update: Your Application Status',
+      studentName: studentName,
+      assignmentTitle: 'N/A',
+      type: 'rejection' // 👈 Tells backend to use the Rejection look
+    };
+    return await firstValueFrom(this.http.post(url, payload));
+  }
 }
