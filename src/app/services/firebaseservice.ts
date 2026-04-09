@@ -279,4 +279,19 @@ async sendApprovalEmail(targetEmail: string, studentName: string) {
   };
   return await firstValueFrom(this.http.post(url, payload));
 }
+
+/** * 📧 Helper: Sends a Rejection Email via Nodemailer
+ * Call this when a staff member clicks "Reject"
+ */
+async sendRejectionEmail(targetEmail: string, studentName: string) {
+  const url = 'http://localhost:3000/send-email';
+  const payload = {
+    to: targetEmail.trim(),
+    subject: 'Update: Application Status - Rejected',
+    studentName: studentName,
+    assignmentTitle: 'N/A',
+    type: 'rejection' // 👈 Tells backend to use the Rejection look
+  };
+  return await firstValueFrom(this.http.post(url, payload));
+}
 }

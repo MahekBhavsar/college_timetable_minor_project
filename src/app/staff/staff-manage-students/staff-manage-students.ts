@@ -90,4 +90,20 @@ export class StaffManageStudent implements OnInit {
       alert("Error processing approval.");
     }
   }
+
+  async reject(student: any) {
+    if (!confirm(`Reject ${student.name}'s application?`)) return;
+    try {
+      await this.firebaseService.updateDocument(FirebaseCollections.Application, student.id, {
+        status: 'Application rejected'
+      });
+
+      await this.firebaseService.sendRejectionEmail(student.email, student.name);
+
+      alert("Application Rejected!");
+      this.loadAllData(); // Refresh list to reflect changes
+    } catch (error) {
+      alert("Error processing rejection.");
+    }
+  }
 }

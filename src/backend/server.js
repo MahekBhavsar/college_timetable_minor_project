@@ -45,6 +45,18 @@ app.post('/send-email', async (req, res) => {
         <p style="font-size: 11px; color: #888;">BCA Portal - Official Registration Update</p>
       </div>`;
   }
+  // 🎨 Email Design 3: Application Rejection
+  else if (type === 'rejection') {
+    htmlContent = `
+      <div style="font-family: 'Segoe UI', sans-serif; padding: 20px; border: 1px solid #d32f2f; border-radius: 10px; background-color: #fff9f9;">
+        <h2 style="color: #d32f2f;">❌ Application Rejected</h2>
+        <p>Hello <strong>${studentName}</strong>,</p>
+        <p>We regret to inform you that your application for the <b>BCA Portal</b> has been reviewed and rejected by our staff.</p>
+        <p>Please contact the administration if you have any questions or to appeal this decision.</p>
+        <hr style="border: 0; border-top: 1px solid #eee;" />
+        <p style="font-size: 11px; color: #888;">BCA Portal - Official Registration Update</p>
+      </div>`;
+  }
 
   const mailOptions = {
     from: '"BCA Portal Admin" <mahek.bhavsar29@gmail.com>', 
