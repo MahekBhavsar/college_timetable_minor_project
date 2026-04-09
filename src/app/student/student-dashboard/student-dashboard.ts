@@ -32,6 +32,7 @@ export class StudentDashboard implements OnInit, AfterViewInit, OnDestroy {
 
   notices = signal<any[]>([]);
   dailyPlanner = signal<any[]>([]);
+  assignmentsTable = signal<any[]>([]);
 
   private sub = new Subscription();
 
@@ -68,36 +69,53 @@ export class StudentDashboard implements OnInit, AfterViewInit, OnDestroy {
       const isTBA = !divValue || divValue.toUpperCase() === 'TBA';
 
       // 1. Fetch Assignments & User specific submissions
-      const assignmentFilter = [{ field: 'sem', value: semValue }, { field: 'div', value: divValue }];
-      const rawAssignments = await firstValueFrom(
-        isTBA
-          ? this.firebaseService.getFilteredCollection(FirebaseCollections.assignments, 'sem', semValue)
-          : this.firebaseService.getMultipleFilteredCollection(FirebaseCollections.assignments, assignmentFilter)
+      const rawAssignmentsAllSem = await firstValueFrom(
+        this.firebaseService.getFilteredCollection(FirebaseCollections.assignments, 'semester', semValue)
       ) as any[];
 
+      const rawAssignments = isTBA 
+        ? rawAssignmentsAllSem 
+        : rawAssignmentsAllSem.filter(asg => {
+            return !asg.divisions || asg.divisions.includes(divValue);
+          });
+
       const userSubmissions = await firstValueFrom(
-        this.firebaseService.getFilteredCollection('assignment_submissions' as any, 'studentId', user.rollNo)
+        this.firebaseService.getFilteredCollection('assignment_submissions' as any, 'studentId', user.id)
       ) as any[];
 
       const now = new Date();
       let pending = 0;
       let completed = 0;
 
-      rawAssignments.forEach(asg => {
-        const hasSubmitted = userSubmissions.some(sub => sub.assignmentId === asg.id);
-        if (hasSubmitted) {
+      const assignmentsWithStatus = rawAssignments.map(asg => {
+        const submission = userSubmissions.find(sub => sub.assignmentId === asg.id);
+        const isSubmitted = !!submission;
+        
+        let statusStr = isSubmitted ? 'Submitted' : 'Pending';
+        if (!isSubmitted && asg.date && new Date(asg.date) < new Date(now.setHours(0,0,0,0))) {
+           statusStr = 'Overdue';
+        }
+
+        if (isSubmitted) {
           completed++;
         } else {
           pending++;
         }
+
+        return {
+          ...asg,
+          submissionStatus: statusStr,
+          submissionUrl: submission ? (submission.fileUrl || submission.fileBase64) : null
+        };
       });
 
       this.pendingTasks.set(pending);
       this.completedTasks.set(completed);
+      this.assignmentsTable.set(assignmentsWithStatus);
 
       // 2. Fetch Planner (Exams / Events)
       const plannerItems = await firstValueFrom(
-        this.firebaseService.getFilteredCollection(FirebaseCollections.academic_planner, 'sem', semValue)
+        this.firebaseService.getFilteredCollection(FirebaseCollections.academic_planner, 'semester', semValue)
       ) as any[];
 
       let upcExams = 0;
