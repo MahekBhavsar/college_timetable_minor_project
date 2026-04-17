@@ -10,5 +10,6 @@ export enum FirebaseCollections {
     assignment_submissions = "assignment_submissions",
     notices = "notices",
     attendance = "attendance",
-    
+    StaffPreferences = "staff_preferences",
+    Categories = "subject_categories"
 }

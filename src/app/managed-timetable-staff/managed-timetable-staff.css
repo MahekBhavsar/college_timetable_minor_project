@@ -1,0 +1,102 @@
+.sem-btn {
+  width: 80px;
+  height: 90px;
+  border-radius: 16px;
+  border: 2px solid #e2e8f0;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  cursor: pointer;
+}
+
+.sem-btn.assigned {
+  border-color: #cbd5e1;
+  color: #475569;
+}
+
+.sem-btn.active {
+  background: #1a3a6c;
+  border-color: #1a3a6c;
+  color: #fff;
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(26, 58, 108, 0.2);
+}
+
+.sem-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  background: #f1f5f9;
+}
+
+.pref-dot {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 8px;
+  height: 8px;
+  background: #10b981;
+  border-radius: 50%;
+  box-shadow: 0 0 0 3px #fff;
+}
+
+.avatar-circle {
+  width: 48px;
+  height: 48px;
+  background: #1a3a6c;
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.config-panel {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 1px solid #e2e8f0;
+}
+
+.time-input-group {
+  position: relative;
+}
+
+.input-with-icon {
+  position: relative;
+}
+
+.input-with-icon i {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 5;
+}
+
+.input-with-icon input {
+  padding-left: 40px;
+  height: 50px;
+  border-radius: 12px;
+  border: 1px solid #cbd5e1;
+}
+
+.bg-soft-success {
+  background-color: #dcfce7;
+  color: #15803d;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fw-black { font-weight: 900; }
+.extra-small { font-size: 0.7rem; }
