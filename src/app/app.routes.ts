@@ -8,6 +8,7 @@ import { Subject } from './subject/subject';
 import { AcademicPlanner } from './academic-planner/academic-planner';
 import { DivisionAllocationComponent } from './division-allocation/division-allocation';
 import { AdminManageStudent } from './admin-manage-students/admin-manage-students';
+import { ManagedTimetableStaff } from './managed-timetable-staff/managed-timetable-staff';
 
 // ------------------ STAFF COMPONENTS ------------------
 import { StaffDashboard } from './staff/staff-dashboard/staff-dashboard';
@@ -65,6 +66,7 @@ export const routes: Routes = [
   { path: 'admin/academic-planner', component: AcademicPlanner },
   { path: 'admin/manage-students', component: AdminManageStudent },
   { path: 'admin/division-allocation', component: DivisionAllocationComponent },
+  { path: 'admin/staff-preferences', component: ManagedTimetableStaff },
 
   // 6. COMMON ROUTES
   { path: 'timetable', component: TimetableComponent },

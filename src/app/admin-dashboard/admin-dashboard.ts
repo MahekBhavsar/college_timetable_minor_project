@@ -1,7 +1,7 @@
 import { Component, signal, OnInit, AfterViewInit, ElementRef, ViewChild, OnDestroy, Inject, PLATFORM_ID } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FirebaseService } from '../services/firebaseservice';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { AdminLayoutComponent } from '../admin-layout/admin-layout';
 import Chart from 'chart.js/auto';
 import { combineLatest, Subscription } from 'rxjs';
@@ -16,7 +16,7 @@ interface AcademicEvent {
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, AdminLayoutComponent, RouterLink],
+  imports: [CommonModule, AdminLayoutComponent],
   templateUrl: './admin-dashboard.html',
   styleUrl: './admin-dashboard.css'
 })

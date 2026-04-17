@@ -24,6 +24,10 @@ export class Subject implements OnInit {
 
   subjects = signal<any[]>([]);
   staffList = signal<any[]>([]);
+  categories = signal<any[]>([]);
+  showAddCategory = signal(false);
+  newCategoryName = signal('');
+  isCategoryMinor = signal(false);
   editingId = signal<string | null>(null);
   semesterNumbers = [1, 2, 3, 4, 5, 6];
 
@@ -53,6 +57,7 @@ export class Subject implements OnInit {
   ngOnInit() {
     this.loadSubjects();
     this.loadStaff();
+    this.loadCategories();
   }
 
   loadSubjects() {
@@ -61,6 +66,52 @@ export class Subject implements OnInit {
 
   loadStaff() {
     this.fb.getCollection<any>(FirebaseCollections.Staff).subscribe(data => this.staffList.set(data));
+  }
+
+  loadCategories() {
+    const defaults = [
+      { name: 'Major', isMinor: false, color: '#1d4ed8', bg: '#dbeafe' },
+      { name: 'Minor', isMinor: true, color: '#854d0e', bg: '#fef9c3' },
+      { name: 'AEC', isMinor: true, color: '#047857', bg: '#d1fae5' },
+      { name: 'SEC', isMinor: true, color: '#7c3aed', bg: '#ede9fe' },
+      { name: 'VAC', isMinor: true, color: '#c2410c', bg: '#ffedd5' }
+    ];
+
+    this.fb.getCollection<any>(FirebaseCollections.Categories).subscribe(async data => {
+      if (data && data.length > 0) {
+        this.categories.set(data);
+      } else {
+        this.categories.set(defaults);
+        // Seed database in background if truly empty
+        for (const d of defaults) {
+          await this.fb.addDocument(FirebaseCollections.Categories, d);
+        }
+      }
+    });
+  }
+
+  async addCategory() {
+    const name = this.newCategoryName().trim();
+    if (!name) return;
+    const isMinor = this.isCategoryMinor();
+    
+    // Choose a color based on isMinor
+    const color = isMinor ? '#92400e' : '#1d4ed8';
+    const bg = isMinor ? '#fefce8' : '#eff6ff';
+
+    await this.fb.addDocument(FirebaseCollections.Categories, { name, isMinor, color, bg });
+    this.newCategoryName.set('');
+    this.showAddCategory.set(false);
+  }
+
+  async deleteCategory(id: string) {
+    if (confirm('Delete this category?')) {
+      await this.fb.deleteDocument(FirebaseCollections.Categories, id);
+    }
+  }
+
+  getCategory(typeName: string) {
+    return this.categories().find(c => c.name === typeName);
   }
 
   getStaffName(id: string): string {

@@ -1,13 +1,12 @@
 import { Component, OnInit, signal, Inject, PLATFORM_ID, computed } from '@angular/core';
 import { isPlatformBrowser, CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
 import { FirebaseService } from '../../services/firebaseservice';
 import { StaffLayoutComponent } from '../staff-layout/staff-layout';
 
 @Component({
   selector: 'app-staff-timetable',
   standalone: true,
-  imports: [CommonModule, RouterLink, StaffLayoutComponent],
+  imports: [CommonModule, StaffLayoutComponent],
   templateUrl: './staff-timetable.html',
   styleUrls: ['./staff-timetable.css']
 })
